@@ -274,7 +274,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="StringLib\StringLib.csproj">
+    <ProjectReference Include="..\StringLib\StringLib.csproj">
       <Project>{62909d1a-baae-4b9e-a563-52ac8dc9e23e}</Project>
       <Name>StringLib</Name>
     </ProjectReference>
