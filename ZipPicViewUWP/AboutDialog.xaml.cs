@@ -13,6 +13,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.Storage;
+using Windows.System;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -24,13 +26,20 @@ namespace ZipPicViewUWP
         {
             this.InitializeComponent();
 
-
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
-            
-            Version.Text = (package.IsDevelopmentMode? "(Debug)" : "") +
+
+            Version.Text = (package.IsDevelopmentMode ? "(Debug)" : "") +
                 string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+
+            Initialize();
+        }
+
+        public async void Initialize()
+        {
+            ReleaseNote.Text =
+                await FileIO.ReadTextAsync(await Package.Current.InstalledLocation.GetFileAsync(@"Assets\Release.md"));
         }
     }
 }

@@ -94,6 +94,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="..\Release.md">
+      <Link>Assets\Release.md</Link>
+    </Content>
     <None Include="LICENSE" />
     <None Include="PrivacyPolicy.md" />
   </ItemGroup>

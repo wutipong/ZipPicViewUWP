@@ -5,17 +5,19 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Title="About"
     PrimaryButtonText="Close"
     FontWeight="Normal">
     <StackPanel>
-        <TextBlock Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}" FontWeight="Bold">ZipPicView </TextBlock>
+        <TextBlock Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}" FontWeight="Bold">ZipPicView</TextBlock>
         <TextBlock x:Name="Version">($version)</TextBlock>
         <TextBlock>Copyright ©2017-2018 Wutipong Wongsakuldej</TextBlock>
-        <TextBlock>Licensed Under 
+        <TextBlock>Licensed Under
             <Hyperlink NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/LICENSE">MIT License</Hyperlink>
         </TextBlock>
         <HyperlinkButton NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/">GitHub</HyperlinkButton>
+        <controls:MarkdownTextBlock x:Name="ReleaseNote" MaxHeight="500" />
     </StackPanel>
 </ContentDialog>
