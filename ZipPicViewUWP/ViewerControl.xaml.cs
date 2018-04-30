@@ -60,9 +60,9 @@ namespace ZipPicViewUWP
             timer.Tick += Timer_Tick;
             timer.Interval = new TimeSpan(0, 0, 1);
 
-            nextButton.Click += NextButton_Click;
+            NextButton.Click += NextButton_Click;
 
-            durationList.Items.Clear();
+            DurationList.Items.Clear();
             var oneMinute = TimeSpan.FromMinutes(1.00);
             foreach (var duration in advanceDurations)
             {
@@ -70,40 +70,40 @@ namespace ZipPicViewUWP
                     String.Format("{0} Second(s)", duration.Seconds) :
                     String.Format("{0}:{1:00} Minute(s)", (int)duration.TotalMinutes, duration.Seconds);
 
-                durationList.Items.Add(durationStr);
+                DurationList.Items.Add(durationStr);
             }
 
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var index);
-            durationList.SelectedIndex = index == null ? 0 : (int)index;
+            DurationList.SelectedIndex = index == null ? 0 : (int)index;
 
-            durationList.SelectionChanged += (_, __) =>
+            DurationList.SelectionChanged += (_, __) =>
             {
-                applicationData.LocalSettings.Values["durationIndex"] = durationList.SelectedIndex;
+                applicationData.LocalSettings.Values["durationIndex"] = DurationList.SelectedIndex;
             };
 
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
-            precountToggle.IsOn = precount == null ? false : (bool)precount;
-            precountToggle.Toggled += (_, __) =>
+            PrecountToggle.IsOn = precount == null ? false : (bool)precount;
+            PrecountToggle.Toggled += (_, __) =>
             {
-                applicationData.LocalSettings.Values["precount"] = precountToggle.IsOn;
+                applicationData.LocalSettings.Values["precount"] = PrecountToggle.IsOn;
             };
 
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {
-                printBtn.Visibility = Visibility.Collapsed;
+                PrintButton.Visibility = Visibility.Collapsed;
             }
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            nextButtonClick(this, e);
+            nextButtonClick?.Invoke(this, e);
         }
 
         private void Timer_Tick(object sender, object e)
         {
             counter--;
-            if (counter < 5 && counter > 0 && precountToggle.IsOn) { onPreCount?.Invoke(this); }
+            if (counter < 5 && counter > 0 && PrecountToggle.IsOn) { onPreCount?.Invoke(this); }
             if (counter == 0)
             {
                 onAutoAdvance?.Invoke(this);
@@ -120,14 +120,14 @@ namespace ZipPicViewUWP
             set
             {
                 filename = value;
-                filenameTextBlock.Text = filename.Ellipses(70);
+                FilenameTextBlock.Text = filename.Ellipses(70);
             }
         }
 
         public string DimensionText
         {
-            get { return originalDimension.Text; }
-            set { originalDimension.Text = value; }
+            get { return OriginalDimension.Text; }
+            set { OriginalDimension.Text = value; }
         }
 
         public event RoutedEventHandler NextButtonClick
@@ -136,56 +136,56 @@ namespace ZipPicViewUWP
             remove { nextButtonClick -= value; }
         }
 
-        public event RoutedEventHandler PrevButtonClick
+        public event RoutedEventHandler PreviousButtonClick
         {
-            add { prevButton.Click += value; }
-            remove { prevButton.Click -= value; }
+            add { PreviousButton.Click += value; }
+            remove { PreviousButton.Click -= value; }
         }
 
         public event RoutedEventHandler CloseButtonClick
         {
-            add { closeButton.Click += value; }
-            remove { closeButton.Click -= value; }
+            add { CloseButton.Click += value; }
+            remove { CloseButton.Click -= value; }
         }
 
         public event RoutedEventHandler SaveButtonClick
         {
-            add { saveBtn.Click += value; }
-            remove { saveBtn.Click -= value; }
+            add { SaveButton.Click += value; }
+            remove { SaveButton.Click -= value; }
         }
 
         public event RoutedEventHandler PrintButtonClick
         {
-            add { printBtn.Click += value; }
-            remove { printBtn.Click -= value; }
+            add { PrintButton.Click += value; }
+            remove { PrintButton.Click -= value; }
         }
 
         public bool? AutoEnabled
         {
-            get { return autoBtn.IsChecked; }
-            set { autoBtn.IsChecked = value; }
+            get { return AutoButton.IsChecked; }
+            set { AutoButton.IsChecked = value; }
         }
 
-        private void autoBtn_Checked(object sender, RoutedEventArgs e)
+        private void AutoButton_Checked(object sender, RoutedEventArgs e)
         {
-            autoBtn.Content = new SymbolIcon(Symbol.Pause);
-            autoDurationBtn.IsEnabled = false;
+            AutoButton.Content = new SymbolIcon(Symbol.Pause);
+            AutoDurationButton.IsEnabled = false;
             timer.Start();
-            saveBtn.IsEnabled = false;
+            SaveButton.IsEnabled = false;
             ResetCounter();
         }
 
         public void ResetCounter()
         {
-            counter = (int)advanceDurations[durationList.SelectedIndex].TotalSeconds;
+            counter = (int)advanceDurations[DurationList.SelectedIndex].TotalSeconds;
         }
 
-        private void autoBtn_Unchecked(object sender, RoutedEventArgs e)
+        private void AutoButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            autoBtn.Content = new SymbolIcon(Symbol.Play);
-            autoDurationBtn.IsEnabled = true;
+            AutoButton.Content = new SymbolIcon(Symbol.Play);
+            AutoDurationButton.IsEnabled = true;
             timer.Stop();
-            saveBtn.IsEnabled = true;
+            SaveButton.IsEnabled = true;
         }
     }
 }

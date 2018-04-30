@@ -49,18 +49,6 @@ namespace ZipPicViewUWP
             }
         }
 
-        private string selectedFolder;
-
-        private string SelectedFolder
-        {
-            get { return selectedFolder; }
-            set
-            {
-                selectedFolder = value;
-                selectFolderTextBlock.Text = selectedFolder.Ellipses(50);
-            }
-        }
-
         private string currentImageFile;
 
         public async Task<Exception> SetMediaProvider(AbstractMediaProvider provider)
