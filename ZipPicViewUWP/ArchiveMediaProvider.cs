@@ -122,7 +122,10 @@ namespace ZipPicViewUWP
                                             select entry.Key;
 
                         output.Add(Root);
-                        output.AddRange(folderEntries);
+                        foreach (var folder in folderEntries)
+                        {
+                            output.Add(folder.EndsWith(Separator)? folder: folder+Separator);
+                        }
 
                         foreach(var entry in Archive.Entries)
                         {
