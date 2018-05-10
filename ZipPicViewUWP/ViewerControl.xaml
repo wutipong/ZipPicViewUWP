@@ -10,30 +10,54 @@
     d:DesignWidth="800">
   
     <Grid>
-        <Button x:Name="nextButton" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" Height="100" Background="{StaticResource FloatControlBackground}">
+        <Button x:Name="NextButton" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" 
+            Height="100" Background="{StaticResource FloatControlBackground}">
+            
             <SymbolIcon Symbol="Next" />
         </Button>
 
-        <Button x:Name="prevButton" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center" Height="100" Background="{StaticResource FloatControlBackground}">
+        <Button x:Name="PreviousButton" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center" Height="100" 
+            Background="{StaticResource FloatControlBackground}">
+            
             <SymbolIcon Symbol="Previous" />
         </Button>
 
-        <RelativePanel HorizontalAlignment="Center" Grid.Row="1" MinHeight="50"  Margin="10" VerticalAlignment="Bottom" Background="{StaticResource FloatControlBackground}">
-            <TextBlock x:Name="filenameTextBlock" Width="400" RelativePanel.AlignLeftWithPanel="True" VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Text="&lt;&lt;filename&gt;&gt;" TextAlignment="Right" />
-            <TextBlock x:Name="originalDimension" Width="100" RelativePanel.RightOf="filenameTextBlock" VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True">(dimension)</TextBlock>
-            <Button Name="saveBtn" RelativePanel.RightOf="originalDimension" VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
+        <RelativePanel HorizontalAlignment="Center" Grid.Row="1" MinHeight="50"  Margin="10" VerticalAlignment="Bottom" 
+            Background="{StaticResource FloatControlBackground}">
+            
+            <TextBlock x:Name="FilenameTextBlock" Width="400" RelativePanel.AlignLeftWithPanel="True" 
+                VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" 
+                RelativePanel.AlignBottomWithPanel="True" Text="&lt;&lt;filename&gt;&gt;" TextAlignment="Right" />
+            
+            <TextBlock x:Name="OriginalDimension" Width="100" RelativePanel.RightOf="FilenameTextBlock" 
+                VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" 
+                RelativePanel.AlignBottomWithPanel="True">(dimension)</TextBlock>
+            
+            <Button Name="SaveButton" RelativePanel.RightOf="OriginalDimension" VerticalAlignment="Stretch" 
+                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
                 <SymbolIcon Symbol="Save" />
             </Button>
-            <Button Name="printBtn" RelativePanel.RightOf="saveBtn" VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Content="&#xE749;" FontFamily="Segoe MDL2 Assets" FontSize="18"/>
-            <ToggleButton Name="autoBtn" RelativePanel.RightOf="printBtn" VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Checked="autoBtn_Checked" Unchecked="autoBtn_Unchecked" >
+
+            <Button Name="PrintButton" RelativePanel.RightOf="SaveButton" VerticalAlignment="Stretch" 
+                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Content="&#xE749;" 
+                FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+
+            <ToggleButton Name="AutoButton" RelativePanel.RightOf="PrintButton" VerticalAlignment="Stretch" 
+                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" 
+                Checked="AutoButton_Checked" Unchecked="AutoButton_Unchecked" >
+
                 <SymbolIcon Symbol="Play"/>
             </ToggleButton>
-            <Button Name="autoDurationBtn" Content="&#8711;" RelativePanel.RightOf="autoBtn" VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" >
+            
+            <Button Name="AutoDurationButton" Content="&#8711;" RelativePanel.RightOf="AutoButton" 
+                VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" 
+                RelativePanel.AlignBottomWithPanel="True" >
+                
                 <Button.Flyout>
                     <Flyout>
                         <Grid Height="366" VerticalAlignment="Top">
-                            <ToggleSwitch x:Name="precountToggle" Header="Pre-count" VerticalAlignment="Top"/>
-                            <ListBox x:Name="durationList" VerticalAlignment="Top" Margin="0,60,0,0" >
+                            <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" VerticalAlignment="Top"/>
+                            <ListBox x:Name="DurationList" VerticalAlignment="Top" Margin="0,60,0,0" >
                                 <ListBoxItem Content="5 seconds" IsSelected="True"/>
                                 <ListBoxItem Content="10 seconds"/>
                                 <ListBoxItem Content="15 seconds"/>
@@ -46,7 +70,8 @@
             </Button>
         </RelativePanel>
 
-        <Button x:Name="closeButton" Width="50" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10" Background="{StaticResource FloatControlBackground}">
+        <Button x:Name="CloseButton" Width="50" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" 
+            Margin="10" Background="{StaticResource FloatControlBackground}">
             <SymbolIcon Symbol="Cancel"/>
         </Button>
 

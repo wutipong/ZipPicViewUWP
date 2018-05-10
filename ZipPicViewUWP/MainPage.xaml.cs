@@ -36,6 +36,8 @@ namespace ZipPicViewUWP
         private PrintHelper printHelper;
         private DisplayRequest displayRequest;
         private CastingConnection castingConnection = null;
+        private FileOpenPicker fileOpenPicker = null;
+        private FolderPicker folderPicker = null;
 
         private string FileName
         {
@@ -44,18 +46,6 @@ namespace ZipPicViewUWP
             {
                 filename = value;
                 filenameTextBlock.Text = filename.Ellipses(100);
-            }
-        }
-
-        private string selectedFolder;
-
-        private string SelectedFolder
-        {
-            get { return selectedFolder; }
-            set
-            {
-                selectedFolder = value;
-                selectFolderTextBlock.Text = selectedFolder.Ellipses(50);
             }
         }
 
@@ -223,15 +213,19 @@ namespace ZipPicViewUWP
 
         private async void openFileButton_Click(object sender, RoutedEventArgs e)
         {
-            IsEnabled = false;
-            var picker = new FileOpenPicker();
-            picker.FileTypeFilter.Add(".zip");
-            picker.FileTypeFilter.Add(".rar");
-            picker.FileTypeFilter.Add(".7z");
-            picker.FileTypeFilter.Add(".pdf");
-            picker.FileTypeFilter.Add("*");
+            if (fileOpenPicker != null) return;
 
-            var selected = await picker.PickSingleFileAsync();
+            IsEnabled = false;
+            fileOpenPicker = new FileOpenPicker();
+            fileOpenPicker.FileTypeFilter.Add(".zip");
+            fileOpenPicker.FileTypeFilter.Add(".rar");
+            fileOpenPicker.FileTypeFilter.Add(".7z");
+            fileOpenPicker.FileTypeFilter.Add(".pdf");
+            fileOpenPicker.FileTypeFilter.Add("*");
+
+            var selected = await fileOpenPicker.PickSingleFileAsync();
+            fileOpenPicker = null;
+
             if (selected == null)
             {
                 IsEnabled = true;
@@ -283,10 +277,15 @@ namespace ZipPicViewUWP
 
         private async void openFolderButton_Click(object sender, RoutedEventArgs e)
         {
+            if (folderPicker != null) return;
+
             IsEnabled = false;
-            var picker = new FolderPicker();
-            picker.FileTypeFilter.Add("*");
-            var selected = await picker.PickSingleFolderAsync();
+            folderPicker = new FolderPicker();
+            folderPicker.FileTypeFilter.Add("*");
+
+            var selected = await folderPicker.PickSingleFolderAsync();
+            folderPicker = null;
+
             if (selected == null)
             {
                 IsEnabled = true;
