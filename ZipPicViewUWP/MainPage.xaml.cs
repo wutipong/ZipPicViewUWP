@@ -158,11 +158,8 @@ namespace ZipPicViewUWP
         {
             clickSound = await LoadSound("beep.wav");
             imageControl.OnPreCount += ImageControl_OnPreCount;
-            printHelper = new PrintHelper(printPanel)
-            {
-                ApplicationContentMarginLeft = 0,
-                ApplicationContentMarginTop = 0
-            };
+            printHelper = new PrintHelper(this);
+            printHelper.RegisterForPrinting();
         }
 
         private async void Picker_CastingDeviceSelected(CastingDevicePicker sender, CastingDeviceSelectedEventArgs args)
@@ -609,7 +606,6 @@ namespace ZipPicViewUWP
             var output = new BitmapImage();
             output.SetSource(stream.Item1);
 
-            printHelper.ClearListOfPrintableFrameworkElements();
             var image = new Image()
             {
                 Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill,
@@ -618,8 +614,7 @@ namespace ZipPicViewUWP
                 Margin = new Thickness(0),
             };
 
-            image.Source = output;
-            printHelper.AddFrameworkElementToPrint(image);
+            printHelper.BitmapImage = output;
 
             await printHelper.ShowPrintUIAsync("ZipPicView - " + currentImageFile.ExtractFilename());
         }

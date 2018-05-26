@@ -113,6 +113,11 @@
     <Compile Include="PdfFileFIlter.cs" />
     <Compile Include="PdfMediaProvider.cs" />
     <Compile Include="PhysicalFileFilter.cs" />
+    <Compile Include="PrintHelper.cs" />
+    <Compile Include="PrintPage.xaml.cs">
+      <DependentUpon>PrintPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PrintPanel.cs" />
     <Compile Include="SevenZipMediaProvider.cs" />
     <Compile Include="AbstractMediaProvider.cs" />
     <Compile Include="App.xaml.cs">
@@ -221,6 +226,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="PasswordDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PrintPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
