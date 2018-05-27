@@ -160,6 +160,12 @@ namespace ZipPicViewUWP
             remove { PrintButton.Click -= value; }
         }
 
+        public event RoutedEventHandler CopyButtonClick
+        {
+            add { CopyButton.Click += value; }
+            remove { CopyButton.Click -= value; }
+        }
+
         public bool? AutoEnabled
         {
             get { return AutoButton.IsChecked; }

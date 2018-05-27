@@ -20,6 +20,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using ZipPicViewUWP.StringLib;
 using NaturalSort.Extension;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Streams;
 
 namespace ZipPicViewUWP
 {
@@ -606,17 +608,32 @@ namespace ZipPicViewUWP
             var output = new BitmapImage();
             output.SetSource(stream.Item1);
 
-            var image = new Image()
-            {
-                Stretch = Windows.UI.Xaml.Media.Stretch.UniformToFill,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0),
-            };
-
             printHelper.BitmapImage = output;
 
             await printHelper.ShowPrintUIAsync("ZipPicView - " + currentImageFile.ExtractFilename());
+        }
+
+        private async void imageControl_CopyButtonClick(object sender, RoutedEventArgs e)
+        {
+            var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
+            var dataPackage = new DataPackage();
+
+            var memoryStream = new InMemoryRandomAccessStream();
+
+            await RandomAccessStream.CopyAsync(stream.Item1, memoryStream);
+
+            dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
+            
+            try
+            {
+                Clipboard.SetContent(dataPackage);
+
+                inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", currentImageFile.ExtractFilename()), 1000);
+            }
+            catch (Exception ex)
+            {
+                inAppNotification.Show(ex.Message, 5000);
+            }
         }
 
         private void castButton_Click(object sender, RoutedEventArgs e)

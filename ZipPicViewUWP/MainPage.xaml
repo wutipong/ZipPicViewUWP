@@ -50,7 +50,12 @@
                 </Image>
             </Border>
 
-            <local:ViewerControl x:Name="imageControl" Visibility="Collapsed" CloseButtonClick="imageControl_CloseButtonClick" NextButtonClick="imageControl_NextButtonClick" PreviousButtonClick="imageControl_PrevButtonClick" SaveButtonClick="imageControl_SaveButtonClick" PrintButtonClick="imageControl_PrintButtonClick" />
+            <local:ViewerControl x:Name="imageControl" Visibility="Collapsed" 
+                CloseButtonClick="imageControl_CloseButtonClick" NextButtonClick="imageControl_NextButtonClick" 
+                PreviousButtonClick="imageControl_PrevButtonClick" SaveButtonClick="imageControl_SaveButtonClick" 
+                PrintButtonClick="imageControl_PrintButtonClick" 
+                CopyButtonClick="imageControl_CopyButtonClick"/>
+            
             <Border x:Name="loadingBorder" Visibility="Collapsed">
                 <ProgressRing IsActive="True" Width="100" Height="100" />
             </Border>

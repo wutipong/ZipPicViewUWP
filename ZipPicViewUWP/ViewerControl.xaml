@@ -22,37 +22,32 @@
             <SymbolIcon Symbol="Previous" />
         </Button>
 
-        <RelativePanel HorizontalAlignment="Center" Grid.Row="1" MinHeight="50"  Margin="10" VerticalAlignment="Bottom" 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" MinHeight="50"  Margin="10" VerticalAlignment="Bottom" 
             Background="{StaticResource FloatControlBackground}">
             
-            <TextBlock x:Name="FilenameTextBlock" Width="400" RelativePanel.AlignLeftWithPanel="True" 
-                VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" 
-                RelativePanel.AlignBottomWithPanel="True" Text="&lt;&lt;filename&gt;&gt;" TextAlignment="Right" />
+            <TextBlock x:Name="FilenameTextBlock" Width="400" 
+                VerticalAlignment="Center" Margin="10" Text="&lt;&lt;filename&gt;&gt;" TextAlignment="Right" />
             
-            <TextBlock x:Name="OriginalDimension" Width="100" RelativePanel.RightOf="FilenameTextBlock" 
-                VerticalAlignment="Center" Margin="10" RelativePanel.AlignTopWithPanel="True" 
-                RelativePanel.AlignBottomWithPanel="True">(dimension)</TextBlock>
-            
-            <Button Name="SaveButton" RelativePanel.RightOf="OriginalDimension" VerticalAlignment="Stretch" 
-                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True">
+            <TextBlock x:Name="OriginalDimension" Width="100" 
+                VerticalAlignment="Center" Margin="10">(dimension)</TextBlock>
+
+            <Button Name="CopyButton" VerticalAlignment="Stretch">
+                <SymbolIcon Symbol="Paste" />
+            </Button>
+
+            <Button Name="SaveButton" VerticalAlignment="Stretch">
                 <SymbolIcon Symbol="Save" />
             </Button>
 
-            <Button Name="PrintButton" RelativePanel.RightOf="SaveButton" VerticalAlignment="Stretch" 
-                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" Content="&#xE749;" 
-                FontFamily="Segoe MDL2 Assets" FontSize="18"/>
+            <Button Name="PrintButton" VerticalAlignment="Stretch">
+                <SymbolIcon Symbol="Print"/>
+            </Button>
 
-            <ToggleButton Name="AutoButton" RelativePanel.RightOf="PrintButton" VerticalAlignment="Stretch" 
-                RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" 
-                Checked="AutoButton_Checked" Unchecked="AutoButton_Unchecked" >
-
+            <ToggleButton Name="AutoButton" VerticalAlignment="Stretch" Checked="AutoButton_Checked" Unchecked="AutoButton_Unchecked" >
                 <SymbolIcon Symbol="Play"/>
             </ToggleButton>
-            
-            <Button Name="AutoDurationButton" Content="&#8711;" RelativePanel.RightOf="AutoButton" 
-                VerticalAlignment="Stretch" RelativePanel.AlignTopWithPanel="True" 
-                RelativePanel.AlignBottomWithPanel="True" >
-                
+
+            <Button Name="AutoDurationButton" Content="&#8711;" VerticalAlignment="Stretch">
                 <Button.Flyout>
                     <Flyout>
                         <Grid Height="366" VerticalAlignment="Top">
@@ -68,7 +63,7 @@
                     </Flyout>
                 </Button.Flyout>
             </Button>
-        </RelativePanel>
+        </StackPanel>
 
         <Button x:Name="CloseButton" Width="50" Height="50" HorizontalAlignment="Right" VerticalAlignment="Top" 
             Margin="10" Background="{StaticResource FloatControlBackground}">
