@@ -62,8 +62,14 @@ namespace ZipPicViewUWP
             alignOption.AddItem("AlignRightOrBottom", "Align to the right or to the bottom");
 
             printLayout = PrintPanel.LayoutOption.Centered;
-           
+            displayedOptions.Clear();
+
+            displayedOptions.Add(StandardPrintTaskOptions.Copies);
             displayedOptions.Add("LayoutOption");
+            displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
+            displayedOptions.Add(StandardPrintTaskOptions.Orientation);
+            displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
+            displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
 
             printDetailedOptions.OptionChanged += printDetailedOptions_OptionChanged;
         }
