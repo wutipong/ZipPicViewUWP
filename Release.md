@@ -1,5 +1,11 @@
 # Release Note
 
+## Version 1.2.6.0
+* Add "Copy to Clipboard" functionality 
+* Add "Layout Option" in the print dialog
+* Fix the issue where multiple "open file" dialog shows on top of each ohter.
+* Fix the duplicate RAR file entries.
+
 ## Version 1.2.4.0
 
 * Add support for more image file formats -- the supported format will be enumerated from the system's installed decoders.
