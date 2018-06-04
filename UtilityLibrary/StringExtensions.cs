@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ZipPicViewUWP.StringLib
+namespace ZipPicViewUWP.Utility
 {
     public static class StringExtensions
     {

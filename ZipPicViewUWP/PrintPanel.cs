@@ -110,7 +110,8 @@ namespace ZipPicViewUWP
 
         protected override Size MeasureOverride(Size availableSize)
         {
-            Image.Measure(ImageHelper.ResizeToFill(BitmapImage.PixelWidth, BitmapImage.PixelHeight, availableSize.Width, availableSize.Height));
+            var size = new Size(BitmapImage.PixelWidth, BitmapImage.PixelHeight);
+            Image.Measure(size.ResizeToFill(availableSize));
 
             return availableSize;
         }

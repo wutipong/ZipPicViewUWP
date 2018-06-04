@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <AssemblyName>ZipPicViewUWP.StringLib.Test</AssemblyName>
+    <AssemblyName>ZipPicViewUWP.Utility.Test</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\StringLib\StringLib.csproj" />
+    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj" />
   </ItemGroup>
 
 </Project>
