@@ -8,26 +8,23 @@
     mc:Ignorable="d"
     d:DesignHeight="600"
     d:DesignWidth="800">
-  
+
     <Grid>
-        <Button x:Name="NextButton" HorizontalAlignment="Right" Margin="0,0,10,0" VerticalAlignment="Center" 
-            Height="100" Background="{StaticResource FloatControlBackground}">
-            
+        <Button x:Name="NextButton" HorizontalAlignment="Right" Margin="0,100,10,100" VerticalAlignment="Stretch" Background="{StaticResource FloatControlBackground}" Width="50" MinHeight="50">
             <SymbolIcon Symbol="Next" />
         </Button>
 
-        <Button x:Name="PreviousButton" HorizontalAlignment="Left" Margin="10" VerticalAlignment="Center" Height="100" 
-            Background="{StaticResource FloatControlBackground}">
-            
+        <Button x:Name="PreviousButton" HorizontalAlignment="Left" Margin="10,100,0,100" VerticalAlignment="Stretch" 
+            Background="{StaticResource FloatControlBackground}" Width="50" MinHeight="50">
             <SymbolIcon Symbol="Previous" />
         </Button>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" MinHeight="50"  Margin="10" VerticalAlignment="Bottom" 
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" MinHeight="50" MinWidth="250" Margin="10" VerticalAlignment="Bottom" 
             Background="{StaticResource FloatControlBackground}">
-            
+
             <TextBlock x:Name="FilenameTextBlock" Width="400" 
                 VerticalAlignment="Center" Margin="10" Text="&lt;&lt;filename&gt;&gt;" TextAlignment="Right" />
-            
+
             <TextBlock x:Name="OriginalDimension" Width="100" 
                 VerticalAlignment="Center" Margin="10">(dimension)</TextBlock>
 
@@ -43,6 +40,7 @@
                 <SymbolIcon Symbol="Print"/>
             </Button>
 
+            <Rectangle Width="20"></Rectangle>
             <ToggleButton Name="AutoButton" VerticalAlignment="Stretch" Checked="AutoButton_Checked" Unchecked="AutoButton_Unchecked" >
                 <SymbolIcon Symbol="Play"/>
             </ToggleButton>
