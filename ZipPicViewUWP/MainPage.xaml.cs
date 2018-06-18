@@ -18,7 +18,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
-using ZipPicViewUWP.StringLib;
+using ZipPicViewUWP.Utility;
 using NaturalSort.Extension;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage.Streams;

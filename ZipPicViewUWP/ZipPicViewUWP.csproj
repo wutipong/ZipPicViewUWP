@@ -111,6 +111,7 @@
       <DependentUpon>FolderReadingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ImageHelper.cs" />
+    <Compile Include="ImageSizeHelper.cs" />
     <Compile Include="PdfFileFIlter.cs" />
     <Compile Include="PdfMediaProvider.cs" />
     <Compile Include="PhysicalFileFilter.cs" />
@@ -276,9 +277,9 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\StringLib\StringLib.csproj">
+    <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{62909d1a-baae-4b9e-a563-52ac8dc9e23e}</Project>
-      <Name>StringLib</Name>
+      <Name>UtilityLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

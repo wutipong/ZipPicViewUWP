@@ -2,7 +2,7 @@
 using System;
 
 
-namespace ZipPicViewUWP.StringLib.Test
+namespace ZipPicViewUWP.Utility.Test
 {
     [TestFixture]
     public class StringExtensionsTest

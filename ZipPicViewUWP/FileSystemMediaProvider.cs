@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Search;
 using Windows.Storage.Streams;
-using ZipPicViewUWP.StringLib;
+using ZipPicViewUWP.Utility;
 
 namespace ZipPicViewUWP
 {

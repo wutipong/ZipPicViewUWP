@@ -5,9 +5,9 @@ VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZipPicViewUWP", "ZipPicViewUWP\ZipPicViewUWP.csproj", "{D1B9BAA2-B2B5-4E8C-9AA9-8B97CAD54FC4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StringLib", "StringLib\StringLib.csproj", "{62909D1A-BAAE-4B9E-A563-52AC8DC9E23E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilityLibrary", "UtilityLibrary\UtilityLibrary.csproj", "{62909D1A-BAAE-4B9E-A563-52AC8DC9E23E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StringLib.Test", "StringLib.Test\StringLib.Test.csproj", "{FC6920D0-4E8E-41F2-A093-7B39FFE059A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UtilityLibrary.Test", "UtilityLibrary.Test\UtilityLibrary.Test.csproj", "{FC6920D0-4E8E-41F2-A093-7B39FFE059A0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
