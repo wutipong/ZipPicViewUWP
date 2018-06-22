@@ -1,4 +1,4 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
+﻿using NaturalSort.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +7,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Graphics.Imaging;
 using Windows.Media.Casting;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.System;
 using Windows.System.Display;
 using Windows.UI.Popups;
@@ -19,9 +21,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using ZipPicViewUWP.Utility;
-using NaturalSort.Extension;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Storage.Streams;
 
 namespace ZipPicViewUWP
 {
@@ -89,8 +88,8 @@ namespace ZipPicViewUWP
         private async Task RebuildSubFolderList()
         {
             var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
-            Array.Sort(folderList, (s1,s2)=> {
-
+            Array.Sort(folderList, (s1, s2) =>
+            {
                 if (s1 == "\\") return -1;
                 else if (s2 == "\\") return 1;
                 else return comparer.Compare(s1, s2);
@@ -169,7 +168,7 @@ namespace ZipPicViewUWP
             await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
                 castingConnection = args.SelectedCastingDevice.CreateCastingConnection();
-                
+
                 castingConnection.ErrorOccurred += Connection_ErrorOccurred;
                 castingConnection.StateChanged += Connection_StateChanged;
 
@@ -407,7 +406,6 @@ namespace ZipPicViewUWP
             await delayTask;
             HideImage();
             imageControl.Filename = file.ExtractFilename();
-            
 
             var source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
@@ -424,17 +422,20 @@ namespace ZipPicViewUWP
             }
 
             if (viewerPanel.Visibility == Visibility.Collapsed)
+            {
                 imageBorder.Visibility = Visibility.Collapsed;
+                hiddenImageControl.Visibility = Visibility.Collapsed;
+            }
 
             displayRequest = new DisplayRequest();
             displayRequest.RequestActive();
-
         }
 
         private void ShowImage()
         {
             loadingBorder.Visibility = Visibility.Collapsed;
             imageBorder.Visibility = Visibility.Visible;
+            hiddenImageControl.Visibility = Visibility.Visible;
             ImageTransitionBehavior.Value = 0;
             ImageTransitionBehavior.StartAnimation();
         }
@@ -478,6 +479,7 @@ namespace ZipPicViewUWP
             BlurBehavior.StartAnimation();
             imageBorder.Visibility = Visibility.Collapsed;
             imageControl.Visibility = Visibility.Collapsed;
+            hiddenImageControl.Visibility = Visibility.Collapsed;
             viewerPanel.Visibility = Visibility.Collapsed;
             thumbnailGrid.IsEnabled = true;
             imageControl.AutoEnabled = false;
@@ -523,7 +525,6 @@ namespace ZipPicViewUWP
                 output.Dispose();
             }
             stream.Dispose();
-            
         }
 
         private async Task AdvanceImage(int step)
@@ -540,7 +541,7 @@ namespace ZipPicViewUWP
             await SetCurrentFile(fileList[currentFileIndex]);
         }
 
-        private async void image_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
+        private async void hiddenImageControl_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
         {
             var deltaX = e.Cumulative.Translation.X;
 
@@ -596,12 +597,6 @@ namespace ZipPicViewUWP
             fullscreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
         }
 
-        private void image_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            imageControl.Visibility = imageControl.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-            page.TopAppBar.Visibility = page.TopAppBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
-        }
-
         private async void imageControl_PrintButtonClick(object sender, RoutedEventArgs e)
         {
             var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
@@ -623,7 +618,7 @@ namespace ZipPicViewUWP
             await RandomAccessStream.CopyAsync(stream.Item1, memoryStream);
 
             dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
-            
+
             try
             {
                 Clipboard.SetContent(dataPackage);
@@ -641,7 +636,6 @@ namespace ZipPicViewUWP
             var transform = castButton.TransformToVisual(Window.Current.Content as UIElement);
             var pt = transform.TransformPoint(new Point(0, 0));
 
-
             var picker = new CastingDevicePicker();
             picker.Filter.SupportsPictures = true;
             picker.CastingDeviceSelected += Picker_CastingDeviceSelected;
@@ -653,6 +647,25 @@ namespace ZipPicViewUWP
         {
             AboutDialog dialog = new AboutDialog();
             await dialog.ShowAsync();
+        }
+
+        private async void hiddenImageControl_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var pos = e.GetPosition(hiddenImageControl);
+
+            if (pos.X < 200)
+            {
+                await AdvanceImage(-1);
+            }
+            else if (pos.X > hiddenImageControl.ActualWidth - 200)
+            {
+                await AdvanceImage(1);
+            }
+            else
+            {
+                imageControl.Visibility = imageControl.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+                page.TopAppBar.Visibility = page.TopAppBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            }
         }
     }
 }
