@@ -155,7 +155,7 @@ namespace ZipPicViewUWP
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
         }
 
-        private async void page_Loaded(object sender, RoutedEventArgs e)
+        private async void PageLoaded(object sender, RoutedEventArgs e)
         {
             clickSound = await LoadSound("beep.wav");
             imageControl.OnPreCount += ImageControl_OnPreCount;
@@ -209,7 +209,7 @@ namespace ZipPicViewUWP
             return sound;
         }
 
-        private async void openFileButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenFileButtonClick(object sender, RoutedEventArgs e)
         {
             if (fileOpenPicker != null) return;
 
@@ -273,7 +273,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private async void openFolderButton_Click(object sender, RoutedEventArgs e)
+        private async void OpenFolderButtonClick(object sender, RoutedEventArgs e)
         {
             if (folderPicker != null) return;
 
@@ -294,12 +294,12 @@ namespace ZipPicViewUWP
             FileName = selected.Name;
         }
 
-        private void subFolderButton_Click(object sender, RoutedEventArgs e)
+        private void SubFolderButtonClick(object sender, RoutedEventArgs e)
         {
             splitView.IsPaneOpen = true;
         }
 
-        private async void subFolderList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void SubFolderListSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count == 0) return;
             var selected = ((FolderListItem)e.AddedItems.First()).Value;
@@ -447,7 +447,7 @@ namespace ZipPicViewUWP
             ImageTransitionBehavior.StartAnimation();
         }
 
-        private void canvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
         {
             foreach (var child in canvas.Children)
             {
@@ -468,7 +468,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private void imageControl_CloseButtonClick(object sender, RoutedEventArgs e)
+        private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
         {
             HideImageControl();
         }
@@ -492,17 +492,17 @@ namespace ZipPicViewUWP
             }
         }
 
-        private async void imageControl_NextButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlNextButtonClick(object sender, RoutedEventArgs e)
         {
             await AdvanceImage(1);
         }
 
-        private async void imageControl_PrevButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlPrevButtonClick(object sender, RoutedEventArgs e)
         {
             await AdvanceImage(-1);
         }
 
-        private async void imageControl_SaveButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlSaveButtonClick(object sender, RoutedEventArgs e)
         {
             var filename = fileList[currentFileIndex];
             var (stream, suggestedFileName, error) = await provider.OpenEntryAsync(filename);
@@ -541,7 +541,7 @@ namespace ZipPicViewUWP
             await SetCurrentFile(fileList[currentFileIndex]);
         }
 
-        private async void hiddenImageControl_ManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
+        private async void HiddenImageControlManipulationCompleted(object sender, Windows.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs e)
         {
             var deltaX = e.Cumulative.Translation.X;
 
@@ -555,7 +555,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private async void page_KeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
+        private async void PageKeyUp(object sender, Windows.UI.Xaml.Input.KeyRoutedEventArgs e)
         {
             if (imageBorder.Visibility == Visibility.Collapsed) return;
             var key = e.Key;
@@ -573,7 +573,7 @@ namespace ZipPicViewUWP
             e.Handled = true;
         }
 
-        private void fullscreenButton_Checked(object sender, RoutedEventArgs e)
+        private void FullscreenButton_Checked(object sender, RoutedEventArgs e)
         {
             fullscreenButton.Icon = new SymbolIcon(Symbol.BackToWindow);
             fullscreenButton.Label = "Exit Fullscreen";
@@ -584,7 +584,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private void fullscreenButton_Unchecked(object sender, RoutedEventArgs e)
+        private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)
         {
             fullscreenButton.Icon = new SymbolIcon(Symbol.FullScreen);
             fullscreenButton.Label = "Fullscreen";
@@ -592,12 +592,12 @@ namespace ZipPicViewUWP
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
-        private void page_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
             fullscreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
         }
 
-        private async void imageControl_PrintButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlPrintButtonClick(object sender, RoutedEventArgs e)
         {
             var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
             var output = new BitmapImage();
@@ -608,7 +608,7 @@ namespace ZipPicViewUWP
             await printHelper.ShowPrintUIAsync("ZipPicView - " + currentImageFile.ExtractFilename());
         }
 
-        private async void imageControl_CopyButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlCopyButtonClick(object sender, RoutedEventArgs e)
         {
             var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
             var dataPackage = new DataPackage();
@@ -631,7 +631,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private void castButton_Click(object sender, RoutedEventArgs e)
+        private void CastButtonClick(object sender, RoutedEventArgs e)
         {
             var transform = castButton.TransformToVisual(Window.Current.Content as UIElement);
             var pt = transform.TransformPoint(new Point(0, 0));
@@ -643,13 +643,13 @@ namespace ZipPicViewUWP
             picker.Show(new Windows.Foundation.Rect(pt.X, pt.Y, 100, 100), Placement.Below);
         }
 
-        private async void aboutButton_Click(object sender, RoutedEventArgs e)
+        private async void AboutButtonClick(object sender, RoutedEventArgs e)
         {
             AboutDialog dialog = new AboutDialog();
             await dialog.ShowAsync();
         }
 
-        private async void hiddenImageControl_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void HiddenImageControlTapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var pos = e.GetPosition(hiddenImageControl);
 
