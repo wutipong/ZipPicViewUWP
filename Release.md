@@ -1,5 +1,8 @@
 # Release Note
 
+## Version 1.2.8.0
+* Add invisible image viewer control -- When an image is displaying, the whole screen area becomes a control. Tapping the left area on the left will make the viewer to change to the previous one. Tap on the right, and the viewer advance to the next image. The remaining area will toggle image controls visbility.
+
 ## Version 1.2.6.0
 * Add "Copy to Clipboard" functionality 
 * Add "Layout Option" in the print dialog
