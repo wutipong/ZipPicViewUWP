@@ -88,8 +88,6 @@
             <AppBarSeparator />
             <AppBarButton x:Name="openFileButton" Icon="OpenFile" Label="Open File" Click="OpenFileButtonClick" />
             <AppBarButton x:Name="openFolderButton" Icon="Folder" Label="Open Folder" Click="OpenFolderButtonClick"/>
-            <AppBarSeparator Visibility="Collapsed"/>
-            <AppBarButton x:Name="castButton" Icon="Remote" Label="Cast Image" Click="CastButtonClick"  Visibility="Collapsed"/>
             <AppBarSeparator/>
             <AppBarButton x:Name="aboutButton" Icon="Help" Label="About" Click="AboutButtonClick"  />
         </CommandBar>

@@ -36,7 +36,6 @@ namespace ZipPicViewUWP
         private string filename;
         private PrintHelper printHelper;
         private DisplayRequest displayRequest;
-        private CastingConnection castingConnection = null;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
 
@@ -163,35 +162,7 @@ namespace ZipPicViewUWP
             printHelper.RegisterForPrinting();
         }
 
-        private async void Picker_CastingDeviceSelected(CastingDevicePicker sender, CastingDeviceSelectedEventArgs args)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                castingConnection = args.SelectedCastingDevice.CreateCastingConnection();
-
-                castingConnection.ErrorOccurred += Connection_ErrorOccurred;
-                castingConnection.StateChanged += Connection_StateChanged;
-
-                castingConnection.Source = image.GetAsCastingSource();
-            });
-        }
-
-        private async void Connection_StateChanged(CastingConnection sender, object args)
-        {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                inAppNotification.Show("Casting Connection State Changed: " + sender.State, 2000);
-            });
-        }
-
-        private async void Connection_ErrorOccurred(CastingConnection sender, CastingConnectionErrorOccurredEventArgs args)
-        {
-            castingConnection = null;
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-            {
-                inAppNotification.Show("Casting Error Occured: " + args.Message, 2000);
-            });
-        }
+        
 
         private void ImageControl_OnPreCount(object sender)
         {
@@ -415,12 +386,6 @@ namespace ZipPicViewUWP
 
             ShowImage();
 
-            if (castingConnection != null)
-            {
-                await castingConnection.DisconnectAsync();
-                await castingConnection.RequestStartCastingAsync(image.GetAsCastingSource());
-            }
-
             if (viewerPanel.Visibility == Visibility.Collapsed)
             {
                 imageBorder.Visibility = Visibility.Collapsed;
@@ -629,18 +594,6 @@ namespace ZipPicViewUWP
             {
                 inAppNotification.Show(ex.Message, 5000);
             }
-        }
-
-        private void CastButtonClick(object sender, RoutedEventArgs e)
-        {
-            var transform = castButton.TransformToVisual(Window.Current.Content as UIElement);
-            var pt = transform.TransformPoint(new Point(0, 0));
-
-            var picker = new CastingDevicePicker();
-            picker.Filter.SupportsPictures = true;
-            picker.CastingDeviceSelected += Picker_CastingDeviceSelected;
-
-            picker.Show(new Windows.Foundation.Rect(pt.X, pt.Y, 100, 100), Placement.Below);
         }
 
         private async void AboutButtonClick(object sender, RoutedEventArgs e)
