@@ -8,9 +8,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Graphics.Imaging;
-using Windows.Media.Casting;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -162,8 +160,6 @@ namespace ZipPicViewUWP
             printHelper.RegisterForPrinting();
         }
 
-        
-
         private void ImageControl_OnPreCount(object sender)
         {
             clickSound.Play();
@@ -302,31 +298,26 @@ namespace ZipPicViewUWP
             try
             {
                 thumbProgress.IsActive = true;
+                Thumbnail[] thumbnails = new Thumbnail[fileList.Length];
+
                 for (int i = 0; i < fileList.Length; i++)
                 {
                     var file = fileList[i];
-                    var thumbnail = new Thumbnail();
+                    thumbnails[i] = new Thumbnail();
+                    var thumbnail = thumbnails[i];
+
                     thumbnail.Click += Thumbnail_Click;
                     thumbnail.Label.Text = file.ExtractFilename().Ellipses(25);
                     thumbnail.UserData = file;
+
                     thumbnailGrid.Items.Add(thumbnail);
 
-                    var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(file);
-                    if (error != null)
-                    {
-                        throw error;
-                    }
-                    var decoder = await BitmapDecoder.CreateAsync(stream);
-                    SoftwareBitmap bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
-                    var source = new SoftwareBitmapSource();
-                    var setSourceTask = source.SetBitmapAsync(bitmap);
-
                     token.ThrowIfCancellationRequested();
-                    thumbnail.Image.Source = source;
-                    thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
+                }
 
-                    await setSourceTask;
-                    await Task.Delay(1);
+                for (int i = 0; i < fileList.Length; i++)
+                {
+                    await SetThumbnailImage(provider, fileList[i], thumbnails[i], token);
                 }
 
                 thumbProgress.IsActive = false;
@@ -337,6 +328,25 @@ namespace ZipPicViewUWP
                 thumbProgress.IsActive = false;
                 cancellationTokenSource = null;
             }
+        }
+
+        private static async Task SetThumbnailImage(AbstractMediaProvider provider, string file, Thumbnail thumbnail, CancellationToken token)
+        {
+            var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(file);
+            if (error != null)
+            {
+                throw error;
+            }
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            token.ThrowIfCancellationRequested();
+            SoftwareBitmap bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+            token.ThrowIfCancellationRequested();
+            var source = new SoftwareBitmapSource();
+            await source.SetBitmapAsync(bitmap);
+
+            token.ThrowIfCancellationRequested();
+            thumbnail.Image.Source = source;
+            thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
         }
 
         private async void Thumbnail_Click(object sender, RoutedEventArgs e)
