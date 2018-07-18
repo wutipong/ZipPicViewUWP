@@ -138,8 +138,9 @@ namespace ZipPicViewUWP
 
             if (error != null)
                 throw error;
+
             var decoder = await BitmapDecoder.CreateAsync(stream);
-            var bitmap = await ImageHelper.CreateResizedBitmap(decoder, 40, 50);
+            var bitmap = await ImageHelper.CreateThumbnail(decoder, 40, 50);
             source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
@@ -341,7 +342,7 @@ namespace ZipPicViewUWP
             thumbnail.ProgressRing.Visibility = Visibility.Visible;
             var decoder = await BitmapDecoder.CreateAsync(stream);
             token.ThrowIfCancellationRequested();
-            SoftwareBitmap bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+            SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 200, 200);
             token.ThrowIfCancellationRequested();
             var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
