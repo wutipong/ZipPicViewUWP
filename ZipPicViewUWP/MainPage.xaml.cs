@@ -309,6 +309,7 @@ namespace ZipPicViewUWP
                     thumbnail.Click += Thumbnail_Click;
                     thumbnail.Label.Text = file.ExtractFilename().Ellipses(25);
                     thumbnail.UserData = file;
+                    thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
 
                     thumbnailGrid.Items.Add(thumbnail);
 
@@ -337,6 +338,7 @@ namespace ZipPicViewUWP
             {
                 throw error;
             }
+            thumbnail.ProgressRing.Visibility = Visibility.Visible;
             var decoder = await BitmapDecoder.CreateAsync(stream);
             token.ThrowIfCancellationRequested();
             SoftwareBitmap bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
