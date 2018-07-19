@@ -320,7 +320,7 @@ namespace ZipPicViewUWP
 
                 for (int i = 0; i < fileList.Length; i++)
                 {
-                    thumbProgressText.Text = string.Format("Loading {0}/{1}", i, fileList.Length);
+                    thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i, fileList.Length);
                     thumbProgress.Value = i;
                     await SetThumbnailImage(provider, fileList[i], thumbnails[i], token);
                 }
