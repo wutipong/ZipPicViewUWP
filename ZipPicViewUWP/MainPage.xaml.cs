@@ -298,7 +298,8 @@ namespace ZipPicViewUWP
 
             try
             {
-                thumbProgress.IsActive = true;
+                //thumbProgress.IsActive = true;
+                thumbProgress.Maximum = fileList.Length;
                 Thumbnail[] thumbnails = new Thumbnail[fileList.Length];
 
                 for (int i = 0; i < fileList.Length; i++)
@@ -319,15 +320,16 @@ namespace ZipPicViewUWP
 
                 for (int i = 0; i < fileList.Length; i++)
                 {
+                    thumbProgressText.Text = string.Format("Loading {0}/{1}", i, fileList.Length);
+                    thumbProgress.Value = i;
                     await SetThumbnailImage(provider, fileList[i], thumbnails[i], token);
                 }
-
-                thumbProgress.IsActive = false;
+                
             }
             catch { }
             finally
             {
-                thumbProgress.IsActive = false;
+                thumbProgress.Value = fileList.Length;
                 cancellationTokenSource = null;
             }
         }
