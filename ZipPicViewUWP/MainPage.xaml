@@ -72,7 +72,8 @@
                 PreviousButtonClick="ImageControlPrevButtonClick" 
                 SaveButtonClick="ImageControlSaveButtonClick" 
                 PrintButtonClick="ImageControlPrintButtonClick" 
-                CopyButtonClick="ImageControlCopyButtonClick"/>
+                CopyButtonClick="ImageControlCopyButtonClick"
+                OnAutoAdvance="ImageControlOnAutoAdvance"/>
             
             <Border x:Name="loadingBorder" Visibility="Collapsed">
                 <ProgressRing IsActive="True" Width="100" Height="100" />

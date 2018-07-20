@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using ZipPicViewUWP.Utility;
@@ -52,6 +50,8 @@ namespace ZipPicViewUWP
             add { onAutoAdvance += value; }
             remove { onAutoAdvance -= value; }
         }
+
+        public bool IsAutoAdvanceRandomly { get { return RandomToggle.IsOn; } }
 
         public ViewerControl()
         {
@@ -108,6 +108,7 @@ namespace ZipPicViewUWP
             {
                 onAutoAdvance?.Invoke(this);
                 nextButtonClick?.Invoke(this, null);
+
                 ResetCounter();
             }
         }

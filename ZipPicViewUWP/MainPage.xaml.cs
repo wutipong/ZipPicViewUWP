@@ -36,6 +36,7 @@ namespace ZipPicViewUWP
         private DisplayRequest displayRequest;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
+        private Random random = new Random();
 
         private string FileName
         {
@@ -635,6 +636,14 @@ namespace ZipPicViewUWP
                 imageControl.Visibility = imageControl.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
                 page.TopAppBar.Visibility = page.TopAppBar.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
             }
+        }
+
+        private async void ImageControlOnAutoAdvance(object sender)
+        {
+            if (fileList.Length == 0) return;
+            int advance = imageControl.IsAutoAdvanceRandomly ? random.Next(fileList.Length) : 1;
+
+            await AdvanceImage(advance);
         }
     }
 }
