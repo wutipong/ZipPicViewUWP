@@ -107,9 +107,8 @@ namespace ZipPicViewUWP
             if (counter == 0)
             {
                 onAutoAdvance?.Invoke(this);
-                nextButtonClick?.Invoke(this, null);
 
-                ResetCounter();
+                timer.Stop();
             }
         }
 
@@ -177,14 +176,17 @@ namespace ZipPicViewUWP
         {
             AutoButton.Content = new SymbolIcon(Symbol.Pause);
             AutoDurationButton.IsEnabled = false;
-            timer.Start();
+            
             SaveButton.IsEnabled = false;
             ResetCounter();
         }
 
         public void ResetCounter()
         {
+            if (AutoButton.IsChecked == false)
+                return;
             counter = (int)advanceDurations[DurationList.SelectedIndex].TotalSeconds;
+            timer.Start();
         }
 
         private void AutoButton_Unchecked(object sender, RoutedEventArgs e)

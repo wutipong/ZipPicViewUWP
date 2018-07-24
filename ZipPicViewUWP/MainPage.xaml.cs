@@ -402,6 +402,7 @@ namespace ZipPicViewUWP
             image.Source = source;
 
             ShowImage();
+            imageControl.ResetCounter();
 
             if (viewerPanel.Visibility == Visibility.Collapsed)
             {
@@ -517,8 +518,6 @@ namespace ZipPicViewUWP
                 if (currentFileIndex < 0) currentFileIndex += fileList.Length;
                 else if (currentFileIndex >= fileList.Length) currentFileIndex -= fileList.Length;
             }
-
-            imageControl.ResetCounter();
 
             await SetCurrentFile(fileList[currentFileIndex]);
         }
