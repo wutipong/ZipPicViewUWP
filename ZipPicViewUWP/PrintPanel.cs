@@ -29,39 +29,13 @@ namespace ZipPicViewUWP
 
         protected override Size ArrangeOverride(Size finalSize)
         {
-            var orientation = finalSize.Width > finalSize.Height ?
-                ImageOrientation.Landscape :
-                ImageOrientation.Portrait;
+            var finalSizeRatio = finalSize.Width / finalSize.Height;
+            var imageSizeRatio = Image.DesiredSize.Width / Image.DesiredSize.Height;
 
-            var imageOrientation = Image.DesiredSize.Width > Image.DesiredSize.Height ?
-                ImageOrientation.Landscape :
-                ImageOrientation.Portrait;
-
-            if (orientation == imageOrientation)
-            {
-                switch (orientation)
-                {
-                    case ImageOrientation.Portrait:
-                        LayoutVertically(Image, finalSize);
-                        break;
-                    case ImageOrientation.Landscape:
-                        LayoutHorizontally(Image, finalSize);
-                        break;
-                }
-            }
-
+            if (finalSizeRatio > imageSizeRatio)
+                LayoutVertically(Image, finalSize);
             else
-            {
-                switch (orientation)
-                {
-                    case ImageOrientation.Portrait:
-                        LayoutHorizontally(Image, finalSize);
-                        break;
-                    case ImageOrientation.Landscape:
-                        LayoutVertically(Image, finalSize);
-                        break;
-                }
-            }
+                LayoutHorizontally(Image, finalSize);
 
             return finalSize;
         }
