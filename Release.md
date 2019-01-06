@@ -1,5 +1,10 @@
 # Release Note
 
+## Version 2019.01
+* Change version scheming to *year.month*. No more figuring out version number.
+* Fix the printing where some images are not filling the printing area correctly.
+* Add error image and dialog which displays when the program cannot open the image file.
+
 ## Version 1.2.8.0
 * Add invisible image viewer control -- When an image is displaying, the whole screen area becomes a control. Tapping the area on the left makes the viewer to change to the previous one. Tap on the right, and the viewer advance to the next image. The remaining area toggles image controls visbility.
 
