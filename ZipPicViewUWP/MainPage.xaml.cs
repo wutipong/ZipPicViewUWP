@@ -138,7 +138,9 @@ namespace ZipPicViewUWP
             var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
 
             if (error != null)
-                throw error;
+            {
+                stream = await GetErrorImageStream();
+            }
 
             var decoder = await BitmapDecoder.CreateAsync(stream);
             var bitmap = await ImageHelper.CreateThumbnail(decoder, 40, 50);
@@ -170,12 +172,18 @@ namespace ZipPicViewUWP
         private async Task<MediaElement> LoadSound(string filename)
         {
             var sound = new MediaElement();
-            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(String.Format(@"Assets\{0}", filename));
+            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(string.Format(@"Assets\{0}", filename));
             sound.AutoPlay = false;
             sound.SetSource(await soundFile.OpenReadAsync(), "");
             sound.Stop();
 
             return sound;
+        }
+
+        private static async Task<IRandomAccessStream> GetErrorImageStream()
+        {
+            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
+            return await file.OpenReadAsync();
         }
 
         private async void OpenFileButtonClick(object sender, RoutedEventArgs e)
@@ -341,7 +349,7 @@ namespace ZipPicViewUWP
             var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(file);
             if (error != null)
             {
-                throw error;
+                stream = await GetErrorImageStream();
             }
             thumbnail.ProgressRing.Visibility = Visibility.Visible;
             var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -385,6 +393,9 @@ namespace ZipPicViewUWP
             var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
             {
                 var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(file);
+                if(error != null)
+                    stream = await GetErrorImageStream();
+
                 var decoder = await BitmapDecoder.CreateAsync(stream);
                 var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
 
@@ -490,6 +501,14 @@ namespace ZipPicViewUWP
             var filename = fileList[currentFileIndex];
             var (stream, suggestedFileName, error) = await provider.OpenEntryAsync(filename);
 
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", currentImageFile), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
             var picker = new FileSavePicker
             {
                 SuggestedFileName = suggestedFileName
@@ -580,9 +599,17 @@ namespace ZipPicViewUWP
 
         private async void ImageControlPrintButtonClick(object sender, RoutedEventArgs e)
         {
-            var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
+            var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
+            if (error != null)
+            {
+                var dialog = new MessageDialog(String.Format("Cannot open image file: {0}.", currentImageFile), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
             var output = new BitmapImage();
-            output.SetSource(stream.Item1);
+            output.SetSource(stream);
 
             printHelper.BitmapImage = output;
 
@@ -591,12 +618,20 @@ namespace ZipPicViewUWP
 
         private async void ImageControlCopyButtonClick(object sender, RoutedEventArgs e)
         {
-            var stream = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
+            var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(currentImageFile);
+            if(error != null)
+            {
+                var dialog = new MessageDialog(String.Format("Cannot open image file: {0}.", currentImageFile), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
             var dataPackage = new DataPackage();
 
             var memoryStream = new InMemoryRandomAccessStream();
 
-            await RandomAccessStream.CopyAsync(stream.Item1, memoryStream);
+            await RandomAccessStream.CopyAsync(stream, memoryStream);
 
             dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
 
