@@ -8,46 +8,24 @@ namespace ZipPicViewUWP
     {
         public static Size ResizeToFill(this Size s, Size expectedSize)
         {
-            switch (s.GetOrientation())
-            {
-                case ImageOrientation.Portrait:
-                    return s.ResizeToWidth(expectedSize.Width);
+            var sizeRatio = s.Width / s.Height;
+            var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
-                case ImageOrientation.Landscape:
-                    return s.ResizeToHeight(expectedSize.Height);
-
-                default:
-                    throw new ArgumentException();
-            }
+            if(sizeRatio < expectSizeRatio)
+                return s.ResizeToWidth(expectedSize.Width);
+            else
+                return s.ResizeToHeight(expectedSize.Height);
         }
 
-        public static Size ResizeToFit(this Size size, Size expectedSize)
+        public static Size ResizeToFit(this Size s, Size expectedSize)
         {
-            var imageOrientation = size.GetOrientation();
-            var expectedOrientation = expectedSize.GetOrientation();
+            var sizeRatio = s.Width / s.Height;
+            var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
-            if (expectedOrientation != imageOrientation)
-            {
-                if (imageOrientation == ImageOrientation.Landscape)
-                {
-                    return size.ResizeToWidth(expectedSize.Width);
-                }
-                else
-                {
-                    return size.ResizeToHeight(expectedSize.Height);
-                }
-            }
+            if (sizeRatio > expectSizeRatio)
+                return s.ResizeToWidth(expectedSize.Width);
             else
-            {
-                if (imageOrientation == ImageOrientation.Landscape)
-                {
-                    return size.ResizeToHeight(expectedSize.Height);
-                }
-                else
-                {
-                    return size.ResizeToWidth(expectedSize.Width);
-                }
-            }
+                return s.ResizeToHeight(expectedSize.Height);
         }
 
         public static Size ResizeToWidth(this Size s, double expectedWidth)
