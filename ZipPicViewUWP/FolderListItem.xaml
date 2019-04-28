@@ -9,9 +9,11 @@
     d:DesignHeight="50"
     d:DesignWidth="300">
 
-    <Grid>
-        <Image Name="image" Width="40" Height="50" HorizontalAlignment="Left" Visibility="Collapsed"/>
-        <SymbolIcon Name="folderIcon" Width="40" Height="50" HorizontalAlignment="Left" Symbol="Folder"/>
-        <TextBlock Name="name" Grid.Column="1" Margin="50,0,0,0" VerticalAlignment="Center">Folder</TextBlock>
-    </Grid>
+    <RelativePanel Height="50">
+        <Canvas Name="thumb" Width="40" Height="50" RelativePanel.AlignLeftWithPanel="True" Margin="3,0,0,0">
+            <Image Name="image" Width="40" Height="50" Visibility="Collapsed" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center" />
+            <SymbolIcon Name="folderIcon" Width="40" Height="50" HorizontalAlignment="Left" Symbol="Folder"/>
+        </Canvas>
+        <TextBlock Name="name" RelativePanel.RightOf="thumb" RelativePanel.AlignVerticalCenterWithPanel="True" Margin="10,0,0,0">Folder</TextBlock>
+    </RelativePanel>
 </UserControl>
