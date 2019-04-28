@@ -387,8 +387,8 @@ namespace ZipPicViewUWP
             currentImageFile = file;
             var delayTask = Task.Delay(withDelay ? 250 : 0);
 
-            uint width = (uint)canvas.RenderSize.Width;
-            uint height = (uint)canvas.RenderSize.Height;
+            uint width = (uint)displayPanel.RenderSize.Width;
+            uint height = (uint)displayPanel.RenderSize.Height;
 
             var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
             {
@@ -439,27 +439,6 @@ namespace ZipPicViewUWP
             loadingBorder.Visibility = Visibility.Visible;
             ImageTransitionBehavior.Value = 10;
             ImageTransitionBehavior.StartAnimation();
-        }
-
-        private void CanvasSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            foreach (var child in canvas.Children)
-            {
-                if (child is FrameworkElement fe)
-                {
-                    fe.Width = e.NewSize.Width;
-                    fe.Height = e.NewSize.Height;
-                }
-            }
-
-            foreach (var child in viewerPanel.Children)
-            {
-                if (child is FrameworkElement fe)
-                {
-                    fe.Width = e.NewSize.Width;
-                    fe.Height = e.NewSize.Height;
-                }
-            }
         }
 
         private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)

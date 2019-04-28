@@ -10,8 +10,8 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" Loaded="PageLoaded" SizeChanged="PageSizeChanged"
     KeyUp="PageKeyUp">
-    <Grid x:Name="canvas" SizeChanged="CanvasSizeChanged">
-        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <RelativePanel x:Name="displayPanel">
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" >
             <Grid x:Name="printPanel" Opacity="0" />
             <SplitView x:Name="splitView" DisplayMode="CompactOverlay" PanePlacement="Left" CompactPaneLength="50" OpenPaneLength="300">
                 <SplitView.Content>
@@ -46,8 +46,8 @@
                 <behaviors:Blur x:Name="BlurBehavior" Duration="500" AutomaticallyStart="False" />
             </interactivity:Interaction.Behaviors>
         </Grid>
-        <Canvas x:Name="viewerPanel" Visibility="Collapsed">
-            <Border x:Name="imageBorder" Visibility="Collapsed">
+        <RelativePanel x:Name="viewerPanel" Visibility="Collapsed" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" >
+            <Border x:Name="imageBorder" Visibility="Collapsed" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                 <Image x:Name="image">
                     <interactivity:Interaction.Behaviors>
                         <behaviors:Blur x:Name="ImageTransitionBehavior" Duration="500" AutomaticallyStart="False" />
@@ -61,7 +61,7 @@
                 ManipulationMode="TranslateX"
                 ManipulationCompleted="HiddenImageControlManipulationCompleted"
                 Tapped="HiddenImageControlTapped"
-                Background="#00000000" />
+                Background="#00000000" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" />
 
             <local:ViewerControl
                 x:Name="imageControl" Visibility="Collapsed"
@@ -71,16 +71,16 @@
                 SaveButtonClick="ImageControlSaveButtonClick"
                 PrintButtonClick="ImageControlPrintButtonClick"
                 CopyButtonClick="ImageControlCopyButtonClick"
-                OnAutoAdvance="ImageControlOnAutoAdvance" />
+                OnAutoAdvance="ImageControlOnAutoAdvance" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" />
 
-            <Border x:Name="loadingBorder" Visibility="Collapsed">
+            <Border x:Name="loadingBorder" Visibility="Collapsed" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                 <ProgressRing IsActive="True" Width="100" Height="100" />
             </Border>
-        </Canvas>
-        <Grid>
+        </RelativePanel>
+        <Grid RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" >
             <controls:InAppNotification x:Name="inAppNotification" />
         </Grid>
-    </Grid>
+    </RelativePanel>
     <Page.TopAppBar>
         <CommandBar VerticalContentAlignment="Center" VerticalAlignment="Center">
             <CommandBar.Content>

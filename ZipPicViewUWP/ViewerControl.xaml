@@ -5,9 +5,7 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    d:DesignHeight="600"
-    d:DesignWidth="800">
+    mc:Ignorable="d">
 
     <Grid>
         <Button x:Name="NextButton" HorizontalAlignment="Right" Margin="0,100,10,100" VerticalAlignment="Stretch" Background="{StaticResource FloatControlBackground}" Width="50" MinHeight="50">
