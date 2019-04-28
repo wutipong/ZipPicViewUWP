@@ -20,7 +20,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>802AF891AF6C9EA8DDEBF533BD9BC7E64250B267</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>C06F7B68BC032E99E5D8FCE1B5BAFFFCD9A208FE</PackageCertificateThumbprint>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <AppxPackageDir>D:\Desktop\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
