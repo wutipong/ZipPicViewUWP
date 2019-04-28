@@ -13,11 +13,13 @@
     <StackPanel>
         <TextBlock Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}" FontWeight="Bold">ZipPicView</TextBlock>
         <TextBlock x:Name="Version">($version)</TextBlock>
-        <TextBlock>Copyright ©2017-2018 Wutipong Wongsakuldej</TextBlock>
+        <TextBlock>Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
         <TextBlock>Licensed Under
             <Hyperlink NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/LICENSE">MIT License</Hyperlink>
         </TextBlock>
         <HyperlinkButton NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/">GitHub</HyperlinkButton>
-        <controls:MarkdownTextBlock x:Name="ReleaseNote" MaxHeight="500" />
+        <ScrollViewer Height="300">
+            <controls:MarkdownTextBlock x:Name="ReleaseNote" Padding="16,16,16,16" />
+        </ScrollViewer>
     </StackPanel>
 </ContentDialog>
