@@ -15,7 +15,7 @@ namespace ZipPicViewUWP
 
             var size = new Size(decoder.PixelWidth, decoder.PixelHeight);
 
-            size = size.ResizeToFit(expectedSize);
+            size = size.ResizeToFill(expectedSize);
 
             var transform = new BitmapTransform
             {

@@ -10,11 +10,12 @@
     <Color x:Key="PrimaryColor5">#550000</Color>
 
     <SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}"/>
+    <SolidColorBrush x:Key="ThumbnailNameBackground" Color="{StaticResource PrimaryColor5}" Opacity="0.5"/>
     <SolidColorBrush x:Key="FloatControlBackground" Color="#33000000"/>
 
     <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource PrimaryColor3}"/>
     <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource PrimaryColor3}"/>
     <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource PrimaryColor2}"/>
     <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource PrimaryColor1}"/>
-    
+
 </ResourceDictionary>
