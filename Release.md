@@ -1,5 +1,9 @@
 # Release Note
 
+## Version 2019.04
+* Fix a number of minor UI issues.
+* The thumbnail images in the file list will fill the whole button.
+
 ## Version 2019.01
 * Change version scheming to *year.month*. No more figuring out version number.
 * Fix the printing where some images are not filling the printing area correctly.
