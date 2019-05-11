@@ -9,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics.Imaging;
+using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -201,6 +202,11 @@ namespace ZipPicViewUWP
             var selected = await fileOpenPicker.PickSingleFileAsync();
             fileOpenPicker = null;
 
+            await OpenFile(selected);
+        }
+
+        private async Task OpenFile(StorageFile selected)
+        {
             if (selected == null)
             {
                 IsEnabled = true;
@@ -261,6 +267,11 @@ namespace ZipPicViewUWP
             var selected = await folderPicker.PickSingleFolderAsync();
             folderPicker = null;
 
+            await OpenFolder(selected);
+        }
+
+        private async Task OpenFolder(StorageFolder selected)
+        {
             if (selected == null)
             {
                 IsEnabled = true;
@@ -657,6 +668,52 @@ namespace ZipPicViewUWP
             int advance = imageControl.IsAutoAdvanceRandomly ? random.Next(fileList.Length) : 1;
 
             await AdvanceImage(advance);
+        }
+
+        private async void DisplayPanel_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Link;
+
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                if (items.Count <= 0) return;
+
+                if (items[0] is StorageFile)
+                {
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+                }
+                else if (items[0] is StorageFolder)
+                {
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+                }
+            }
+            else
+            {
+                e.AcceptedOperation = DataPackageOperation.None;
+            }
+
+        }
+
+        private async void DisplayPanel_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                if (items.Count <= 0) return;
+
+                if (items[0] is StorageFile)
+                {
+                    var storageFile = items[0] as StorageFile;
+                    await OpenFile(storageFile);
+                    
+                }
+                else if(items[0] is StorageFolder)
+                {
+                    var storageFolder = items[0] as StorageFolder;
+                    await OpenFolder(storageFolder);
+                }
+            }
         }
     }
 }

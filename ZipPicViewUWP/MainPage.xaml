@@ -10,7 +10,7 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d" Loaded="PageLoaded" SizeChanged="PageSizeChanged"
     KeyUp="PageKeyUp">
-    <RelativePanel x:Name="displayPanel">
+    <RelativePanel x:Name="displayPanel" AllowDrop="True" DragOver="DisplayPanel_DragOver" Drop="DisplayPanel_Drop">
         <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" >
             <Grid x:Name="printPanel" Opacity="0" />
             <SplitView x:Name="splitView" DisplayMode="CompactOverlay" PanePlacement="Left" CompactPaneLength="50" OpenPaneLength="300">
