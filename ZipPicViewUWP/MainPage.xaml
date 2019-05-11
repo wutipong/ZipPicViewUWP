@@ -47,6 +47,10 @@
             </interactivity:Interaction.Behaviors>
         </Grid>
         <RelativePanel x:Name="viewerPanel" Visibility="Collapsed" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True" >
+            <interactivity:Interaction.Behaviors>
+                <behaviors:Fade x:Name="ControlCloseBehavior" Value="1.0" Duration="100" Delay="0" EasingType="Linear" AutomaticallyStart="True"/>
+            </interactivity:Interaction.Behaviors>
+            
             <Border x:Name="imageBorder" Visibility="Collapsed" RelativePanel.AlignTopWithPanel="True" RelativePanel.AlignBottomWithPanel="True" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignRightWithPanel="True">
                 <Image x:Name="image">
                     <interactivity:Interaction.Behaviors>

@@ -452,9 +452,13 @@ namespace ZipPicViewUWP
             ImageTransitionBehavior.StartAnimation();
         }
 
-        private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
+        private async void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
         {
+            ControlCloseBehavior.StartAnimation();
+            ControlCloseBehavior.Value = 0;
+            await Task.Delay((int)ControlCloseBehavior.Duration);
             HideImageControl();
+            ControlCloseBehavior.Value = 1.0;
         }
 
         private void HideImageControl()
