@@ -2,20 +2,20 @@
     x:Class="ZipPicViewUWP.AboutDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ZipPicViewUWP"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:ZipPicViewUWP"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="About"
+    FontWeight="Normal"
     PrimaryButtonText="Close"
-    FontWeight="Normal">
+    mc:Ignorable="d">
     <StackPanel>
-        <TextBlock Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}" FontWeight="Bold">ZipPicView</TextBlock>
+        <TextBlock FontWeight="Bold" Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">ZipPicView</TextBlock>
         <TextBlock x:Name="Version">($version)</TextBlock>
         <TextBlock>Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
-        <TextBlock>Licensed Under
-            <Hyperlink NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/LICENSE">MIT License</Hyperlink>
+        <TextBlock>
+            Licensed Under<Hyperlink NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/LICENSE">MIT License</Hyperlink>
         </TextBlock>
         <HyperlinkButton NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/">GitHub</HyperlinkButton>
         <ScrollViewer Height="300">

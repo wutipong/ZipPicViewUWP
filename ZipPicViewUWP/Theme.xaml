@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:ZipPicViewUWP">
 
@@ -9,13 +9,16 @@
     <Color x:Key="PrimaryColor4">#801515</Color>
     <Color x:Key="PrimaryColor5">#550000</Color>
 
-    <SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}"/>
-    <SolidColorBrush x:Key="ThumbnailNameBackground" Color="{StaticResource PrimaryColor5}" Opacity="0.5"/>
-    <SolidColorBrush x:Key="FloatControlBackground" Color="#33000000"/>
+    <SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}" />
+    <SolidColorBrush
+        x:Key="ThumbnailNameBackground"
+        Opacity="0.5"
+        Color="{StaticResource PrimaryColor5}" />
+    <SolidColorBrush x:Key="FloatControlBackground" Color="#33000000" />
 
-    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource PrimaryColor3}"/>
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource PrimaryColor3}"/>
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource PrimaryColor2}"/>
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource PrimaryColor1}"/>
+    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource PrimaryColor3}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource PrimaryColor3}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource PrimaryColor2}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource PrimaryColor1}" />
 
 </ResourceDictionary>
