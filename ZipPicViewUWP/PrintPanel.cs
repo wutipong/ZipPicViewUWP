@@ -1,56 +1,69 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
+    using Windows.Foundation;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Imaging;
+
     public class PrintPanel : Panel
     {
-        public enum LayoutOption { Centered, AlignLeftOrTop, AlignRightOrBottom };
+        public PrintPanel()
+        {
+            this.Children.Add(this.Image);
+        }
+
+        public enum LayoutOption
+        {
+            Centered,
+            AlignLeftOrTop,
+            AlignRightOrBottom,
+        }
+
+        public BitmapImage BitmapImage
+        {
+            get { return (BitmapImage)this.Image.Source; }
+            set { this.Image.Source = value; }
+        }
 
         public LayoutOption Layout { get; set; } = LayoutOption.Centered;
 
         private Image Image { get; set; } = new Image();
-        public BitmapImage BitmapImage
-        {
-            get { return (BitmapImage)Image.Source; }
-            set { Image.Source = value; }
-        }
-
-        public PrintPanel()
-        {
-            Children.Add(Image);
-        }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             var finalSizeRatio = finalSize.Width / finalSize.Height;
-            var imageSizeRatio = Image.DesiredSize.Width / Image.DesiredSize.Height;
+            var imageSizeRatio = this.Image.DesiredSize.Width / this.Image.DesiredSize.Height;
 
             if (finalSizeRatio > imageSizeRatio)
-                LayoutVertically(Image, finalSize);
+            {
+                this.LayoutVertically(this.Image, finalSize);
+            }
             else
-                LayoutHorizontally(Image, finalSize);
+            {
+                this.LayoutHorizontally(this.Image, finalSize);
+            }
 
             return finalSize;
         }
 
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            var size = new Size(this.BitmapImage.PixelWidth, this.BitmapImage.PixelHeight);
+            this.Image.Measure(size.ResizeToFill(availableSize));
+
+            return availableSize;
+        }
+
         private void LayoutHorizontally(Image image, Size finalSize)
         {
-            var anchorPoint = new Point();
+            var anchorPoint = default(Point);
 
-            switch (Layout)
+            switch (this.Layout)
             {
                 case LayoutOption.AlignLeftOrTop:
                     anchorPoint.X = 0;
                     break;
                 case LayoutOption.AlignRightOrBottom:
-                    anchorPoint.X = (finalSize.Width - image.DesiredSize.Width);
+                    anchorPoint.X = finalSize.Width - image.DesiredSize.Width;
                     break;
 
                 case LayoutOption.Centered:
@@ -63,15 +76,15 @@ namespace ZipPicViewUWP
 
         private void LayoutVertically(Image image, Size finalSize)
         {
-            var anchorPoint = new Point();
+            var anchorPoint = default(Point);
 
-            switch (Layout)
+            switch (this.Layout)
             {
                 case LayoutOption.AlignLeftOrTop:
                     anchorPoint.Y = 0;
                     break;
                 case LayoutOption.AlignRightOrBottom:
-                    anchorPoint.Y = (finalSize.Height - image.DesiredSize.Height);
+                    anchorPoint.Y = finalSize.Height - image.DesiredSize.Height;
                     break;
 
                 case LayoutOption.Centered:
@@ -81,15 +94,5 @@ namespace ZipPicViewUWP
 
             image.Arrange(new Rect(anchorPoint, image.DesiredSize));
         }
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            var size = new Size(BitmapImage.PixelWidth, BitmapImage.PixelHeight);
-            Image.Measure(size.ResizeToFill(availableSize));
-
-            return availableSize;
-        }
-
-        
     }
 }

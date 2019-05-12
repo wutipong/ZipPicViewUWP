@@ -1,23 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
+    using System;
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media;
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -28,38 +15,38 @@ namespace ZipPicViewUWP
             this.InitializeComponent();
         }
 
+        public string Text
+        {
+            get { return this.name.Text; }
+            set { this.name.Text = value; }
+        }
+
+        public string Value { get; set; }
+
         public ImageSource ImageSource
         {
             set
             {
                 if (value == null)
                 {
-                    image.Visibility = Visibility.Collapsed;
-                    folderIcon.Visibility = Visibility.Visible;
+                    this.image.Visibility = Visibility.Collapsed;
+                    this.folderIcon.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    image.Source = value;
-                    image.Visibility = Visibility.Visible;
-                    folderIcon.Visibility = Visibility.Collapsed;
+                    this.image.Source = value;
+                    this.image.Visibility = Visibility.Visible;
+                    this.folderIcon.Visibility = Visibility.Collapsed;
                 }
             }
         }
 
         public async void SetImageSourceAsync(ImageSource source)
         {
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {
-                ImageSource = source;
+                this.ImageSource = source;
             });
         }
-
-        public string Text
-        {
-            get { return name.Text; }
-            set { name.Text = value; }
-        }
-
-        public string Value { get; set; }
     }
 }

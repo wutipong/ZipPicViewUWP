@@ -1,9 +1,9 @@
-﻿using System;
-using Windows.Foundation;
-using ZipPicViewUWP.Utility;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
+    using System;
+    using Windows.Foundation;
+    using ZipPicViewUWP.Utility;
+
     public static class ImageSizeHelper
     {
         public static Size ResizeToFill(this Size s, Size expectedSize)
@@ -11,10 +11,14 @@ namespace ZipPicViewUWP
             var sizeRatio = s.Width / s.Height;
             var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
-            if(sizeRatio < expectSizeRatio)
+            if (sizeRatio < expectSizeRatio)
+            {
                 return s.ResizeToWidth(expectedSize.Width);
+            }
             else
+            {
                 return s.ResizeToHeight(expectedSize.Height);
+            }
         }
 
         public static Size ResizeToFit(this Size s, Size expectedSize)
@@ -23,9 +27,13 @@ namespace ZipPicViewUWP
             var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
             if (sizeRatio > expectSizeRatio)
+            {
                 return s.ResizeToWidth(expectedSize.Width);
+            }
             else
+            {
                 return s.ResizeToHeight(expectedSize.Height);
+            }
         }
 
         public static Size ResizeToWidth(this Size s, double expectedWidth)

@@ -1,11 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Graphics.Imaging;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
-    public enum ImageOrientation { Portrait, Landscape };
+    using System;
+    using System.Threading.Tasks;
+    using Windows.Foundation;
+    using Windows.Graphics.Imaging;
+
+    public enum ImageOrientation
+    {
+        Portrait,
+        Landscape,
+    }
 
     public static class ImageHelper
     {
@@ -21,7 +25,7 @@ namespace ZipPicViewUWP
             {
                 InterpolationMode = BitmapInterpolationMode.Fant,
                 ScaledWidth = (uint)size.Width,
-                ScaledHeight = (uint)size.Height
+                ScaledHeight = (uint)size.Height,
             };
 
             return await decoder.GetSoftwareBitmapAsync(
@@ -52,11 +56,16 @@ namespace ZipPicViewUWP
                     var preview = await decoder.GetPreviewAsync();
                     decoder2 = await BitmapDecoder.CreateAsync(preview);
                 }
-                catch { decoder2 = null; }
+                catch
+                {
+                    decoder2 = null;
+                }
             }
 
             if (decoder2 == null)
+            {
                 decoder2 = decoder;
+            }
 
             return await CreateResizedBitmap(decoder2, expectedWidth, expectedHeight);
         }

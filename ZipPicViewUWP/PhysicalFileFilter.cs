@@ -1,53 +1,61 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
-    class PhysicalFileFilter : FileFilter
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Windows.Graphics.Imaging;
+
+    public class PhysicalFileFilter : FileFilter
     {
-        private readonly string[] coverKeywords = new string[]{ "cover", "top" };
+        private static string[] formats = null;
+        private readonly string[] coverKeywords = new string[] { "cover", "top" };
+
         private static string[] ImageFileExtensions
         {
             get
             {
-                if(formats == null)
+                if (formats == null)
                 {
                     List<string> exts = new List<string>();
-                    foreach(var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
+                    foreach (var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
                     {
                         exts.AddRange(decoderInfo.FileExtensions);
                     }
 
                     formats = exts.ToArray();
                 }
+
                 return formats;
             }
         }
 
-        private static string[] formats = null; 
-
         public override string FindCoverPage(string[] filenames)
         {
-            if (filenames.Length <= 0) return null;
-            foreach(var keyword in coverKeywords){
+            if (filenames.Length <= 0)
+            {
+                return null;
+            }
+
+            foreach (var keyword in this.coverKeywords)
+            {
                 var name = filenames.FirstOrDefault((s) => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
-                if (name != null) return name;
+                if (name != null)
+                {
+                    return name;
+                }
             }
 
             return filenames[0];
-            
         }
 
         public override bool IsImageFile(string filename)
         {
-
             foreach (var format in ImageFileExtensions)
             {
-                if (filename.ToLower().EndsWith(format.ToLower())) return true;
+                if (filename.ToLower().EndsWith(format.ToLower()))
+                {
+                    return true;
+                }
             }
 
             return false;

@@ -1,55 +1,48 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Graphics.Printing;
-using Windows.Graphics.Printing.OptionDetails;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Printing;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
-    class PrintHelper
+    using System;
+    using System.Threading.Tasks;
+    using Windows.Graphics.Printing;
+    using Windows.Graphics.Printing.OptionDetails;
+    using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Imaging;
+    using Windows.UI.Xaml.Printing;
+
+    public class PrintHelper
     {
         private PrintPage printPage;
         private PrintDocument printDocument;
         private IPrintDocumentSource printDocumentSource;
-
         private PrintPanel.LayoutOption printLayout;
-        public BitmapImage BitmapImage { get; set; }
-
         private Page caller;
-
         private string title;
 
         public PrintHelper(Page page)
         {
-            caller = page;
+            this.caller = page;
         }
+
+        public BitmapImage BitmapImage { get; set; }
 
         public void RegisterForPrinting()
         {
-            printDocument = new PrintDocument();
-            printDocumentSource = printDocument.DocumentSource;
-            printDocument.Paginate += CreatePrintPreviewPages;
-            printDocument.GetPreviewPage += GetPrintPreviewPage;
-            printDocument.AddPages += AddPrintPages;
+            this.printDocument = new PrintDocument();
+            this.printDocumentSource = this.printDocument.DocumentSource;
+            this.printDocument.Paginate += this.CreatePrintPreviewPages;
+            this.printDocument.GetPreviewPage += this.GetPrintPreviewPage;
+            this.printDocument.AddPages += this.AddPrintPages;
 
             PrintManager printMan = PrintManager.GetForCurrentView();
-            printMan.PrintTaskRequested += PrintTaskRequested;
+            printMan.PrintTaskRequested += this.PrintTaskRequested;
         }
-
 
         private void PrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs e)
         {
             PrintTask printTask = null;
 
-            printTask = e.Request.CreatePrintTask(title, sourceRequested =>
+            printTask = e.Request.CreatePrintTask(this.title, sourceRequested =>
             {
-                sourceRequested.SetSource(printDocumentSource);
+                sourceRequested.SetSource(this.printDocumentSource);
             });
 
             var printDetailedOptions = PrintTaskOptionDetails.GetFromPrintTaskOptions(printTask.Options);
@@ -61,7 +54,7 @@ namespace ZipPicViewUWP
             alignOption.AddItem("AlignLeftOrTop", "Align to the Left or to the Top");
             alignOption.AddItem("AlignRightOrBottom", "Align to the right or to the bottom");
 
-            printLayout = PrintPanel.LayoutOption.Centered;
+            this.printLayout = PrintPanel.LayoutOption.Centered;
             displayedOptions.Clear();
 
             displayedOptions.Add(StandardPrintTaskOptions.Copies);
@@ -71,7 +64,7 @@ namespace ZipPicViewUWP
             displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
             displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
 
-            printDetailedOptions.OptionChanged += printDetailedOptions_OptionChanged;
+            printDetailedOptions.OptionChanged += this.printDetailedOptions_OptionChanged;
         }
 
         private async void printDetailedOptions_OptionChanged(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
@@ -85,26 +78,27 @@ namespace ZipPicViewUWP
                     switch (sender.Options["LayoutOption"].Value as string)
                     {
                         case "Center":
-                            printLayout = PrintPanel.LayoutOption.Centered;
+                            this.printLayout = PrintPanel.LayoutOption.Centered;
                             break;
 
                         case "AlignLeftOrTop":
-                            printLayout = PrintPanel.LayoutOption.AlignLeftOrTop;
+                            this.printLayout = PrintPanel.LayoutOption.AlignLeftOrTop;
                             break;
 
                         case "AlignRightOrBottom":
-                            printLayout = PrintPanel.LayoutOption.AlignRightOrBottom;
+                            this.printLayout = PrintPanel.LayoutOption.AlignRightOrBottom;
                             break;
-
                     }
+
                     invalidatePreview = true;
                     break;
             }
+
             if (invalidatePreview)
             {
-                await caller.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                await this.caller.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    printDocument.InvalidatePreview();
+                    this.printDocument.InvalidatePreview();
                 });
             }
         }
@@ -112,19 +106,19 @@ namespace ZipPicViewUWP
         private void AddPrintPages(object sender, AddPagesEventArgs e)
         {
             PrintDocument printDoc = (PrintDocument)sender;
-            printDoc.AddPage(printPage);
+            printDoc.AddPage(this.printPage);
             printDoc.AddPagesComplete();
         }
 
         private void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
             PrintDocument printDoc = (PrintDocument)sender;
-            printPage = new PrintPage()
+            this.printPage = new PrintPage()
             {
-                LayoutOption = printLayout,
-                ImageSource = BitmapImage,
+                LayoutOption = this.printLayout,
+                ImageSource = this.BitmapImage,
             };
-            printDoc.SetPreviewPage(e.PageNumber, printPage);
+            printDoc.SetPreviewPage(e.PageNumber, this.printPage);
         }
 
         private void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
@@ -133,7 +127,6 @@ namespace ZipPicViewUWP
 
             printDoc.SetPreviewPageCount(1, PreviewPageCountType.Intermediate);
         }
-
 
         public async Task<bool> ShowPrintUIAsync(string title)
         {

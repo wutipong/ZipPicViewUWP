@@ -1,25 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Windows.Storage;
-using Windows.System;
-
-// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace ZipPicViewUWP
 {
+    using System;
+    using Windows.ApplicationModel;
+    using Windows.Storage;
+    using Windows.UI.Xaml.Controls;
+
     public sealed partial class AboutDialog : ContentDialog
     {
         public AboutDialog()
@@ -30,15 +17,15 @@ namespace ZipPicViewUWP
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;
 
-            Version.Text = (package.IsDevelopmentMode ? "(Debug)" : "") +
+            this.Version.Text = (package.IsDevelopmentMode ? "(Debug)" : string.Empty) +
                 string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
 
-            Initialize();
+            this.Initialize();
         }
 
         public async void Initialize()
         {
-            ReleaseNote.Text =
+            this.ReleaseNote.Text =
                 await FileIO.ReadTextAsync(await Package.Current.InstalledLocation.GetFileAsync(@"Assets\Release.md"));
         }
     }

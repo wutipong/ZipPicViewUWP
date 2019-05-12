@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Search;
-using Windows.Storage.Streams;
-using ZipPicViewUWP.Utility;
-
-namespace ZipPicViewUWP
+﻿namespace ZipPicViewUWP
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Windows.Storage;
+    using Windows.Storage.Search;
+    using Windows.Storage.Streams;
+    using ZipPicViewUWP.Utility;
+
     internal class FileSystemMediaProvider : AbstractMediaProvider
     {
         private StorageFolder folder;
@@ -17,35 +17,36 @@ namespace ZipPicViewUWP
         public FileSystemMediaProvider(StorageFolder folder)
         {
             this.folder = folder;
-            FileFilter = new PhysicalFileFilter();
+            this.FileFilter = new PhysicalFileFilter();
         }
 
         public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
         {
-            return (await folder.OpenStreamForReadAsync(entry), entry.ExtractFilename(), null);
+            return (await this.folder.OpenStreamForReadAsync(entry), entry.ExtractFilename(), null);
         }
 
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
             try
             {
-                var subFolder = entry == Root ? folder : await folder.GetFolderAsync(entry);
+                var subFolder = (entry == this.Root) ? this.folder : await this.folder.GetFolderAsync(entry);
 
                 var files = await subFolder.GetFilesAsync();
 
                 var output = new List<string>(files.Count);
 
-                var startIndex = folder.Path.Length == 3 ?
-                    folder.Path.Length :
-                    folder.Path.Length + 1;
+                var startIndex = this.folder.Path.Length == 3 ?
+                    this.folder.Path.Length :
+                    this.folder.Path.Length + 1;
 
                 foreach (var path in
                     from f in files
-                    where FilterImageFileType(f.Name)
+                    where this.FilterImageFileType(f.Name)
                     select f.Path)
                 {
                     output.Add(path.Substring(startIndex));
                 }
+
                 return (output.ToArray(), null);
             }
             catch (Exception e)
@@ -60,16 +61,16 @@ namespace ZipPicViewUWP
             {
                 var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
                 {
-                    FolderDepth = FolderDepth.Deep
+                    FolderDepth = FolderDepth.Deep,
                 };
 
-                var subFolders = await folder.CreateFolderQueryWithOptions(options).GetFoldersAsync();
+                var subFolders = await this.folder.CreateFolderQueryWithOptions(options).GetFoldersAsync();
 
-                var output = new List<string>(subFolders.Count) { Root };
+                var output = new List<string>(subFolders.Count) { this.Root };
 
-                var startIndex = folder.Path.Length == 3 ?
-                    folder.Path.Length :
-                    folder.Path.Length + 1;
+                var startIndex = (this.folder.Path.Length == 3) ?
+                    this.folder.Path.Length :
+                    this.folder.Path.Length + 1;
 
                 foreach (var folder in subFolders)
                 {
@@ -86,11 +87,12 @@ namespace ZipPicViewUWP
 
         public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            var (results, suggested, error) = await OpenEntryAsync(entry);
+            var (results, suggested, error) = await this.OpenEntryAsync(entry);
             if (error != null)
             {
                 return (null, error);
             }
+
             return (results.AsRandomAccessStream(), null);
         }
     }
