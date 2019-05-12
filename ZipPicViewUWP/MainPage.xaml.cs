@@ -254,6 +254,8 @@ namespace ZipPicViewUWP
                     return;
                 }
             }
+
+            page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private async void OpenFolderButtonClick(object sender, RoutedEventArgs e)
@@ -280,6 +282,8 @@ namespace ZipPicViewUWP
 
             await SetMediaProvider(new FileSystemMediaProvider(selected));
             FileName = selected.Name;
+
+            page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private void SubFolderButtonClick(object sender, RoutedEventArgs e)
@@ -710,7 +714,6 @@ namespace ZipPicViewUWP
                 {
                     var storageFile = items[0] as StorageFile;
                     await OpenFile(storageFile);
-                    
                 }
                 else if(items[0] is StorageFolder)
                 {
