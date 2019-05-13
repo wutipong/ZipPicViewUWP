@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="ArchiveMediaProvider.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.Collections.Generic;
@@ -10,6 +14,9 @@
     using Windows.Storage.Streams;
     using ZipPicViewUWP.Utility;
 
+    /// <summary>
+    /// Media provider class for archive file source.
+    /// </summary>
     internal class ArchiveMediaProvider : AbstractMediaProvider
     {
         private string[] fileList;
@@ -17,6 +24,11 @@
 
         private Stream stream;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArchiveMediaProvider"/> class.
+        /// </summary>
+        /// <param name="stream">stream of the open file.</param>
+        /// <param name="archive">archive instant of the file.</param>
         public ArchiveMediaProvider(Stream stream, IArchive archive)
         {
             this.Archive = archive;
@@ -26,8 +38,14 @@
             this.FileFilter = new PhysicalFileFilter();
         }
 
+        /// <summary>
+        /// Gets or sets archive that media files are read from.
+        /// </summary>
         protected IArchive Archive { get; set; }
 
+        /// <summary>
+        /// Gets the list of file inside this archive.
+        /// </summary>
         protected string[] FileList
         {
             get
@@ -41,6 +59,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the list of folder inside this archive.
+        /// </summary>
         protected string[] FolderList
         {
             get
@@ -54,6 +75,13 @@
             }
         }
 
+        /// <summary>
+        /// Try to open the archive using supplied password.
+        /// </summary>
+        /// <param name="stream">The archive stream.</param>
+        /// <param name="password">password of the file.</param>
+        /// <param name="isEncrypted">will be assigned whtether or not the file is encrypted.</param>
+        /// <returns>the archive instance.</returns>
         public static IArchive TryOpenArchive(Stream stream, string password, out bool isEncrypted)
         {
             isEncrypted = false;
@@ -83,6 +111,12 @@
             return archive;
         }
 
+        /// <summary>
+        /// Create an instance of suitable media provider based on given archive type.
+        /// </summary>
+        /// <param name="stream">stream of the archive file.</param>
+        /// <param name="archive">archive instance.</param>
+        /// <returns>media provider of the given archive.</returns>
         public static ArchiveMediaProvider Create(Stream stream, IArchive archive)
         {
             if (archive.Type == SharpCompress.Common.ArchiveType.SevenZip)
@@ -93,6 +127,7 @@
             return new ArchiveMediaProvider(stream, archive);
         }
 
+        /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetFolderEntries()
         {
             return await Task.Run<(string[], Exception)>(() =>
@@ -108,6 +143,7 @@
             });
         }
 
+        /// <inheritdoc/>
         public override Task<(string[], Exception error)> GetChildEntries(string entry)
         {
             return Task.Run<(string[], Exception)>(() =>
@@ -146,6 +182,7 @@
             });
         }
 
+        /// <inheritdoc/>
         public override Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
         {
             return Task.Run<(Stream, string, Exception)>(() =>
@@ -176,6 +213,7 @@
             });
         }
 
+        /// <inheritdoc/>
         public override void Dispose()
         {
             base.Dispose();
@@ -192,6 +230,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
             try
@@ -205,6 +244,10 @@
             }
         }
 
+        /// <summary>
+        /// Create a list of folders contained in the archive.
+        /// </summary>
+        /// <returns>folder list.</returns>
         protected virtual string[] CreateFolderList()
         {
             var output = new List<string>();
@@ -258,6 +301,10 @@
             return output.ToArray();
         }
 
+        /// <summary>
+        /// Create a list of file contained in the archive.
+        /// </summary>
+        /// <returns>file list.</returns>
         protected virtual string[] CreateFileList()
         {
             List<string> files = new List<string>();

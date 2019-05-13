@@ -1,4 +1,6 @@
-﻿// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿// <copyright file="PrintPage.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
 
 namespace ZipPicViewUWP
 {
@@ -10,18 +12,27 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class PrintPage : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrintPage"/> class.
+        /// </summary>
         public PrintPage()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets or sets the layout option.
+        /// </summary>
         public PrintPanel.LayoutOption LayoutOption
         {
             get { return this.PrintPanel.Layout; }
             set { this.PrintPanel.Layout = value; }
         }
 
-        public BitmapImage ImageSource
+        /// <summary>
+        /// Gets or sets the image to be printed.
+        /// </summary>
+        public BitmapImage Image
         {
             get
             {

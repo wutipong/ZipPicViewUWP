@@ -1,63 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
+﻿// <copyright file="Thumbnail.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
 
 namespace ZipPicViewUWP
 {
+    using Windows.UI.Xaml;
+    using Windows.UI.Xaml.Controls;
+
+    /// <summary>
+    /// A thumbnail control.
+    /// </summary>
     public sealed partial class Thumbnail : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Thumbnail"/> class.
+        /// </summary>
         public Thumbnail()
         {
             this.InitializeComponent();
-            button.Click += Button_Click;
+            this.button.Click += this.Button_Click;
         }
+
+        /// <summary>
+        /// Event handler that will be called when the control is clicked.
+        /// </summary>
+        public event RoutedEventHandler Click;
+
+        /// <summary>
+        /// Gets the thumbnail image.
+        /// </summary>
+        public Image Image => this.image;
+
+        /// <summary>
+        /// Gets the thumbnail label.
+        /// </summary>
+        public TextBlock Label => this.label;
+
+        /// <summary>
+        /// Gets the progress ring.
+        /// </summary>
+        public ProgressRing ProgressRing => this.loading;
+
+        /// <summary>
+        /// Gets or sets the custom user data assciated with the thumbnail.
+        /// </summary>
+        public string UserData { get; set; }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Click(this, e);
-        }
-
-        public TextBlock Label
-        {
-            get
-            {
-                return label;
-            }
-        }
-
-        public Image Image
-        {
-            get
-            {
-                return image;
-            }
-        }
-
-        public ProgressRing ProgressRing
-        {
-            get { return loading; }
-        }
-
-        public event RoutedEventHandler Click;
-
-        private string userData;
-        public string UserData
-        {
-            get { return userData; }
-            set { userData = value; }
         }
     }
 }

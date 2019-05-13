@@ -148,6 +148,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <AdditionalFiles Include="stylecop.json" />
     <None Include="ZipPicViewUWP_StoreKey.pfx" />
     <None Include="ZipPicViewUWP_TemporaryKey.pfx" />
   </ItemGroup>

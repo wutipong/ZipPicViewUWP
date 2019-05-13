@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="FileSystemMediaProvider.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.Collections.Generic;
@@ -10,21 +14,30 @@
     using Windows.Storage.Streams;
     using ZipPicViewUWP.Utility;
 
+    /// <summary>
+    /// Media provider class for reading media from directory.
+    /// </summary>
     internal class FileSystemMediaProvider : AbstractMediaProvider
     {
-        private StorageFolder folder;
+        private readonly StorageFolder folder;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileSystemMediaProvider"/> class.
+        /// </summary>
+        /// <param name="folder">Folder to read media from.</param>
         public FileSystemMediaProvider(StorageFolder folder)
         {
             this.folder = folder;
             this.FileFilter = new PhysicalFileFilter();
         }
 
+        /// <inheritdoc/>
         public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
         {
             return (await this.folder.OpenStreamForReadAsync(entry), entry.ExtractFilename(), null);
         }
 
+        /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
             try
@@ -55,6 +68,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetFolderEntries()
         {
             try
@@ -85,9 +99,10 @@
             }
         }
 
+        /// <inheritdoc/>
         public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            var (results, suggested, error) = await this.OpenEntryAsync(entry);
+            var (results, _, error) = await this.OpenEntryAsync(entry);
             if (error != null)
             {
                 return (null, error);

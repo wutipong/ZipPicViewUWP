@@ -1,10 +1,18 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="PhysicalFileFilter.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using Windows.Graphics.Imaging;
 
+    /// <summary>
+    /// A file filter to be used with FileSystemMediaProvider.
+    /// <seealso cref="FileSystemMediaProvider"/>
+    /// </summary>
     public class PhysicalFileFilter : FileFilter
     {
         private static string[] formats = null;
@@ -29,6 +37,7 @@
             }
         }
 
+        /// <inheritdoc/>
         public override string FindCoverPage(string[] filenames)
         {
             if (filenames.Length <= 0)
@@ -48,6 +57,7 @@
             return filenames[0];
         }
 
+        /// <inheritdoc/>
         public override bool IsImageFile(string filename)
         {
             foreach (var format in ImageFileExtensions)

@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="PdfMediaProvider.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.IO;
@@ -8,24 +12,36 @@
     using Windows.Storage;
     using Windows.Storage.Streams;
 
+    /// <summary>
+    /// A media provider based on PDF file.
+    /// </summary>
     internal class PdfMediaProvider : AbstractMediaProvider
     {
+        private readonly StorageFile file;
         private PdfDocument pdfDocument;
-        private StorageFile file;
         private uint pageCount = 0;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PdfMediaProvider"/> class.
+        /// </summary>
+        /// <param name="file">PDF file.</param>
         public PdfMediaProvider(StorageFile file)
         {
             this.file = file;
             this.FileFilter = new PdfFileFIlter();
         }
 
+        /// <summary>
+        /// Read the pdf document from file.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the result of the asynchronous operation.</returns>
         public async Task Load()
         {
             this.pdfDocument = await PdfDocument.LoadFromFileAsync(this.file);
             this.pageCount = this.pdfDocument.PageCount;
         }
 
+        /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
             return await Task.Run<(string[], Exception)>(() =>
@@ -40,6 +56,7 @@
             });
         }
 
+        /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetFolderEntries()
         {
             return await Task.Run<(string[], Exception)>(() =>
@@ -48,6 +65,7 @@
             });
         }
 
+        /// <inheritdoc/>
         public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
         {
             var (irs, error) = await this.OpenEntryAsRandomAccessStreamAsync(entry);
@@ -77,6 +95,7 @@
             return (outputStream, entry + ".png", null);
         }
 
+        /// <inheritdoc/>
         public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
             var pageindex = uint.Parse(entry);

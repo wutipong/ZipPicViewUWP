@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="PrintHelper.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.Threading.Tasks;
@@ -8,22 +12,35 @@
     using Windows.UI.Xaml.Media.Imaging;
     using Windows.UI.Xaml.Printing;
 
+    /// <summary>
+    /// Helper class providing printing functionalities.
+    /// </summary>
     public class PrintHelper
     {
-        private PrintPage printPage;
+        private readonly Page caller;
         private PrintDocument printDocument;
         private IPrintDocumentSource printDocumentSource;
         private PrintPanel.LayoutOption printLayout;
-        private Page caller;
+        private PrintPage printPage;
         private string title;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrintHelper"/> class.
+        /// </summary>
+        /// <param name="page">The page instant requesting for printing.</param>
         public PrintHelper(Page page)
         {
             this.caller = page;
         }
 
+        /// <summary>
+        /// Gets or sets image to be printed.
+        /// </summary>
         public BitmapImage BitmapImage { get; set; }
 
+        /// <summary>
+        /// Register for printing.
+        /// </summary>
         public void RegisterForPrinting()
         {
             this.printDocument = new PrintDocument();
@@ -36,38 +53,43 @@
             printMan.PrintTaskRequested += this.PrintTaskRequested;
         }
 
-        private void PrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs e)
+        /// <summary>
+        /// Show the printing dialog.
+        /// </summary>
+        /// <param name="title">Dialog's title.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public async Task<bool> ShowPrintUIAsync(string title)
         {
-            PrintTask printTask = null;
-
-            printTask = e.Request.CreatePrintTask(this.title, sourceRequested =>
-            {
-                sourceRequested.SetSource(this.printDocumentSource);
-            });
-
-            var printDetailedOptions = PrintTaskOptionDetails.GetFromPrintTaskOptions(printTask.Options);
-            var displayedOptions = printDetailedOptions.DisplayedOptions;
-
-            var alignOption = printDetailedOptions.CreateItemListOption("LayoutOption", "Layout Option");
-
-            alignOption.AddItem("Center", "Center");
-            alignOption.AddItem("AlignLeftOrTop", "Align to the Left or to the Top");
-            alignOption.AddItem("AlignRightOrBottom", "Align to the right or to the bottom");
-
-            this.printLayout = PrintPanel.LayoutOption.Centered;
-            displayedOptions.Clear();
-
-            displayedOptions.Add(StandardPrintTaskOptions.Copies);
-            displayedOptions.Add("LayoutOption");
-            displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
-            displayedOptions.Add(StandardPrintTaskOptions.Orientation);
-            displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
-            displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
-
-            printDetailedOptions.OptionChanged += this.printDetailedOptions_OptionChanged;
+            this.title = title;
+            return await PrintManager.ShowPrintUIAsync();
         }
 
-        private async void printDetailedOptions_OptionChanged(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
+        private void AddPrintPages(object sender, AddPagesEventArgs e)
+        {
+            PrintDocument printDoc = (PrintDocument)sender;
+            printDoc.AddPage(this.printPage);
+            printDoc.AddPagesComplete();
+        }
+
+        private void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
+        {
+            PrintDocument printDoc = (PrintDocument)sender;
+
+            printDoc.SetPreviewPageCount(1, PreviewPageCountType.Intermediate);
+        }
+
+        private void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
+        {
+            PrintDocument printDoc = (PrintDocument)sender;
+            this.printPage = new PrintPage()
+            {
+                LayoutOption = this.printLayout,
+                Image = this.BitmapImage,
+            };
+            printDoc.SetPreviewPage(e.PageNumber, this.printPage);
+        }
+
+        private async void PrintDetailedOptions_OptionChanged(PrintTaskOptionDetails sender, PrintTaskOptionChangedEventArgs args)
         {
             var invalidatePreview = false;
 
@@ -103,37 +125,35 @@
             }
         }
 
-        private void AddPrintPages(object sender, AddPagesEventArgs e)
+        private void PrintTaskRequested(PrintManager sender, PrintTaskRequestedEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
-            printDoc.AddPage(this.printPage);
-            printDoc.AddPagesComplete();
-        }
+            PrintTask printTask = null;
 
-        private void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
-        {
-            PrintDocument printDoc = (PrintDocument)sender;
-            this.printPage = new PrintPage()
+            printTask = e.Request.CreatePrintTask(this.title, sourceRequested =>
             {
-                LayoutOption = this.printLayout,
-                ImageSource = this.BitmapImage,
-            };
-            printDoc.SetPreviewPage(e.PageNumber, this.printPage);
+                sourceRequested.SetSource(this.printDocumentSource);
+            });
+
+            var printDetailedOptions = PrintTaskOptionDetails.GetFromPrintTaskOptions(printTask.Options);
+            var displayedOptions = printDetailedOptions.DisplayedOptions;
+
+            var alignOption = printDetailedOptions.CreateItemListOption("LayoutOption", "Layout Option");
+
+            alignOption.AddItem("Center", "Center");
+            alignOption.AddItem("AlignLeftOrTop", "Align to the Left or to the Top");
+            alignOption.AddItem("AlignRightOrBottom", "Align to the right or to the bottom");
+
+            this.printLayout = PrintPanel.LayoutOption.Centered;
+            displayedOptions.Clear();
+
+            displayedOptions.Add(StandardPrintTaskOptions.Copies);
+            displayedOptions.Add("LayoutOption");
+            displayedOptions.Add(StandardPrintTaskOptions.MediaSize);
+            displayedOptions.Add(StandardPrintTaskOptions.Orientation);
+            displayedOptions.Add(StandardPrintTaskOptions.ColorMode);
+            displayedOptions.Add(StandardPrintTaskOptions.PrintQuality);
+
+            printDetailedOptions.OptionChanged += this.PrintDetailedOptions_OptionChanged;
         }
-
-        private void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
-        {
-            PrintDocument printDoc = (PrintDocument)sender;
-
-            printDoc.SetPreviewPageCount(1, PreviewPageCountType.Intermediate);
-        }
-
-        public async Task<bool> ShowPrintUIAsync(string title)
-        {
-            this.title = title;
-            return await PrintManager.ShowPrintUIAsync();
-        }
-
     }
 }
-

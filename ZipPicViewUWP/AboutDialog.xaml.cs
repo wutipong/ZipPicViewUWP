@@ -1,4 +1,6 @@
-﻿// The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
+﻿// <copyright file="AboutDialog.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
 
 namespace ZipPicViewUWP
 {
@@ -7,8 +9,14 @@ namespace ZipPicViewUWP
     using Windows.Storage;
     using Windows.UI.Xaml.Controls;
 
+    /// <summary>
+    /// A dialog class to display information about the application.
+    /// </summary>
     public sealed partial class AboutDialog : ContentDialog
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AboutDialog"/> class.
+        /// </summary>
         public AboutDialog()
         {
             this.InitializeComponent();
@@ -23,6 +31,9 @@ namespace ZipPicViewUWP
             this.Initialize();
         }
 
+        /// <summary>
+        /// Initialize controls.
+        /// </summary>
         public async void Initialize()
         {
             this.ReleaseNote.Text =

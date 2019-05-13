@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="FolderListItem.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using Windows.UI.Xaml;
@@ -6,23 +10,35 @@
     using Windows.UI.Xaml.Media;
 
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// Folder list item control.
     /// </summary>
     public sealed partial class FolderListItem : UserControl
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FolderListItem"/> class.
+        /// </summary>
         public FolderListItem()
         {
             this.InitializeComponent();
         }
 
+        /// <summary>
+        /// Gets or sets the displaying folder name.
+        /// </summary>
         public string Text
         {
             get { return this.name.Text; }
             set { this.name.Text = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the actual folder value.
+        /// </summary>
         public string Value { get; set; }
 
+        /// <summary>
+        /// Sets the thumbnail image source.
+        /// </summary>
         public ImageSource ImageSource
         {
             set
@@ -41,6 +57,10 @@
             }
         }
 
+        /// <summary>
+        /// Set the thumbnail image source asynchronously.
+        /// </summary>
+        /// <param name="source">image source.</param>
         public async void SetImageSourceAsync(ImageSource source)
         {
             await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
