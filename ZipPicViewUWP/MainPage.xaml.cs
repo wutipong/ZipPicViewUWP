@@ -88,7 +88,7 @@ namespace ZipPicViewUWP
             thumbnail.ProgressRing.Visibility = Visibility.Visible;
             var decoder = await BitmapDecoder.CreateAsync(stream);
             token.ThrowIfCancellationRequested();
-            SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 200, 200);
+            SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 250, 200);
             token.ThrowIfCancellationRequested();
             var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);

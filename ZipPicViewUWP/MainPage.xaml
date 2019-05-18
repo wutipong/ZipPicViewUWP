@@ -34,7 +34,7 @@
                 <SplitView.Content>
                     <controls:AdaptiveGridView
                         x:Name="thumbnailGrid"
-                        DesiredWidth="200"
+                        DesiredWidth="250"
                         ItemHeight="200" />
                 </SplitView.Content>
                 <SplitView.Pane>
