@@ -1,5 +1,12 @@
 # Release Note
 
+## Version 2019.05
+* Add Drag-Drop support. The input file/folder can now be dragged into the window to open the file. 
+* Image file is now properly closed after finish reading.
+* The thumbnail is changed to 300x200 rectangle instead of 200x200 square.
+* Minor UI adjustments.
+* Source code are now being enforced by StyleCop Analyzer.
+
 ## Version 2019.04
 * Fix a number of minor UI issues.
 * The thumbnail images in the file list will fill the whole button.
