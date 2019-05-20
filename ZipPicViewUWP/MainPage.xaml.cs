@@ -674,6 +674,7 @@ namespace ZipPicViewUWP
                 var decoder = await BitmapDecoder.CreateAsync(stream);
                 var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
 
+                stream.Dispose();
                 return (output, decoder.PixelWidth, decoder.PixelHeight);
             });
 
