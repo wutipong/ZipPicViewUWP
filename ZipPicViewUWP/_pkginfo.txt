@@ -1,1 +1,1 @@
-C:\Users\mr_ta\Source\Repos\wutipong\ZipPicViewUWP\ZipPicViewUWP\bin\ARM\Release\Upload\ZipPicViewUWP_2019.4.0.0\ZipPicViewUWP_2019.4.0.0_x86_x64_arm.appxbundle
+C:\Users\mr_ta\Source\Repos\wutipong\ZipPicViewUWP\ZipPicViewUWP\bin\ARM\Release\Upload\ZipPicViewUWP_2019.5.0.0\ZipPicViewUWP_2019.5.0.0_x86_x64_arm.appxbundle
