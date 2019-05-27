@@ -291,6 +291,8 @@ namespace ZipPicViewUWP
             this.AutoDurationButton.IsEnabled = false;
 
             this.SaveButton.IsEnabled = false;
+            this.PreviousButton.IsEnabled = false;
+            this.NextButton.IsEnabled = false;
             this.ResetCounter();
         }
 
@@ -300,6 +302,8 @@ namespace ZipPicViewUWP
             this.AutoDurationButton.IsEnabled = true;
             this.timer.Stop();
             this.SaveButton.IsEnabled = true;
+            this.PreviousButton.IsEnabled = true;
+            this.NextButton.IsEnabled = true;
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
