@@ -20,6 +20,7 @@ namespace ZipPicViewUWP
         private readonly StorageFile file;
         private PdfDocument pdfDocument;
         private uint pageCount = 0;
+        private string[] pages;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PdfMediaProvider"/> class.
@@ -46,13 +47,13 @@ namespace ZipPicViewUWP
         {
             return await Task.Run<(string[], Exception)>(() =>
             {
-                var output = new string[this.pageCount];
+                this.pages = new string[this.pageCount];
                 for (uint i = 0; i < this.pageCount; i++)
                 {
-                    output[i] = i.ToString();
+                    this.pages[i] = i.ToString();
                 }
 
-                return (output, null);
+                return (this.pages, null);
             });
         }
 
@@ -107,6 +108,18 @@ namespace ZipPicViewUWP
             await page.RenderToStreamAsync(stream);
 
             return (stream, null);
+        }
+
+        /// <inheritdoc/>
+        public override Task<(string[], Exception error)> GetAllFileEntries()
+        {
+            return Task.Run<(string[], Exception)>(() => (this.pages, null));
+        }
+
+        /// <inheritdoc/>
+        public override Task<(string, Exception error)> GetParentEntry(string entry)
+        {
+            return Task.Run<(string, Exception)>(() => (this.Root, null));
         }
     }
 }

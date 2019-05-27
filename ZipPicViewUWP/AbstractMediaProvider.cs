@@ -56,11 +56,24 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Get the list of all file entries under this provider.
+        /// </summary>
+        /// <returns>List of child entries.</returns>
+        public abstract Task<(string[], Exception error)> GetAllFileEntries();
+
+        /// <summary>
         /// Get the list of child entries of the input entry.
         /// </summary>
         /// <param name="entry">parent entry.</param>
         /// <returns>List of child entries.</returns>
         public abstract Task<(string[], Exception error)> GetChildEntries(string entry);
+
+        /// <summary>
+        /// Get the parent of the input entry.
+        /// </summary>
+        /// <param name="entry">child entry.</param>
+        /// <returns>Parent entry.</returns>
+        public abstract Task<(string, Exception error)> GetParentEntry(string entry);
 
         /// <summary>
         /// Get the list of folder entries in this media provider.
