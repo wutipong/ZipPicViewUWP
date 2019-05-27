@@ -118,58 +118,5 @@ namespace ZipPicViewUWP
 
             return (results.AsRandomAccessStream(), null);
         }
-
-        /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetAllFileEntries()
-        {
-            try
-            {
-                var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
-                {
-                    FolderDepth = FolderDepth.Deep,
-                };
-
-                var files = await this.folder.CreateFileQueryWithOptions(options).GetFilesAsync();
-
-                var output = new List<string>(files.Count);
-
-                var startIndex = (this.folder.Path.Length == 3) ?
-                    this.folder.Path.Length :
-                    this.folder.Path.Length + 1;
-
-                foreach (var file in files)
-                {
-                    if (!this.FilterImageFileType(file.Name))
-                    {
-                        continue;
-                    }
-
-                    output.Add(file.Path.Substring(startIndex));
-                }
-
-                return (output.ToArray(), null);
-            }
-            catch (Exception e)
-            {
-                return (null, e);
-            }
-        }
-
-        /// <inheritdoc/>
-        public override string GetParentEntry(string entry)
-        {
-            var lastSeparator = entry.LastIndexOf(this.Separator);
-            if (lastSeparator == -1)
-            {
-                return this.Root;
-            }
-
-            if (lastSeparator == entry.Length - 1)
-            {
-                lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
-            }
-
-            return entry.Substring(0, lastSeparator);
-        }
     }
 }

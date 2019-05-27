@@ -619,11 +619,11 @@ namespace ZipPicViewUWP
             var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
             Array.Sort(this.folderEntries, (s1, s2) =>
             {
-                if (s1 == "\\")
+                if (s1 == this.provider.Root)
                 {
                     return -1;
                 }
-                else if (s2 == "\\")
+                else if (s2 == this.provider.Root)
                 {
                     return 1;
                 }
@@ -636,22 +636,12 @@ namespace ZipPicViewUWP
             foreach (var f in this.folderEntries)
             {
                 var folder = f;
-                if (folder == "/")
+
+                if (folder != this.provider.Root)
                 {
-                    folder = "\\";
-                }
+                    int count = folder.Count(c => c == this.provider.Separator);
 
-                if (folder != "\\")
-                {
-                    char separator = folder.Contains("\\") ? '\\' : '/';
-                    int count = folder.Count(c => c == separator);
-
-                    if (folder.EndsWith(separator))
-                    {
-                        folder = folder.Substring(0, folder.Length - 1);
-                    }
-
-                    folder = folder.Substring(folder.LastIndexOf(separator) + 1);
+                    folder = folder.Substring(folder.LastIndexOf(this.provider.Separator) + 1);
 
                     var prefix = string.Empty;
                     for (int i = 0; i < count; i++)
@@ -671,13 +661,10 @@ namespace ZipPicViewUWP
                 var item = new FolderListItem { Text = folder, Value = f };
                 this.subFolderListCtrl.Items.Add(item);
 
-                if (children.Length > 0)
+                var cover = this.provider.FileFilter.FindCoverPage(children);
+                if (cover != null)
                 {
-                    var cover = this.provider.FileFilter.FindCoverPage(children);
-                    if (cover != null)
-                    {
-                        var t = this.UpdateFolderThumbnail(cover, item);
-                    }
+                    var t = this.UpdateFolderThumbnail(cover, item);
                 }
             }
         }

@@ -5,8 +5,10 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
+    using NaturalSort.Extension;
     using Windows.Storage.Streams;
 
     /// <summary>
@@ -23,14 +25,14 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the root directory name.
         /// </summary>
-        protected string Root => @"\";
+        public string Root => @"\";
 
         /// <summary>
         /// Gets or sets the path separator.
         /// </summary>
-        protected char Separator
+        public char Separator
         {
-            get; set;
+            get; protected set;
         }
 
         /// <summary>
@@ -59,7 +61,30 @@ namespace ZipPicViewUWP
         /// Get the list of all file entries under this provider.
         /// </summary>
         /// <returns>List of child entries.</returns>
-        public abstract Task<(string[], Exception error)> GetAllFileEntries();
+        public virtual async Task<(string[], Exception error)> GetAllFileEntries()
+        {
+            var (folders, error) = await this.GetFolderEntries();
+            if (error != null)
+            {
+                return (null, error);
+            }
+
+            var output = new List<string>();
+            foreach (var folder in folders)
+            {
+                var (files, errorFile) = await this.GetChildEntries(folder);
+                if (errorFile != null)
+                {
+                    return (null, errorFile);
+                }
+
+                Array.Sort(files, StringComparer.OrdinalIgnoreCase.WithNaturalSort());
+
+                output.AddRange(files);
+            }
+
+            return (output.ToArray(), null);
+        }
 
         /// <summary>
         /// Get the list of child entries of the input entry.
@@ -73,7 +98,21 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entry">child entry.</param>
         /// <returns>Parent entry.</returns>
-        public abstract string GetParentEntry(string entry);
+        public virtual string GetParentEntry(string entry)
+        {
+            var lastSeparator = entry.LastIndexOf(this.Separator);
+            if (lastSeparator == -1)
+            {
+                return this.Root;
+            }
+
+            if (lastSeparator == entry.Length - 1)
+            {
+                lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
+            }
+
+            return entry.Substring(0, lastSeparator);
+        }
 
         /// <summary>
         /// Get the list of folder entries in this media provider.

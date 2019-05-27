@@ -244,42 +244,6 @@ namespace ZipPicViewUWP
             }
         }
 
-        /// <inheritdoc/>
-        public override Task<(string[], Exception error)> GetAllFileEntries()
-        {
-            return Task.Run<(string[], Exception)>(() =>
-            {
-                var output = new LinkedList<string>();
-
-                foreach (var file in this.FileList)
-                {
-                    if (this.FilterImageFileType(file))
-                    {
-                        output.AddLast(file);
-                    }
-                }
-
-                return (output.ToArray(), null);
-            });
-        }
-
-        /// <inheritdoc/>
-        public override string GetParentEntry(string entry)
-        {
-            var lastSeparator = entry.LastIndexOf(this.Separator);
-            if (lastSeparator == -1)
-            {
-                return this.Root;
-            }
-
-            if (lastSeparator == entry.Length - 1)
-            {
-                lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
-            }
-
-            return entry.Substring(0, lastSeparator + 1);
-        }
-
         /// <summary>
         /// Create a list of folders contained in the archive.
         /// </summary>
@@ -302,19 +266,19 @@ namespace ZipPicViewUWP
                         output.Add(this.Root);
                         foreach (var folder in folderEntries)
                         {
-                            output.Add(folder.EndsWith(this.Separator) ? folder : folder + this.Separator);
+                            output.Add(folder.EndsWith(this.Separator) ? folder.Substring(0, folder.Length - 1) : folder);
                         }
 
-                        foreach (var entry in this.Archive.Entries)
+                        foreach (var entry in this.FileList)
                         {
-                            var key = entry.Key;
+                            var key = entry;
                             var separatorIndex = key.LastIndexOf(this.Separator);
                             if (separatorIndex < 0)
                             {
                                 continue;
                             }
 
-                            var parent = key.Substring(0, separatorIndex + 1);
+                            var parent = key.Substring(0, separatorIndex);
 
                             if (!output.Contains(parent))
                             {
