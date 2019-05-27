@@ -39,7 +39,7 @@ namespace ZipPicViewUWP
         private int currentFileIndex = 0;
         private string currentImageFile;
         private DisplayRequest displayRequest;
-        private string[] fileList;
+        private string[] currentFolderFileList;
         private string filename;
         private FileOpenPicker fileOpenPicker = null;
         private string[] folderList;
@@ -107,19 +107,19 @@ namespace ZipPicViewUWP
         private async Task AdvanceImage(int step)
         {
             this.currentFileIndex += step;
-            while (this.currentFileIndex < 0 || this.currentFileIndex >= this.fileList.Length)
+            while (this.currentFileIndex < 0 || this.currentFileIndex >= this.currentFolderFileList.Length)
             {
                 if (this.currentFileIndex < 0)
                 {
-                    this.currentFileIndex += this.fileList.Length;
+                    this.currentFileIndex += this.currentFolderFileList.Length;
                 }
-                else if (this.currentFileIndex >= this.fileList.Length)
+                else if (this.currentFileIndex >= this.currentFolderFileList.Length)
                 {
-                    this.currentFileIndex -= this.fileList.Length;
+                    this.currentFileIndex -= this.currentFolderFileList.Length;
                 }
             }
 
-            await this.SetCurrentFile(this.fileList[this.currentFileIndex]);
+            await this.SetCurrentFile(this.currentFolderFileList[this.currentFileIndex]);
         }
 
         private async Task CreateThumbnails(string selected, AbstractMediaProvider provider)
@@ -130,18 +130,18 @@ namespace ZipPicViewUWP
             this.thumbnailGrid.Items.Clear();
             var results = await provider.GetChildEntries(selected);
 
-            this.fileList = results.Item1;
+            this.currentFolderFileList = results.Item1;
 
-            Array.Sort(this.fileList, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
+            Array.Sort(this.currentFolderFileList, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
 
             try
             {
-                this.thumbProgress.Maximum = this.fileList.Length;
-                Thumbnail[] thumbnails = new Thumbnail[this.fileList.Length];
+                this.thumbProgress.Maximum = this.currentFolderFileList.Length;
+                Thumbnail[] thumbnails = new Thumbnail[this.currentFolderFileList.Length];
 
-                for (int i = 0; i < this.fileList.Length; i++)
+                for (int i = 0; i < this.currentFolderFileList.Length; i++)
                 {
-                    var file = this.fileList[i];
+                    var file = this.currentFolderFileList[i];
                     thumbnails[i] = new Thumbnail();
                     var thumbnail = thumbnails[i];
 
@@ -155,11 +155,11 @@ namespace ZipPicViewUWP
                     token.ThrowIfCancellationRequested();
                 }
 
-                for (int i = 0; i < this.fileList.Length; i++)
+                for (int i = 0; i < this.currentFolderFileList.Length; i++)
                 {
-                    this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i + 1, this.fileList.Length);
+                    this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i + 1, this.currentFolderFileList.Length);
                     this.thumbProgress.Value = i;
-                    await SetThumbnailImage(provider, this.fileList[i], thumbnails[i], token);
+                    await SetThumbnailImage(provider, this.currentFolderFileList[i], thumbnails[i], token);
                 }
             }
             catch
@@ -168,7 +168,7 @@ namespace ZipPicViewUWP
             finally
             {
                 this.thumbProgressText.Text = "Idle";
-                this.thumbProgress.Value = this.fileList.Length;
+                this.thumbProgress.Value = this.currentFolderFileList.Length;
                 this.cancellationTokenSource = null;
             }
         }
@@ -358,12 +358,12 @@ namespace ZipPicViewUWP
 
         private async void ImageControlOnAutoAdvance(object sender)
         {
-            if (this.fileList.Length == 0)
+            if (this.currentFolderFileList.Length == 0)
             {
                 return;
             }
 
-            int advance = this.imageControl.CurrentPlayMode == ViewerControl.AutoAdvanceMode.RandomCurrent ? this.random.Next(this.fileList.Length) : 1;
+            int advance = this.imageControl.CurrentPlayMode == ViewerControl.AutoAdvanceMode.RandomCurrent ? this.random.Next(this.currentFolderFileList.Length) : 1;
 
             await this.AdvanceImage(advance);
         }
@@ -394,7 +394,7 @@ namespace ZipPicViewUWP
 
         private async void ImageControlSaveButtonClick(object sender, RoutedEventArgs e)
         {
-            var filename = this.fileList[this.currentFileIndex];
+            var filename = this.currentFolderFileList[this.currentFileIndex];
             var (stream, suggestedFileName, error) = await this.provider.OpenEntryAsync(filename);
 
             if (error != null)
@@ -800,7 +800,7 @@ namespace ZipPicViewUWP
             this.viewerPanel.Visibility = Visibility.Visible;
 
             var file = ((Thumbnail)sender).UserData;
-            this.currentFileIndex = Array.FindIndex(this.fileList, (string value) => value == file);
+            this.currentFileIndex = Array.FindIndex(this.currentFolderFileList, (string value) => value == file);
 
             await this.SetCurrentFile(file, false);
             if (this.viewerPanel.Visibility == Visibility.Visible)
