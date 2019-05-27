@@ -193,12 +193,17 @@ namespace ZipPicViewUWP
             /// Choose item randomly from current folder.
             /// </summary>
             RandomCurrent,
+
+            /// <summary>
+            /// Choose item randomly from all folders.
+            /// </summary>
+            RandomAll,
         }
 
         /// <summary>
         /// Gets the current play mode.
         /// </summary>
-        public AutoAdvanceMode CurrentPlayMode
+        public AutoAdvanceMode CurrentAutoAdvanceMode
         {
             get
             {
@@ -212,6 +217,9 @@ namespace ZipPicViewUWP
 
                     case 2:
                         return AutoAdvanceMode.RandomCurrent;
+
+                    case 3:
+                        return AutoAdvanceMode.RandomAll;
                 }
 
                 throw new InvalidOperationException();
@@ -231,6 +239,10 @@ namespace ZipPicViewUWP
 
                     case AutoAdvanceMode.RandomCurrent:
                         this.AutoAdvanceModeList.SelectedIndex = 2;
+                        break;
+
+                    case AutoAdvanceMode.RandomAll:
+                        this.AutoAdvanceModeList.SelectedIndex = 3;
                         break;
                 }
             }

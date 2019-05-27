@@ -91,6 +91,7 @@
                                     <ListBoxItem Content="Loop inside current folder." IsSelected="True" />
                                     <ListBoxItem Content="Loop through all folder" />
                                     <ListBoxItem Content="Random item from current folder." />
+                                    <ListBoxItem Content="Random item from all folder." />
                                 </ListBox>
                             </controls:HeaderedContentControl>
                             <controls:HeaderedContentControl Header="Duration">

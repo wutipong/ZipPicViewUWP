@@ -378,7 +378,8 @@ namespace ZipPicViewUWP
         private async void ImageControlOnAutoAdvance(object sender)
         {
             var entryList = this.fileEntries;
-            if (this.imageControl.CurrentPlayMode != ViewerControl.AutoAdvanceMode.LoopAll)
+            if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
+                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent)
             {
                 await this.RefreshCurrentFolderFileEntries(this.provider.GetParentEntry(this.currentImageEntry), this.provider);
                 entryList = this.currentFolderFileList;
@@ -390,7 +391,13 @@ namespace ZipPicViewUWP
             }
 
             var entryIndex = Array.IndexOf(entryList, this.currentImageEntry);
-            int advance = this.imageControl.CurrentPlayMode == ViewerControl.AutoAdvanceMode.RandomCurrent ? this.random.Next(this.currentFolderFileList.Length) : 1;
+            int advance = 1;
+            if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent ||
+                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomAll)
+            {
+                advance = this.random.Next(entryList.Length);
+            }
+
             entryIndex += advance;
 
             if (entryIndex >= entryList.Length)
