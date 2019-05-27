@@ -247,27 +247,37 @@ namespace ZipPicViewUWP
         /// <inheritdoc/>
         public override Task<(string[], Exception error)> GetAllFileEntries()
         {
-            return Task.Run<(string[], Exception)>(() => (this.fileList, null));
+            return Task.Run<(string[], Exception)>(() =>
+            {
+                var output = new LinkedList<string>();
+
+                foreach (var file in this.FileList)
+                {
+                    if (this.FilterImageFileType(file))
+                    {
+                        output.AddLast(file);
+                    }
+                }
+
+                return (output.ToArray(), null);
+            });
         }
 
         /// <inheritdoc/>
-        public override Task<(string, Exception error)> GetParentEntry(string entry)
+        public override string GetParentEntry(string entry)
         {
-            return Task.Run<(string, Exception)>(() =>
+            var lastSeparator = entry.LastIndexOf(this.Separator);
+            if (lastSeparator == -1)
             {
-                var lastSeparator = entry.LastIndexOf(this.Separator);
-                if (lastSeparator == -1)
-                {
-                    return (this.Root, null);
-                }
+                return this.Root;
+            }
 
-                if (lastSeparator == entry.Length - 1)
-                {
-                    lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
-                }
+            if (lastSeparator == entry.Length - 1)
+            {
+                lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
+            }
 
-                return (entry.Substring(0, lastSeparator + 1), null);
-            });
+            return entry.Substring(0, lastSeparator + 1);
         }
 
         /// <summary>

@@ -29,6 +29,7 @@ namespace ZipPicViewUWP
         {
             this.folder = folder;
             this.FileFilter = new PhysicalFileFilter();
+            this.Separator = Path.DirectorySeparatorChar;
         }
 
         /// <inheritdoc/>
@@ -130,15 +131,20 @@ namespace ZipPicViewUWP
 
                 var files = await this.folder.CreateFileQueryWithOptions(options).GetFilesAsync();
 
-                var output = new List<string>(files.Count) { this.Root };
+                var output = new List<string>(files.Count);
 
                 var startIndex = (this.folder.Path.Length == 3) ?
                     this.folder.Path.Length :
                     this.folder.Path.Length + 1;
 
-                foreach (var folder in files)
+                foreach (var file in files)
                 {
-                    output.Add(folder.Path.Substring(startIndex));
+                    if (!this.FilterImageFileType(file.Name))
+                    {
+                        continue;
+                    }
+
+                    output.Add(file.Path.Substring(startIndex));
                 }
 
                 return (output.ToArray(), null);
@@ -150,12 +156,20 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override async Task<(string, Exception error)> GetParentEntry(string entry)
+        public override string GetParentEntry(string entry)
         {
-            var file = await this.folder.GetFileAsync(entry);
-            var parent = await file.GetParentAsync();
+            var lastSeparator = entry.LastIndexOf(this.Separator);
+            if (lastSeparator == -1)
+            {
+                return this.Root;
+            }
 
-            return (parent.Path, null);
+            if (lastSeparator == entry.Length - 1)
+            {
+                lastSeparator = entry.LastIndexOf(this.Separator, 0, lastSeparator);
+            }
+
+            return entry.Substring(0, lastSeparator);
         }
     }
 }

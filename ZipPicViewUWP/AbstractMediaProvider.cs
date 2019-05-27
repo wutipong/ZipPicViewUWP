@@ -73,7 +73,7 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entry">child entry.</param>
         /// <returns>Parent entry.</returns>
-        public abstract Task<(string, Exception error)> GetParentEntry(string entry);
+        public abstract string GetParentEntry(string entry);
 
         /// <summary>
         /// Get the list of folder entries in this media provider.

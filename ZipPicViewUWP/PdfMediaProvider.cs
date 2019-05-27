@@ -40,6 +40,12 @@ namespace ZipPicViewUWP
         {
             this.pdfDocument = await PdfDocument.LoadFromFileAsync(this.file);
             this.pageCount = this.pdfDocument.PageCount;
+
+            this.pages = new string[this.pageCount];
+            for (uint i = 0; i < this.pageCount; i++)
+            {
+                this.pages[i] = i.ToString();
+            }
         }
 
         /// <inheritdoc/>
@@ -47,12 +53,6 @@ namespace ZipPicViewUWP
         {
             return await Task.Run<(string[], Exception)>(() =>
             {
-                this.pages = new string[this.pageCount];
-                for (uint i = 0; i < this.pageCount; i++)
-                {
-                    this.pages[i] = i.ToString();
-                }
-
                 return (this.pages, null);
             });
         }
@@ -62,7 +62,7 @@ namespace ZipPicViewUWP
         {
             return await Task.Run<(string[], Exception)>(() =>
             {
-                return (new string[] { "/" }, null);
+                return (new string[] { this.Root }, null);
             });
         }
 
@@ -117,9 +117,9 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override Task<(string, Exception error)> GetParentEntry(string entry)
+        public override string GetParentEntry(string entry)
         {
-            return Task.Run<(string, Exception)>(() => (this.Root, null));
+            return this.Root;
         }
     }
 }
