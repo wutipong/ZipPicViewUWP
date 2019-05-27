@@ -177,7 +177,7 @@ namespace ZipPicViewUWP
             Array.Sort(this.currentFolderFileList, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
         }
 
-        private async void DisplayPanel_DragOver(object sender, DragEventArgs e)
+        private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Link;
 
@@ -204,7 +204,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private async void DisplayPanel_Drop(object sender, DragEventArgs e)
+        private async void DisplayPanelDrop(object sender, DragEventArgs e)
         {
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
@@ -321,7 +321,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private void ImageControl_OnPreCount(object sender)
+        private void ImageControlOnPreCount(object sender)
         {
             this.clickSound.Play();
         }
@@ -377,7 +377,13 @@ namespace ZipPicViewUWP
 
         private async void ImageControlOnAutoAdvance(object sender)
         {
-            var entryList = this.imageControl.CurrentPlayMode == ViewerControl.AutoAdvanceMode.LoopAll ? this.fileEntries : this.currentFolderFileList;
+            var entryList = this.fileEntries;
+            if (this.imageControl.CurrentPlayMode != ViewerControl.AutoAdvanceMode.LoopAll)
+            {
+                await this.RefreshCurrentFolderFileEntries(this.provider.GetParentEntry(this.currentImageEntry), this.provider);
+                entryList = this.currentFolderFileList;
+            }
+
             if (entryList.Length == 0)
             {
                 return;
@@ -604,7 +610,7 @@ namespace ZipPicViewUWP
         private async void PageLoaded(object sender, RoutedEventArgs e)
         {
             this.clickSound = await this.LoadSound("beep.wav");
-            this.imageControl.OnPreCount += this.ImageControl_OnPreCount;
+            this.imageControl.OnPreCount += this.ImageControlOnPreCount;
             this.printHelper = new PrintHelper(this);
             this.printHelper.RegisterForPrinting();
         }

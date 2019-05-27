@@ -16,8 +16,8 @@
     <RelativePanel
         x:Name="displayPanel"
         AllowDrop="True"
-        DragOver="DisplayPanel_DragOver"
-        Drop="DisplayPanel_Drop">
+        DragOver="DisplayPanelDragOver"
+        Drop="DisplayPanelDrop">
         <Grid
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             RelativePanel.AlignBottomWithPanel="True"
