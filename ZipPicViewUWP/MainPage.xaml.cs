@@ -363,7 +363,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            int advance = this.imageControl.IsAutoAdvanceRandomly ? this.random.Next(this.fileList.Length) : 1;
+            int advance = this.imageControl.CurrentPlayMode == ViewerControl.AutoAdvanceMode.RandomCurrent ? this.random.Next(this.fileList.Length) : 1;
 
             await this.AdvanceImage(advance);
         }

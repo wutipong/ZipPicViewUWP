@@ -274,7 +274,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets a value indicating whether or not auto advance is random.
         /// </summary>
-        public bool IsAutoAdvanceRandomly => this.CurrentPlayMode == AutoAdvanceMode.RandomCurrent;
+        //public bool IsAutoAdvanceRandomly => this.CurrentPlayMode == AutoAdvanceMode.RandomCurrent;
 
         /// <summary>
         /// Reset the timer counter.
