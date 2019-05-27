@@ -167,6 +167,68 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// PlayMode enumerator.
+        /// </summary>
+        public enum AutoAdvanceMode
+        {
+            /// <summary>
+            /// Loop item within the curent folder.
+            /// </summary>
+            LoopCurrent,
+
+            /// <summary>
+            /// Loop item from all folder
+            /// </summary>
+            LoopAll,
+
+            /// <summary>
+            /// Choose item randomly from current folder.
+            /// </summary>
+            RandomCurrent,
+        }
+
+        /// <summary>
+        /// Gets the current play mode.
+        /// </summary>
+        public AutoAdvanceMode CurrentPlayMode
+        {
+            get
+            {
+                switch (this.AutoAdvanceModeList.SelectedIndex)
+                {
+                    case 0:
+                        return AutoAdvanceMode.LoopCurrent;
+
+                    case 1:
+                        return AutoAdvanceMode.LoopAll;
+
+                    case 2:
+                        return AutoAdvanceMode.RandomCurrent;
+                }
+
+                throw new InvalidOperationException();
+            }
+
+            private set
+            {
+                switch (value)
+                {
+                    case AutoAdvanceMode.LoopCurrent:
+                        this.AutoAdvanceModeList.SelectedIndex = 0;
+                        break;
+
+                    case AutoAdvanceMode.LoopAll:
+                        this.AutoAdvanceModeList.SelectedIndex = 1;
+                        break;
+
+                    case AutoAdvanceMode.RandomCurrent:
+                        this.AutoAdvanceModeList.SelectedIndex = 2;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets whether or not auto advance is enabled.
         /// </summary>
         public bool? AutoEnabled
@@ -204,7 +266,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets a value indicating whether or not auto advance is random.
         /// </summary>
-        public bool IsAutoAdvanceRandomly => this.RandomToggle.IsOn;
+        public bool IsAutoAdvanceRandomly => this.CurrentPlayMode == AutoAdvanceMode.RandomCurrent;
 
         /// <summary>
         /// Reset the timer counter.
