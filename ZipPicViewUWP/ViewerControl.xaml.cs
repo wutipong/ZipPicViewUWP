@@ -61,12 +61,20 @@ namespace ZipPicViewUWP
             }
 
             var applicationData = Windows.Storage.ApplicationData.Current;
-            applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var index);
-            this.DurationList.SelectedIndex = index == null ? 0 : (int)index;
+            applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var durationIndex);
+            this.DurationList.SelectedIndex = durationIndex == null ? 0 : (int)durationIndex;
 
             this.DurationList.SelectionChanged += (_, __) =>
             {
                 applicationData.LocalSettings.Values["durationIndex"] = this.DurationList.SelectedIndex;
+            };
+
+            applicationData.LocalSettings.Values.TryGetValue("autoAdvanceModeIndex", out var autoAdvanceModeIndex);
+            this.AutoAdvanceModeList.SelectedIndex = autoAdvanceModeIndex == null ? 0 : (int)autoAdvanceModeIndex;
+
+            this.AutoAdvanceModeList.SelectionChanged += (_, __) =>
+            {
+                applicationData.LocalSettings.Values["autoAdvanceModeIndex"] = this.AutoAdvanceModeList.SelectedIndex;
             };
 
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
