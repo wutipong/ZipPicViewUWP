@@ -20,6 +20,8 @@ namespace ZipPicViewUWP
     internal class FileSystemMediaProvider : AbstractMediaProvider
     {
         private readonly StorageFolder folder;
+        private string[] folderEntries = null;
+        private string[][] fileEntries = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileSystemMediaProvider"/> class.
@@ -48,6 +50,12 @@ namespace ZipPicViewUWP
         /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
+            var folderIndex = Array.IndexOf(this.folderEntries, entry);
+            if (this.fileEntries[folderIndex] != null)
+            {
+                return (this.fileEntries[folderIndex], null);
+            }
+
             try
             {
                 var subFolder = (entry == this.Root) ? this.folder : await this.folder.GetFolderAsync(entry);
@@ -68,7 +76,8 @@ namespace ZipPicViewUWP
                     output.Add(path.Substring(startIndex));
                 }
 
-                return (output.ToArray(), null);
+                this.fileEntries[folderIndex] = output.ToArray();
+                return (this.fileEntries[folderIndex], null);
             }
             catch (Exception e)
             {
@@ -77,8 +86,25 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetFolderEntries()
+        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
+            var (results, _, error) = await this.OpenEntryAsync(entry);
+            if (error != null)
+            {
+                return (null, error);
+            }
+
+            return (results.AsRandomAccessStream(), null);
+        }
+
+        /// <inheritdoc/>
+        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        {
+            if (this.folderEntries != null)
+            {
+                return (this.folderEntries, null);
+            }
+
             try
             {
                 var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
@@ -99,24 +125,15 @@ namespace ZipPicViewUWP
                     output.Add(folder.Path.Substring(startIndex));
                 }
 
-                return (output.ToArray(), null);
+                this.folderEntries = output.ToArray();
+                this.fileEntries = new string[this.folderEntries.Length][];
+
+                return (this.folderEntries, null);
             }
             catch (Exception e)
             {
                 return (null, e);
             }
-        }
-
-        /// <inheritdoc/>
-        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
-        {
-            var (results, _, error) = await this.OpenEntryAsync(entry);
-            if (error != null)
-            {
-                return (null, error);
-            }
-
-            return (results.AsRandomAccessStream(), null);
         }
     }
 }

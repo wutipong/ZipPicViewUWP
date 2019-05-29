@@ -223,24 +223,6 @@ namespace ZipPicViewUWP
                 return errorFolder;
             }
 
-            var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
-
-            Array.Sort(folderEntries, (s1, s2) =>
-            {
-                if (s1 == provider.Root)
-                {
-                    return -1;
-                }
-                else if (s2 == provider.Root)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return comparer.Compare(s1, s2);
-                }
-            });
-
             FolderEntries = folderEntries;
             CurrentFolder = provider.Root;
             currentFolderEntries = null;

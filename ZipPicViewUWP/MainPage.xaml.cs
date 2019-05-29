@@ -568,15 +568,15 @@ namespace ZipPicViewUWP
         private async Task RebuildSubFolderList()
         {
             this.subFolderListCtrl.Items.Clear();
-            foreach (var f in MediaManager.FolderEntries)
+            foreach (var folder in MediaManager.FolderEntries)
             {
-                var folder = f;
+                var name = folder;
 
-                if (folder != MediaManager.Provider.Root)
+                if (name != MediaManager.Provider.Root)
                 {
-                    int count = folder.Count(c => c == MediaManager.Provider.Separator);
+                    int count = name.Count(c => c == MediaManager.Provider.Separator);
 
-                    folder = folder.Substring(folder.LastIndexOf(MediaManager.Provider.Separator) + 1);
+                    name = name.Substring(name.LastIndexOf(MediaManager.Provider.Separator) + 1);
 
                     var prefix = string.Empty;
                     for (int i = 0; i < count; i++)
@@ -584,13 +584,13 @@ namespace ZipPicViewUWP
                         prefix += "  ";
                     }
 
-                    folder = prefix + folder;
+                    name = prefix + name;
                 }
 
-                var item = new FolderListItem { Text = folder, Value = f };
+                var item = new FolderListItem { Text = name, Value = folder };
                 this.subFolderListCtrl.Items.Add(item);
 
-                var cover = await MediaManager.FindFolderThumbnailEntry(f);
+                var cover = await MediaManager.FindFolderThumbnailEntry(folder);
 
                 if (cover != null)
                 {

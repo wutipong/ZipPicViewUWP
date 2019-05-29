@@ -58,15 +58,6 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetFolderEntries()
-        {
-            return await Task.Run<(string[], Exception)>(() =>
-            {
-                return (new string[] { this.Root }, null);
-            });
-        }
-
-        /// <inheritdoc/>
         public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
         {
             var (irs, error) = await this.OpenEntryAsRandomAccessStreamAsync(entry);
@@ -120,6 +111,15 @@ namespace ZipPicViewUWP
         public override string GetParentEntry(string entry)
         {
             return this.Root;
+        }
+
+        /// <inheritdoc/>
+        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        {
+            return await Task.Run<(string[], Exception)>(() =>
+            {
+                return (new string[] { this.Root }, null);
+            });
         }
     }
 }

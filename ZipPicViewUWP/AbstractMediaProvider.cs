@@ -118,7 +118,35 @@ namespace ZipPicViewUWP
         /// Get the list of folder entries in this media provider.
         /// </summary>
         /// <returns>Folder entries.</returns>
-        public abstract Task<(string[], Exception error)> GetFolderEntries();
+        public async Task<(string[], Exception error)> GetFolderEntries()
+        {
+            var output = await this.DoGetFolderEntries();
+
+            if (output.error != null)
+            {
+                return output;
+            }
+
+            var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
+
+            Array.Sort(output.Item1, (s1, s2) =>
+            {
+                if (s1 == this.Root)
+                {
+                    return -1;
+                }
+                else if (s2 == this.Root)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return comparer.Compare(s1, s2);
+                }
+            });
+
+            return output;
+        }
 
         /// <summary>
         /// Read the entry and return as an <c>RandomAccessStream</c>.
@@ -133,5 +161,11 @@ namespace ZipPicViewUWP
         /// <param name="entry">entry to read from.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public abstract Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry);
+
+        /// <summary>
+        /// Get the list of folder entries in this media provider.
+        /// </summary>
+        /// <returns>Folder entries.</returns>
+        protected abstract Task<(string[], Exception error)> DoGetFolderEntries();
     }
 }
