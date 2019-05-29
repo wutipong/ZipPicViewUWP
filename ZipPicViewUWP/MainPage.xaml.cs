@@ -647,21 +647,17 @@ namespace ZipPicViewUWP
                     folder = prefix + folder;
                 }
 
-                var (children, error) = await MediaManager.Provider.GetChildEntries(f);
-                if (error != null)
-                {
-                    throw error;
-                }
-
                 var item = new FolderListItem { Text = folder, Value = f };
                 this.subFolderListCtrl.Items.Add(item);
 
-                var cover = MediaManager.Provider.FileFilter.FindCoverPage(children);
+                var cover = await MediaManager.FindFolderThumbnailEntry(f);
+
                 if (cover != null)
                 {
                     var t = this.UpdateFolderThumbnail(cover, item);
                 }
             }
+
             this.subFolderListCtrl.SelectedIndex = 0;
         }
 

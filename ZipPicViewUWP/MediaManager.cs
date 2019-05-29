@@ -182,12 +182,25 @@
                 index -= eligibleItems.Length;
             }
 
-            if(index < 0)
+            if (index < 0)
             {
                 index = 0;
             }
 
             CurrentEntry = eligibleItems[index];
+        }
+
+        public static async Task<string> FindFolderThumbnailEntry(string folder)
+        {
+            var (children, error) = await Provider.GetChildEntries(folder);
+            if (error != null)
+            {
+                throw error;
+            }
+
+            var cover = MediaManager.Provider.FileFilter.FindCoverPage(children);
+
+            return cover;
         }
 
         private static void CurrentFolderItemsChange(string[] items)
