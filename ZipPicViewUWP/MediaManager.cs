@@ -58,21 +58,6 @@ namespace ZipPicViewUWP
         public static string[] FolderEntries { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the auto advance operation flag is on.
-        /// </summary>
-        public static bool AutoAdvance { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether item will be advanced throughout the current media provider during auto-advance operation.
-        /// </summary>
-        public static bool AutoAdvanceLocally { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether or not item will be advanced randomly during auto-advance operation.
-        /// </summary>
-        public static bool AutoAdvanceRandomly { get; set; }
-
-        /// <summary>
         /// Gets the current media provider.
         /// </summary>
         public static AbstractMediaProvider Provider { get; private set; }
@@ -158,24 +143,19 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Advance the current entry.
         /// </summary>
-        /// <param name="step">step to advance, will be ignored if the AdvanceRandomly is true.</param>
-        public static void Advance(int step = 1)
+        /// <param name="current">Use items under current folder.</param>
+        /// <param name="random">Advance randomly.</param>
+        /// <param name="step">step to advance, will be ignored if the random is true.</param>
+        public static void Advance(bool current = true, bool random = false, int step = 1)
         {
             string[] eligibleItems;
 
-            if (AutoAdvance == true)
-            {
-                eligibleItems = AutoAdvanceLocally ? currentFolderEntries : FileEntries;
-            }
-            else
-            {
-                eligibleItems = currentFolderEntries;
-            }
+            eligibleItems = current ? currentFolderEntries : FileEntries;
 
             int index = Array.IndexOf(eligibleItems, CurrentEntry);
-            if (AutoAdvanceRandomly)
+            if (random)
             {
-                index += new Random().Next(eligibleItems.Length);
+                index += new Random(eligibleItems.Length).Next();
             }
             else
             {
@@ -212,11 +192,6 @@ namespace ZipPicViewUWP
             var cover = MediaManager.Provider.FileFilter.FindCoverPage(children);
 
             return cover;
-        }
-
-        private static void CurrentFolderItemsChange(string[] items)
-        {
-            CurrentEntry = items.Length != 0 ? items[0] : string.Empty;
         }
 
         private static Task<Exception> MediaManager_CurrentItemChange(string newvalue)

@@ -85,33 +85,8 @@ namespace ZipPicViewUWP
 
         private async Task AdvanceImage(int step)
         {
-            var (currentFolderFileEntries, _) = await MediaManager.GetCurrentFolderFileEntries();
-            var currentFileIndex = Array.IndexOf(currentFolderFileEntries, MediaManager.CurrentEntry);
-            if (currentFileIndex == -1)
-            {
-                MediaManager.CurrentFolder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
-                currentFileIndex = Array.IndexOf(currentFolderFileEntries, MediaManager.CurrentEntry);
-            }
-
-            if (currentFolderFileEntries.Length == 0)
-            {
-                return;
-            }
-
-            currentFileIndex += step;
-            while (currentFileIndex < 0 || currentFileIndex >= currentFolderFileEntries.Length)
-            {
-                if (currentFileIndex < 0)
-                {
-                    currentFileIndex += currentFolderFileEntries.Length;
-                }
-                else if (currentFileIndex >= currentFolderFileEntries.Length)
-                {
-                    currentFileIndex -= currentFolderFileEntries.Length;
-                }
-            }
-
-            await this.ChangeCurrentEntry(currentFolderFileEntries[currentFileIndex]);
+            MediaManager.Advance(true, false, step);
+            await this.ChangeCurrentEntry(MediaManager.CurrentEntry);
         }
 
         private async Task CreateThumbnails(string selected, AbstractMediaProvider provider)
@@ -363,36 +338,15 @@ namespace ZipPicViewUWP
 
         private async void ImageControlOnAutoAdvance(object sender)
         {
-            var entryList = MediaManager.FileEntries;
-            if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
-                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent)
-            {
-                MediaManager.CurrentFolder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
-                Exception error;
-                (entryList, error) = await MediaManager.GetCurrentFolderFileEntries();
-            }
+            bool current = this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
+                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent;
 
-            if (entryList.Length == 0)
-            {
-                return;
-            }
+            bool random = this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent ||
+                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomAll;
 
-            var entryIndex = Array.IndexOf(entryList, MediaManager.CurrentEntry);
-            int advance = 1;
-            if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent ||
-                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomAll)
-            {
-                advance = this.random.Next(entryList.Length);
-            }
+            MediaManager.Advance(current, random);
 
-            entryIndex += advance;
-
-            if (entryIndex >= entryList.Length)
-            {
-                entryIndex -= entryList.Length;
-            }
-
-            await this.ChangeCurrentEntry(entryList[entryIndex]);
+            await this.ChangeCurrentEntry(MediaManager.CurrentEntry);
         }
 
         private async void ImageControlPrevButtonClick(object sender, RoutedEventArgs e)
