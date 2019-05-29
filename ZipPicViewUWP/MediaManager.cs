@@ -162,7 +162,7 @@ namespace ZipPicViewUWP
             int index = Array.IndexOf(entries, CurrentEntry);
             if (random)
             {
-                index += new Random(entries.Length).Next();
+                index += new Random().Next(0, entries.Length);
             }
             else
             {

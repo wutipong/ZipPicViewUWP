@@ -338,11 +338,8 @@ namespace ZipPicViewUWP
 
         private async void ImageControlOnAutoAdvance(object sender)
         {
-            bool current = this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
-                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent;
-
-            bool random = this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent ||
-                this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomAll;
+            bool current = !this.imageControl.GlobalEnabled;
+            bool random = this.imageControl.RandomEnabled;
 
             MediaManager.Advance(current, random);
 

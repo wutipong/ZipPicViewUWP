@@ -69,12 +69,20 @@ namespace ZipPicViewUWP
                 applicationData.LocalSettings.Values["durationIndex"] = this.DurationList.SelectedIndex;
             };
 
-            applicationData.LocalSettings.Values.TryGetValue("autoAdvanceModeIndex", out var autoAdvanceModeIndex);
-            this.AutoAdvanceModeList.SelectedIndex = autoAdvanceModeIndex == null ? 0 : (int)autoAdvanceModeIndex;
+            applicationData.LocalSettings.Values.TryGetValue("randomAdvance", out var randomAdvance);
+            this.RandomToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
 
-            this.AutoAdvanceModeList.SelectionChanged += (_, __) =>
+            this.RandomToggle.Toggled += (_, __) =>
             {
-                applicationData.LocalSettings.Values["autoAdvanceModeIndex"] = this.AutoAdvanceModeList.SelectedIndex;
+                applicationData.LocalSettings.Values["randomAdvance"] = this.RandomToggle.IsOn;
+            };
+
+            applicationData.LocalSettings.Values.TryGetValue("globalAdvance", out var globalAdvance);
+            this.GlobalToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
+
+            this.GlobalToggle.Toggled += (_, __) =>
+            {
+                applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
             };
 
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
@@ -175,86 +183,30 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// PlayMode enumerator.
-        /// </summary>
-        public enum AutoAdvanceMode
-        {
-            /// <summary>
-            /// Loop item within the curent folder.
-            /// </summary>
-            LoopCurrent,
-
-            /// <summary>
-            /// Loop item from all folder
-            /// </summary>
-            LoopAll,
-
-            /// <summary>
-            /// Choose item randomly from current folder.
-            /// </summary>
-            RandomCurrent,
-
-            /// <summary>
-            /// Choose item randomly from all folders.
-            /// </summary>
-            RandomAll,
-        }
-
-        /// <summary>
-        /// Gets the current play mode.
-        /// </summary>
-        public AutoAdvanceMode CurrentAutoAdvanceMode
-        {
-            get
-            {
-                switch (this.AutoAdvanceModeList.SelectedIndex)
-                {
-                    case 0:
-                        return AutoAdvanceMode.LoopCurrent;
-
-                    case 1:
-                        return AutoAdvanceMode.LoopAll;
-
-                    case 2:
-                        return AutoAdvanceMode.RandomCurrent;
-
-                    case 3:
-                        return AutoAdvanceMode.RandomAll;
-                }
-
-                throw new InvalidOperationException();
-            }
-
-            private set
-            {
-                switch (value)
-                {
-                    case AutoAdvanceMode.LoopCurrent:
-                        this.AutoAdvanceModeList.SelectedIndex = 0;
-                        break;
-
-                    case AutoAdvanceMode.LoopAll:
-                        this.AutoAdvanceModeList.SelectedIndex = 1;
-                        break;
-
-                    case AutoAdvanceMode.RandomCurrent:
-                        this.AutoAdvanceModeList.SelectedIndex = 2;
-                        break;
-
-                    case AutoAdvanceMode.RandomAll:
-                        this.AutoAdvanceModeList.SelectedIndex = 3;
-                        break;
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets or sets whether or not auto advance is enabled.
         /// </summary>
         public bool? AutoEnabled
         {
             get { return this.AutoButton.IsChecked; }
             set { this.AutoButton.IsChecked = value; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not Auto Advance is randomly advanced.
+        /// </summary>
+        public bool RandomEnabled
+        {
+            get { return this.RandomToggle.IsOn; }
+            private set { this.RandomToggle.IsOn = value; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not Auto Advance is advanced to all folder.
+        /// </summary>
+        public bool GlobalEnabled
+        {
+            get { return this.GlobalToggle.IsOn; }
+            private set { this.GlobalToggle.IsOn = value; }
         }
 
         /// <summary>
