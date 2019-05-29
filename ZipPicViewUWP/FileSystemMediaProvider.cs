@@ -21,7 +21,7 @@ namespace ZipPicViewUWP
     {
         private readonly StorageFolder folder;
         private string[] folderEntries = null;
-        private Dictionary<string, string[]> fileEntries = new Dictionary<string, string[]>();
+        private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileSystemMediaProvider"/> class.
@@ -51,9 +51,9 @@ namespace ZipPicViewUWP
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
             var folderIndex = Array.IndexOf(this.folderEntries, entry);
-            if (this.fileEntries.ContainsKey(entry))
+            if (this.folderFileEntries.ContainsKey(entry))
             {
-                return (this.fileEntries[entry], null);
+                return (this.folderFileEntries[entry], null);
             }
 
             try
@@ -76,8 +76,8 @@ namespace ZipPicViewUWP
                     output.Add(path.Substring(startIndex));
                 }
 
-                this.fileEntries[entry] = output.ToArray();
-                return (this.fileEntries[entry], null);
+                this.folderFileEntries[entry] = output.ToArray();
+                return (this.folderFileEntries[entry], null);
             }
             catch (Exception e)
             {

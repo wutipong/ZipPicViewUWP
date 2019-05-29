@@ -21,6 +21,7 @@ namespace ZipPicViewUWP
     {
         private string[] fileList;
         private string[] folderList;
+        private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
 
         private Stream stream;
 
@@ -132,6 +133,11 @@ namespace ZipPicViewUWP
         {
             return Task.Run<(string[], Exception)>(() =>
             {
+                if (this.folderFileEntries.ContainsKey(entry))
+                {
+                    return (this.folderFileEntries[entry], null);
+                }
+
                 try
                 {
                     var entryLength = entry.Length;
@@ -157,7 +163,8 @@ namespace ZipPicViewUWP
                         }
                     }
 
-                    return (output.ToArray(), null);
+                    this.folderFileEntries[entry] = output.ToArray();
+                    return (this.folderFileEntries[entry], null);
                 }
                 catch (Exception e)
                 {
