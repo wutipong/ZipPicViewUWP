@@ -13,14 +13,14 @@ namespace ZipPicViewUWP
     /// </summary>
     public static class MediaManager
     {
-        private static string currentItem;
+        private static string currentEntry;
         private static string currentFolder;
         private static string[] currentFolderEntries = null;
 
         static MediaManager()
         {
             MediaProviderChange += MediaManager_MediaProviderChangeAsync;
-            CurrentItemChange += MediaManager_CurrentItemChange;
+            CurrentEntryChange += MediaManager_CurrentEntryChange;
             CurrentFolderChange += MediaManager_CurrentFolderChange;
         }
 
@@ -38,9 +38,9 @@ namespace ZipPicViewUWP
         public static event PropertyChangeHandler<AbstractMediaProvider> MediaProviderChange;
 
         /// <summary>
-        /// Current Item change event.
+        /// Current entry change event.
         /// </summary>
-        public static event PropertyChangeHandler<string> CurrentItemChange;
+        public static event PropertyChangeHandler<string> CurrentEntryChange;
 
         /// <summary>
         /// Current folder change event.
@@ -67,13 +67,13 @@ namespace ZipPicViewUWP
         /// </summary>
         public static string CurrentEntry
         {
-            get => currentItem;
+            get => currentEntry;
             set
             {
-                if (value != currentItem)
+                if (value != currentEntry)
                 {
-                    CurrentItemChange(value);
-                    currentItem = value;
+                    CurrentEntryChange(value);
+                    currentEntry = value;
                 }
             }
         }
@@ -102,13 +102,13 @@ namespace ZipPicViewUWP
         {
             if (currentFolderEntries == null)
             {
-                var (items, error) = await Provider.GetChildEntries(CurrentFolder);
+                var (entries, error) = await Provider.GetChildEntries(CurrentFolder);
                 if (error != null)
                 {
                     return (null, error);
                 }
 
-                currentFolderEntries = items;
+                currentFolderEntries = entries;
                 Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
             }
 
@@ -143,36 +143,36 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Advance the current entry.
         /// </summary>
-        /// <param name="current">Use items under current folder.</param>
+        /// <param name="current">Use entries under current folder.</param>
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
-        public static async void Advance(bool current = true, bool random = false, int step = 1)
+        public static async void Advance(bool current, bool random, int step = 1)
         {
-            string[] eligibleItems;
+            string[] entries;
 
             if (current)
             {
-                (eligibleItems, _) = await GetCurrentFolderFileEntries();
+                (entries, _) = await GetCurrentFolderFileEntries();
             }
             else
             {
-                eligibleItems = FileEntries;
+                entries = FileEntries;
             }
 
-            int index = Array.IndexOf(eligibleItems, CurrentEntry);
+            int index = Array.IndexOf(entries, CurrentEntry);
             if (random)
             {
-                index += new Random(eligibleItems.Length).Next();
+                index += new Random(entries.Length).Next();
             }
             else
             {
                 index += step;
             }
 
-            index += eligibleItems.Length;
-            while (index >= eligibleItems.Length)
+            index += entries.Length;
+            while (index >= entries.Length)
             {
-                index -= eligibleItems.Length;
+                index -= entries.Length;
             }
 
             if (index < 0)
@@ -180,7 +180,7 @@ namespace ZipPicViewUWP
                 index = 0;
             }
 
-            CurrentEntry = eligibleItems[index];
+            CurrentEntry = entries[index];
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace ZipPicViewUWP
             return cover;
         }
 
-        private static Task<Exception> MediaManager_CurrentItemChange(string newvalue)
+        private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)
         {
             CurrentFolder = Provider.GetParentEntry(newvalue);
             return null;
