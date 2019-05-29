@@ -14,7 +14,7 @@
         x:Key="ThumbnailNameBackground"
         Opacity="0.5"
         Color="{StaticResource PrimaryColor5}" />
-    <SolidColorBrush x:Key="FloatControlBackground" Color="#33000000" />
+    <SolidColorBrush x:Key="FloatControlBackground" Color="{ThemeResource SystemChromeMediumColor}" />
 
     <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource PrimaryColor3}" />
     <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource PrimaryColor3}" />
