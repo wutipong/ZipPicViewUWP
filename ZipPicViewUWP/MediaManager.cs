@@ -13,15 +13,15 @@ namespace ZipPicViewUWP
     /// </summary>
     public static class MediaManager
     {
-        private static AbstractMediaProvider provider;
         private static string currentItem;
         private static string currentFolder;
-        private static string[] currentFolderItems = null;
+        private static string[] currentFolderEntries = null;
 
         static MediaManager()
         {
             MediaProviderChange += MediaManager_MediaProviderChangeAsync;
             CurrentItemChange += MediaManager_CurrentItemChange;
+            CurrentFolderChange += MediaManager_CurrentFolderChange;
         }
 
         /// <summary>
@@ -75,10 +75,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the current media provider.
         /// </summary>
-        public static AbstractMediaProvider Provider
-        {
-            get => provider;
-        }
+        public static AbstractMediaProvider Provider { get; private set; }
 
         /// <summary>
         /// Gets or sets the current entry.
@@ -115,17 +112,22 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the files entries under the current folder.
         /// </summary>
-        public static string[] CurrentFolderEntries
+        /// <returns>A result <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task<(string[], Exception)> GetCurrentFolderFileEntries()
         {
-            get => currentFolderItems;
-            private set
+            if (currentFolderEntries == null)
             {
-                if (value != currentFolderItems)
+                var (items, error) = await Provider.GetChildEntries(CurrentFolder);
+                if (error != null)
                 {
-                    CurrentFolderItemsChange(value);
-                    currentFolderItems = value;
+                    return (null, error);
                 }
+
+                currentFolderEntries = items;
+                Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
             }
+
+            return (currentFolderEntries, null);
         }
 
         /// <summary>
@@ -135,7 +137,7 @@ namespace ZipPicViewUWP
         /// <returns>Exception when there're errors. Null otherwise.</returns>
         public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
         {
-            if (newProvider != provider)
+            if (newProvider != Provider)
             {
                 var error = await MediaProviderChange(newProvider);
                 if (error != null)
@@ -144,12 +146,12 @@ namespace ZipPicViewUWP
                 }
             }
 
-            if (provider != null)
+            if (Provider != null)
             {
-                provider.Dispose();
+                Provider.Dispose();
             }
 
-            provider = newProvider;
+            Provider = newProvider;
             return null;
         }
 
@@ -160,13 +162,14 @@ namespace ZipPicViewUWP
         public static void Advance(int step = 1)
         {
             string[] eligibleItems;
+
             if (AutoAdvance == true)
             {
-                eligibleItems = AutoAdvanceLocally ? CurrentFolderEntries : FileEntries;
+                eligibleItems = AutoAdvanceLocally ? currentFolderEntries : FileEntries;
             }
             else
             {
-                eligibleItems = CurrentFolderEntries;
+                eligibleItems = currentFolderEntries;
             }
 
             int index = Array.IndexOf(eligibleItems, CurrentEntry);
@@ -257,8 +260,15 @@ namespace ZipPicViewUWP
             });
 
             FolderEntries = folderEntries;
-
             CurrentFolder = provider.Root;
+            currentFolderEntries = null;
+
+            return null;
+        }
+
+        private static Task<Exception> MediaManager_CurrentFolderChange(string newvalue)
+        {
+            currentFolderEntries = null;
 
             return null;
         }

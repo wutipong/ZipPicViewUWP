@@ -10,7 +10,6 @@ namespace ZipPicViewUWP
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using NaturalSort.Extension;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
@@ -37,7 +36,6 @@ namespace ZipPicViewUWP
         private CancellationTokenSource cancellationTokenSource;
         private MediaElement clickSound;
         private DisplayRequest displayRequest;
-        private string[] currentFolderFileList;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
@@ -87,34 +85,33 @@ namespace ZipPicViewUWP
 
         private async Task AdvanceImage(int step)
         {
-            var currentFileIndex = Array.IndexOf(this.currentFolderFileList, MediaManager.CurrentEntry);
+            var (currentFolderFileEntries, _) = await MediaManager.GetCurrentFolderFileEntries();
+            var currentFileIndex = Array.IndexOf(currentFolderFileEntries, MediaManager.CurrentEntry);
             if (currentFileIndex == -1)
             {
-                var folder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
-                await this.RefreshCurrentFolderFileEntries(folder, MediaManager.Provider);
-
-                currentFileIndex = Array.IndexOf(this.currentFolderFileList, MediaManager.CurrentEntry);
+                MediaManager.CurrentFolder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
+                currentFileIndex = Array.IndexOf(currentFolderFileEntries, MediaManager.CurrentEntry);
             }
 
-            if (this.currentFolderFileList.Length == 0)
+            if (currentFolderFileEntries.Length == 0)
             {
                 return;
             }
 
             currentFileIndex += step;
-            while (currentFileIndex < 0 || currentFileIndex >= this.currentFolderFileList.Length)
+            while (currentFileIndex < 0 || currentFileIndex >= currentFolderFileEntries.Length)
             {
                 if (currentFileIndex < 0)
                 {
-                    currentFileIndex += this.currentFolderFileList.Length;
+                    currentFileIndex += currentFolderFileEntries.Length;
                 }
-                else if (currentFileIndex >= this.currentFolderFileList.Length)
+                else if (currentFileIndex >= currentFolderFileEntries.Length)
                 {
-                    currentFileIndex -= this.currentFolderFileList.Length;
+                    currentFileIndex -= currentFolderFileEntries.Length;
                 }
             }
 
-            await this.ChangeCurrentEntry(this.currentFolderFileList[currentFileIndex]);
+            await this.ChangeCurrentEntry(currentFolderFileEntries[currentFileIndex]);
         }
 
         private async Task CreateThumbnails(string selected, AbstractMediaProvider provider)
@@ -123,16 +120,18 @@ namespace ZipPicViewUWP
             var token = this.cancellationTokenSource.Token;
 
             this.thumbnailGrid.Items.Clear();
-            await this.RefreshCurrentFolderFileEntries(selected, provider);
 
+            MediaManager.CurrentFolder = selected;
+
+            var (currentFolderFileEntries, _) = await MediaManager.GetCurrentFolderFileEntries();
             try
             {
-                this.thumbProgress.Maximum = this.currentFolderFileList.Length;
-                Thumbnail[] thumbnails = new Thumbnail[this.currentFolderFileList.Length];
+                this.thumbProgress.Maximum = currentFolderFileEntries.Length;
+                Thumbnail[] thumbnails = new Thumbnail[currentFolderFileEntries.Length];
 
-                for (int i = 0; i < this.currentFolderFileList.Length; i++)
+                for (int i = 0; i < currentFolderFileEntries.Length; i++)
                 {
-                    var file = this.currentFolderFileList[i];
+                    var file = currentFolderFileEntries[i];
                     thumbnails[i] = new Thumbnail();
                     var thumbnail = thumbnails[i];
 
@@ -146,11 +145,11 @@ namespace ZipPicViewUWP
                     token.ThrowIfCancellationRequested();
                 }
 
-                for (int i = 0; i < this.currentFolderFileList.Length; i++)
+                for (int i = 0; i < currentFolderFileEntries.Length; i++)
                 {
-                    this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i + 1, this.currentFolderFileList.Length);
+                    this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i + 1, currentFolderFileEntries.Length);
                     this.thumbProgress.Value = i;
-                    await SetThumbnailImage(provider, this.currentFolderFileList[i], thumbnails[i], token);
+                    await SetThumbnailImage(provider, currentFolderFileEntries[i], thumbnails[i], token);
                 }
             }
             catch
@@ -159,19 +158,9 @@ namespace ZipPicViewUWP
             finally
             {
                 this.thumbProgressText.Text = "Idle";
-                this.thumbProgress.Value = this.currentFolderFileList.Length;
+                this.thumbProgress.Value = currentFolderFileEntries.Length;
                 this.cancellationTokenSource = null;
             }
-        }
-
-        private async Task RefreshCurrentFolderFileEntries(string folder, AbstractMediaProvider provider)
-        {
-            var results = await provider.GetChildEntries(folder);
-            MediaManager.CurrentFolder = folder;
-
-            this.currentFolderFileList = results.Item1;
-
-            Array.Sort(this.currentFolderFileList, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
         }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
@@ -378,8 +367,9 @@ namespace ZipPicViewUWP
             if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
                 this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent)
             {
-                await this.RefreshCurrentFolderFileEntries(MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry), MediaManager.Provider);
-                entryList = this.currentFolderFileList;
+                MediaManager.CurrentFolder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
+                Exception error;
+                (entryList, error) = await MediaManager.GetCurrentFolderFileEntries();
             }
 
             if (entryList.Length == 0)
