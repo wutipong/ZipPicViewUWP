@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="ImageHelper.cs" />
     <Compile Include="ImageSizeHelper.cs" />
+    <Compile Include="MediaManager.cs" />
     <Compile Include="PdfFileFIlter.cs" />
     <Compile Include="PdfMediaProvider.cs" />
     <Compile Include="PhysicalFileFilter.cs" />

@@ -36,15 +36,12 @@ namespace ZipPicViewUWP
         private readonly Random random = new Random();
         private CancellationTokenSource cancellationTokenSource;
         private MediaElement clickSound;
-        private string currentImageEntry;
         private DisplayRequest displayRequest;
         private string[] currentFolderFileList;
         private string[] fileEntries;
-        private string[] folderEntries;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
-        private AbstractMediaProvider provider;
         private Task thumbnailTask = null;
 
         /// <summary>
@@ -91,13 +88,13 @@ namespace ZipPicViewUWP
 
         private async Task AdvanceImage(int step)
         {
-            var currentFileIndex = Array.IndexOf(this.currentFolderFileList, this.currentImageEntry);
+            var currentFileIndex = Array.IndexOf(this.currentFolderFileList, MediaManager.CurrentEntry);
             if (currentFileIndex == -1)
             {
-                var folder = this.provider.GetParentEntry(this.currentImageEntry);
-                await this.RefreshCurrentFolderFileEntries(folder, this.provider);
+                var folder = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
+                await this.RefreshCurrentFolderFileEntries(folder, MediaManager.Provider);
 
-                currentFileIndex = Array.IndexOf(this.currentFolderFileList, this.currentImageEntry);
+                currentFileIndex = Array.IndexOf(this.currentFolderFileList, MediaManager.CurrentEntry);
             }
 
             if (this.currentFolderFileList.Length == 0)
@@ -171,6 +168,7 @@ namespace ZipPicViewUWP
         private async Task RefreshCurrentFolderFileEntries(string folder, AbstractMediaProvider provider)
         {
             var results = await provider.GetChildEntries(folder);
+            MediaManager.CurrentFolder = folder;
 
             this.currentFolderFileList = results.Item1;
 
@@ -334,17 +332,17 @@ namespace ZipPicViewUWP
             this.HideImageControl();
             this.ControlCloseBehavior.Value = 1.0;
 
-            var parent = this.provider.GetParentEntry(this.currentImageEntry);
-            var folderIndex = Array.IndexOf(this.folderEntries, parent);
+            var parent = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
+            var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
             this.subFolderListCtrl.SelectedIndex = folderIndex;
         }
 
         private async void ImageControlCopyButtonClick(object sender, RoutedEventArgs e)
         {
-            var (stream, error) = await this.provider.OpenEntryAsRandomAccessStreamAsync(this.currentImageEntry);
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
             if (error != null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", this.currentImageEntry), "Error");
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
                 await dialog.ShowAsync();
 
                 return;
@@ -362,7 +360,7 @@ namespace ZipPicViewUWP
             {
                 Clipboard.SetContent(dataPackage);
 
-                this.inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", this.currentImageEntry.ExtractFilename()), 1000);
+                this.inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", MediaManager.CurrentEntry.ExtractFilename()), 1000);
             }
             catch (Exception ex)
             {
@@ -377,11 +375,11 @@ namespace ZipPicViewUWP
 
         private async void ImageControlOnAutoAdvance(object sender)
         {
-            var entryList = this.fileEntries;
+            var entryList = MediaManager.FileEntries;
             if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.LoopCurrent ||
                 this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent)
             {
-                await this.RefreshCurrentFolderFileEntries(this.provider.GetParentEntry(this.currentImageEntry), this.provider);
+                await this.RefreshCurrentFolderFileEntries(MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry), MediaManager.Provider);
                 entryList = this.currentFolderFileList;
             }
 
@@ -390,7 +388,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var entryIndex = Array.IndexOf(entryList, this.currentImageEntry);
+            var entryIndex = Array.IndexOf(entryList, MediaManager.CurrentEntry);
             int advance = 1;
             if (this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomCurrent ||
                 this.imageControl.CurrentAutoAdvanceMode == ViewerControl.AutoAdvanceMode.RandomAll)
@@ -415,10 +413,10 @@ namespace ZipPicViewUWP
 
         private async void ImageControlPrintButtonClick(object sender, RoutedEventArgs e)
         {
-            var (stream, error) = await this.provider.OpenEntryAsRandomAccessStreamAsync(this.currentImageEntry);
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
             if (error != null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", this.currentImageEntry), "Error");
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
                 await dialog.ShowAsync();
 
                 return;
@@ -429,17 +427,17 @@ namespace ZipPicViewUWP
 
             this.printHelper.BitmapImage = output;
 
-            await this.printHelper.ShowPrintUIAsync("ZipPicView - " + this.currentImageEntry.ExtractFilename());
+            await this.printHelper.ShowPrintUIAsync("ZipPicView - " + MediaManager.CurrentEntry.ExtractFilename());
         }
 
         private async void ImageControlSaveButtonClick(object sender, RoutedEventArgs e)
         {
-            var filename = this.currentImageEntry;
-            var (stream, suggestedFileName, error) = await this.provider.OpenEntryAsync(filename);
+            var filename = MediaManager.CurrentEntry;
+            var (stream, suggestedFileName, error) = await MediaManager.Provider.OpenEntryAsync(filename);
 
             if (error != null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", this.currentImageEntry), "Error");
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
                 await dialog.ShowAsync();
 
                 return;
@@ -629,32 +627,16 @@ namespace ZipPicViewUWP
 
         private async Task RebuildSubFolderList()
         {
-            var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
-            Array.Sort(this.folderEntries, (s1, s2) =>
-            {
-                if (s1 == this.provider.Root)
-                {
-                    return -1;
-                }
-                else if (s2 == this.provider.Root)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return comparer.Compare(s1, s2);
-                }
-            });
-
-            foreach (var f in this.folderEntries)
+            this.subFolderListCtrl.Items.Clear();
+            foreach (var f in MediaManager.FolderEntries)
             {
                 var folder = f;
 
-                if (folder != this.provider.Root)
+                if (folder != MediaManager.Provider.Root)
                 {
-                    int count = folder.Count(c => c == this.provider.Separator);
+                    int count = folder.Count(c => c == MediaManager.Provider.Separator);
 
-                    folder = folder.Substring(folder.LastIndexOf(this.provider.Separator) + 1);
+                    folder = folder.Substring(folder.LastIndexOf(MediaManager.Provider.Separator) + 1);
 
                     var prefix = string.Empty;
                     for (int i = 0; i < count; i++)
@@ -665,7 +647,7 @@ namespace ZipPicViewUWP
                     folder = prefix + folder;
                 }
 
-                var (children, error) = await this.provider.GetChildEntries(f);
+                var (children, error) = await MediaManager.Provider.GetChildEntries(f);
                 if (error != null)
                 {
                     throw error;
@@ -674,17 +656,18 @@ namespace ZipPicViewUWP
                 var item = new FolderListItem { Text = folder, Value = f };
                 this.subFolderListCtrl.Items.Add(item);
 
-                var cover = this.provider.FileFilter.FindCoverPage(children);
+                var cover = MediaManager.Provider.FileFilter.FindCoverPage(children);
                 if (cover != null)
                 {
                     var t = this.UpdateFolderThumbnail(cover, item);
                 }
             }
+            this.subFolderListCtrl.SelectedIndex = 0;
         }
 
         private async Task ChangeCurrentEntry(string file, bool withDelay = true)
         {
-            this.currentImageEntry = file;
+            MediaManager.CurrentEntry = file;
             var delayTask = Task.Delay(withDelay ? 250 : 0);
 
             uint width = (uint)this.displayPanel.RenderSize.Width;
@@ -692,7 +675,7 @@ namespace ZipPicViewUWP
 
             var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
             {
-                var (stream, error) = await this.provider.OpenEntryAsRandomAccessStreamAsync(file);
+                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(file);
                 if (error != null)
                 {
                     stream = await GetErrorImageStream();
@@ -730,7 +713,7 @@ namespace ZipPicViewUWP
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
-            var (stream, error) = await this.provider.OpenEntryAsRandomAccessStreamAsync(entry);
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
 
             if (error != null)
             {
@@ -751,25 +734,13 @@ namespace ZipPicViewUWP
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
             var waitTask = Task.Delay(1000);
 
-            if (this.provider != null)
+            if (MediaManager.Provider != null)
             {
-                this.provider.Dispose();
+                MediaManager.Provider.Dispose();
             }
 
-            this.provider = provider;
-
-            this.subFolderListCtrl.Items.Clear();
-            var (list, error) = await provider.GetFolderEntries();
-
-            if (error != null)
-            {
-                dialog.Hide();
-                return error;
-            }
-
-            this.folderEntries = list;
-
-            (this.fileEntries, error) = await provider.GetAllFileEntries();
+            Exception error;
+            error = await MediaManager.SetProvider(provider);
             if (error != null)
             {
                 dialog.Hide();
@@ -778,7 +749,6 @@ namespace ZipPicViewUWP
 
             await this.RebuildSubFolderList();
 
-            this.subFolderListCtrl.SelectedIndex = 0;
             this.HideImageControl();
             this.IsEnabled = true;
 
@@ -811,7 +781,6 @@ namespace ZipPicViewUWP
             }
 
             var selected = ((FolderListItem)e.AddedItems.First()).Value;
-            var provider = this.provider;
 
             if (this.cancellationTokenSource != null)
             {
@@ -823,7 +792,7 @@ namespace ZipPicViewUWP
                 await this.thumbnailTask;
             }
 
-            this.thumbnailTask = this.CreateThumbnails(selected, provider);
+            this.thumbnailTask = this.CreateThumbnails(selected, MediaManager.Provider);
         }
 
         private async void ThumbnailClick(object sender, RoutedEventArgs e)
