@@ -38,7 +38,6 @@ namespace ZipPicViewUWP
         private MediaElement clickSound;
         private DisplayRequest displayRequest;
         private string[] currentFolderFileList;
-        private string[] fileEntries;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
@@ -730,13 +729,8 @@ namespace ZipPicViewUWP
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
             var waitTask = Task.Delay(1000);
 
-            if (MediaManager.Provider != null)
-            {
-                MediaManager.Provider.Dispose();
-            }
-
             Exception error;
-            error = await MediaManager.SetProvider(provider);
+            error = await MediaManager.ChangeProvider(provider);
             if (error != null)
             {
                 dialog.Hide();

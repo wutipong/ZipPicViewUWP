@@ -106,7 +106,7 @@ namespace ZipPicViewUWP
             {
                 if (value != currentFolder)
                 {
-                    CurrentFolderChange(value);
+                    CurrentFolderChange?.Invoke(value);
                     currentFolder = value;
                 }
             }
@@ -129,19 +129,24 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// Set the media provider.
+        /// Change the media provider.
         /// </summary>
         /// <param name="newProvider">the new media provider.</param>
         /// <returns>Exception when there're errors. Null otherwise.</returns>
-        public static async Task<Exception> SetProvider(AbstractMediaProvider newProvider)
+        public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
         {
             if (newProvider != provider)
             {
-                var error = await MediaProviderChange(provider);
+                var error = await MediaProviderChange(newProvider);
                 if (error != null)
                 {
                     return error;
                 }
+            }
+
+            if (provider != null)
+            {
+                provider.Dispose();
             }
 
             provider = newProvider;
