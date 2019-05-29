@@ -295,7 +295,7 @@ namespace ZipPicViewUWP
             this.HideImageControl();
             this.ControlCloseBehavior.Value = 1.0;
 
-            var parent = MediaManager.Provider.GetParentEntry(MediaManager.CurrentEntry);
+            var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
             this.subFolderListCtrl.SelectedIndex = folderIndex;
         }

@@ -146,11 +146,18 @@ namespace ZipPicViewUWP
         /// <param name="current">Use items under current folder.</param>
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
-        public static void Advance(bool current = true, bool random = false, int step = 1)
+        public static async void Advance(bool current = true, bool random = false, int step = 1)
         {
             string[] eligibleItems;
 
-            eligibleItems = current ? currentFolderEntries : FileEntries;
+            if (current)
+            {
+                (eligibleItems, _) = await GetCurrentFolderFileEntries();
+            }
+            else
+            {
+                eligibleItems = FileEntries;
+            }
 
             int index = Array.IndexOf(eligibleItems, CurrentEntry);
             if (random)
@@ -189,7 +196,7 @@ namespace ZipPicViewUWP
                 throw error;
             }
 
-            var cover = MediaManager.Provider.FileFilter.FindCoverPage(children);
+            var cover = Provider.FileFilter.FindCoverPage(children);
 
             return cover;
         }
