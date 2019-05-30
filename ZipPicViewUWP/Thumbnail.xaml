@@ -5,12 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <Grid>
     <Button
         x:Name="button"
         HorizontalAlignment="Stretch"
         VerticalAlignment="Stretch"
         HorizontalContentAlignment="Stretch"
-        VerticalContentAlignment="Stretch">
+        VerticalContentAlignment="Stretch"
+        Visibility="Collapsed">
         <RelativePanel>
             <Image
                 x:Name="image"
@@ -39,8 +41,10 @@
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True">
-                <TextBlock x:Name="label" Padding="2,2,2,2" />
+                
             </Grid>
         </RelativePanel>
     </Button>
+        <TextBlock x:Name="label" Padding="2,2,2,2" />
+    </Grid>
 </UserControl>

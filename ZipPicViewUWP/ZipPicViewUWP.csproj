@@ -142,6 +142,9 @@
     <Compile Include="Thumbnail.xaml.cs">
       <DependentUpon>Thumbnail.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ThumbnailPage.xaml.cs">
+      <DependentUpon>ThumbnailPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewerControl.xaml.cs">
       <DependentUpon>ViewerControl.xaml</DependentUpon>
     </Compile>
@@ -252,6 +255,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Thumbnail.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ThumbnailPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

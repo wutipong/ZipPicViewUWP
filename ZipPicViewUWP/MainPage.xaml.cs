@@ -40,6 +40,7 @@ namespace ZipPicViewUWP
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
         private Task thumbnailTask = null;
+        private ThumbnailPage[] thumbnailPages;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -568,8 +569,11 @@ namespace ZipPicViewUWP
         private async Task RebuildSubFolderList()
         {
             this.subFolderListCtrl.Items.Clear();
-            foreach (var folder in MediaManager.FolderEntries)
+            this.thumbnailPages = new ThumbnailPage[MediaManager.FolderEntries.Length];
+
+            for (int i = 0; i < MediaManager.FolderEntries.Length; i++)
             {
+                var folder = MediaManager.FolderEntries[i];
                 var name = folder;
 
                 if (name != MediaManager.Provider.Root)
@@ -579,7 +583,7 @@ namespace ZipPicViewUWP
                     name = name.Substring(name.LastIndexOf(MediaManager.Provider.Separator) + 1);
 
                     var prefix = string.Empty;
-                    for (int i = 0; i < count; i++)
+                    for (int s = 0; s < count; s++)
                     {
                         prefix += "  ";
                     }
@@ -596,9 +600,30 @@ namespace ZipPicViewUWP
                 {
                     var t = this.UpdateFolderThumbnail(cover, item);
                 }
+
+                this.thumbnailPages[i] = new ThumbnailPage();
+                var (entries, _) = await MediaManager.Provider.GetChildEntries(folder);
+                this.thumbnailPages[i].SetEntries(entries);
+                this.thumbnailPages[i].ItemClicked += ThumbnailPage_ItemClicked;
             }
 
             this.subFolderListCtrl.SelectedIndex = 0;
+        }
+
+        private async void ThumbnailPage_ItemClicked(object source, string entry)
+        {
+            this.BlurBehavior.Value = 10;
+            this.BlurBehavior.StartAnimation();
+            this.imageControl.Visibility = Visibility.Visible;
+            this.viewerPanel.Visibility = Visibility.Visible;
+
+            await this.ChangeCurrentEntry(MediaManager.CurrentEntry, false);
+
+            if (this.viewerPanel.Visibility == Visibility.Visible)
+            {
+                this.thumbnailGrid.IsEnabled = false;
+                this.splitView.IsEnabled = false;
+            }
         }
 
         private async Task ChangeCurrentEntry(string file, bool withDelay = true)
@@ -724,6 +749,7 @@ namespace ZipPicViewUWP
             }
 
             this.thumbnailTask = this.CreateThumbnails(selected, MediaManager.Provider);
+            this.ThumbnailBorder.Child = this.thumbnailPages[this.subFolderListCtrl.SelectedIndex];
         }
 
         private async void ThumbnailClick(object sender, RoutedEventArgs e)

@@ -32,10 +32,15 @@
                 OpenPaneLength="300"
                 PanePlacement="Left">
                 <SplitView.Content>
-                    <controls:AdaptiveGridView
+                    <Grid>
+                        <Border Name="ThumbnailBorder" />
+                        <controls:AdaptiveGridView
                         x:Name="thumbnailGrid"
                         DesiredWidth="250"
-                        ItemHeight="200" />
+                        ItemHeight="200" 
+                        Visibility="Collapsed"/>
+                    </Grid>
+                    
                 </SplitView.Content>
                 <SplitView.Pane>
                     <Grid Background="{StaticResource SidebarBackground}">

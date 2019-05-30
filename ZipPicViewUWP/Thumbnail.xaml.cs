@@ -48,7 +48,7 @@ namespace ZipPicViewUWP
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.Click(this, e);
+            this.Click?.Invoke(this, e);
         }
     }
 }
