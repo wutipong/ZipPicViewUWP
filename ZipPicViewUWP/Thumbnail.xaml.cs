@@ -21,6 +21,14 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Show the thumbnail Image.
+        /// </summary>
+        public void ShowImage()
+        {
+            this.ThumbnailShowStoryBoard.Begin();
+        }
+
+        /// <summary>
         /// Event handler that will be called when the control is clicked.
         /// </summary>
         public event RoutedEventHandler Click;

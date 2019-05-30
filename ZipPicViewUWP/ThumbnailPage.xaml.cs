@@ -171,6 +171,7 @@
 
                     thumbnail.Image.Source = source;
                     thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
+                    thumbnail.ShowImage();
                 }
 
                 this.ThumbnailItemLoading?.Invoke(this, this.Thumbnails.Length, this.Thumbnails.Length);
