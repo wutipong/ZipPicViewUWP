@@ -530,7 +530,7 @@ namespace ZipPicViewUWP
                 }
 
                 this.thumbnailPages[i] = new ThumbnailPage();
-                this.thumbnailPages[i].SetFolderEntry(folder);
+                await this.thumbnailPages[i].SetFolderEntry(folder);
                 this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
 

@@ -78,7 +78,7 @@
         /// Set the current folder entry to display thumbnail.
         /// </summary>
         /// <param name="folder">Entries to display.</param>
-        public async void SetFolderEntry(string folder)
+        public async Task SetFolderEntry(string folder)
         {
             var (entries, error) = await MediaManager.Provider.GetChildEntries(folder);
             if (error != null)
