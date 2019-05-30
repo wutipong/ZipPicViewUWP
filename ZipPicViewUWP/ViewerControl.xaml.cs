@@ -275,11 +275,11 @@ namespace ZipPicViewUWP
             {
                 Clipboard.SetContent(dataPackage);
 
-                // this.inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", MediaManager.CurrentEntry.ExtractFilename()), 1000);
+                this.Notification.Show(string.Format("The image {0} has been copied to the clipboard.", MediaManager.CurrentEntry.ExtractFilename()), 1000);
             }
             catch (Exception ex)
             {
-                // this.inAppNotification.Show(ex.Message, 5000);
+                this.Notification.Show(ex.Message, 5000);
             }
         }
 
