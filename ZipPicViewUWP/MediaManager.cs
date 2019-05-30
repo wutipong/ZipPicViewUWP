@@ -7,6 +7,8 @@ namespace ZipPicViewUWP
     using System;
     using System.Threading.Tasks;
     using NaturalSort.Extension;
+    using Windows.ApplicationModel;
+    using Windows.Storage.Streams;
 
     /// <summary>
     /// MediaManager contains variuos functions to interact with the MediaProvider.
@@ -199,6 +201,16 @@ namespace ZipPicViewUWP
             var cover = Provider.FileFilter.FindCoverPage(children);
 
             return cover;
+        }
+
+        /// <summary>
+        /// Create an image for error.
+        /// </summary>
+        /// <returns>Task for creating image error stream.</returns>
+        public static async Task<IRandomAccessStream> CreateErrorImageStream()
+        {
+            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
+            return await file.OpenReadAsync();
         }
 
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)

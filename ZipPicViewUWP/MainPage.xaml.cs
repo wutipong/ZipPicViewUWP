@@ -49,12 +49,6 @@ namespace ZipPicViewUWP
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
         }
 
-        private static async Task<IRandomAccessStream> GetErrorImageStream()
-        {
-            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
-            return await file.OpenReadAsync();
-        }
-
         private async void AboutButtonClick(object sender, RoutedEventArgs e)
         {
             AboutDialog dialog = new AboutDialog();
@@ -565,7 +559,7 @@ namespace ZipPicViewUWP
                 var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(file);
                 if (error != null)
                 {
-                    stream = await GetErrorImageStream();
+                    stream = await MediaManager.CreateErrorImageStream();
                 }
 
                 var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -604,7 +598,7 @@ namespace ZipPicViewUWP
 
             if (error != null)
             {
-                stream = await GetErrorImageStream();
+                stream = await MediaManager.CreateErrorImageStream();
             }
 
             var decoder = await BitmapDecoder.CreateAsync(stream);

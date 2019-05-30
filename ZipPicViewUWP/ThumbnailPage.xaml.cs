@@ -1,25 +1,13 @@
 ﻿namespace ZipPicViewUWP
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Threading;
     using System.Threading.Tasks;
-    using Windows.ApplicationModel;
-    using Windows.Foundation;
-    using Windows.Foundation.Collections;
     using Windows.Graphics.Imaging;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Data;
-    using Windows.UI.Xaml.Input;
-    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
-    using Windows.UI.Xaml.Navigation;
     using ZipPicViewUWP.Utility;
 
     /// <summary>
@@ -111,7 +99,7 @@
                 (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(cover);
                 if (error != null)
                 {
-                    stream = await GetErrorImageStream();
+                    stream = await MediaManager.CreateErrorImageStream();
                 }
 
                 var decoder = await BitmapDecoder.CreateAsync(stream);
@@ -156,7 +144,7 @@
                     var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.UserData);
                     if (error != null)
                     {
-                        stream = await GetErrorImageStream();
+                        stream = await MediaManager.CreateErrorImageStream();
                     }
 
                     this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
@@ -179,12 +167,6 @@
             catch (Exception)
             {
             }
-        }
-
-        private static async Task<IRandomAccessStream> GetErrorImageStream()
-        {
-            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
-            return await file.OpenReadAsync();
         }
 
         private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
