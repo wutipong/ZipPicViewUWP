@@ -664,6 +664,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
+            this.ThumbnailBorder.Opacity = 0;
             var selected = ((FolderListItem)e.AddedItems.First()).Value;
 
             foreach (var removed in e.RemovedItems)
@@ -671,6 +672,8 @@ namespace ZipPicViewUWP
                 int index = Array.IndexOf(this.subFolderListCtrl.Items.ToArray(), removed);
                 this.thumbnailPages[index].CancellationToken?.Cancel();
             }
+
+            this.ThumbnailBorderOpenStoryboard.Begin();
 
             this.ThumbnailBorder.Child = this.thumbnailPages[this.subFolderListCtrl.SelectedIndex];
             await this.thumbnailPages[this.subFolderListCtrl.SelectedIndex].ResumeLoadThumbnail();

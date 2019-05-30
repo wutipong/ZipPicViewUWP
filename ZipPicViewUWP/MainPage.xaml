@@ -13,6 +13,18 @@
     Loaded="PageLoaded"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="ThumbnailBorderOpenStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="-50" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
     <RelativePanel
         x:Name="displayPanel"
         AllowDrop="True"
@@ -33,7 +45,11 @@
                 PanePlacement="Left">
                 <SplitView.Content>
                     <Grid>
-                        <Border Name="ThumbnailBorder" />
+                        <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <CompositeTransform />
+                            </Border.RenderTransform>
+                        </Border>
                     </Grid>
                 </SplitView.Content>
                 <SplitView.Pane>
