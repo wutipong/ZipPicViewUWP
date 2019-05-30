@@ -123,8 +123,6 @@ namespace ZipPicViewUWP
 
                 for (int i = 0; i < currentFolderFileEntries.Length; i++)
                 {
-                    this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", i + 1, currentFolderFileEntries.Length);
-                    this.thumbProgress.Value = i;
                     await SetThumbnailImage(provider, currentFolderFileEntries[i], thumbnails[i], token);
                 }
             }
@@ -133,8 +131,6 @@ namespace ZipPicViewUWP
             }
             finally
             {
-                this.thumbProgressText.Text = "Idle";
-                this.thumbProgress.Value = currentFolderFileEntries.Length;
                 this.cancellationTokenSource = null;
             }
         }
@@ -604,10 +600,25 @@ namespace ZipPicViewUWP
                 this.thumbnailPages[i] = new ThumbnailPage();
                 var (entries, _) = await MediaManager.Provider.GetChildEntries(folder);
                 this.thumbnailPages[i].SetEntries(entries);
-                this.thumbnailPages[i].ItemClicked += ThumbnailPage_ItemClicked;
+                this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
+                this.thumbnailPages[i].ThumbnailItemLoading += this.ThumbnailPage_ThumbnailItemLoading;
             }
 
             this.subFolderListCtrl.SelectedIndex = 0;
+        }
+
+        private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
+        {
+            this.thumbProgress.Value = count;
+            this.thumbProgress.Value = current;
+            if (current == count)
+            {
+                this.thumbProgressText.Text = "Idle";
+            }
+            else
+            {
+                this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", current, count);
+            }
         }
 
         private async void ThumbnailPage_ItemClicked(object source, string entry)
@@ -748,8 +759,15 @@ namespace ZipPicViewUWP
                 await this.thumbnailTask;
             }
 
+            foreach (var removed in e.RemovedItems)
+            {
+                int index = Array.IndexOf(this.subFolderListCtrl.Items.ToArray(), removed);
+                this.thumbnailPages[index].CancellationToken?.Cancel();
+            }
+
             this.thumbnailTask = this.CreateThumbnails(selected, MediaManager.Provider);
             this.ThumbnailBorder.Child = this.thumbnailPages[this.subFolderListCtrl.SelectedIndex];
+            await this.thumbnailPages[this.subFolderListCtrl.SelectedIndex].ResumeLoadThumbnail();
         }
 
         private async void ThumbnailClick(object sender, RoutedEventArgs e)

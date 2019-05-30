@@ -18,7 +18,6 @@ namespace ZipPicViewUWP
         public Thumbnail()
         {
             this.InitializeComponent();
-            this.button.Click += this.Button_Click;
         }
 
         /// <summary>
@@ -45,10 +44,5 @@ namespace ZipPicViewUWP
         /// Gets or sets the custom user data assciated with the thumbnail.
         /// </summary>
         public string UserData { get; set; }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            this.Click?.Invoke(this, e);
-        }
     }
 }

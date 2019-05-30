@@ -6,14 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
     <Grid>
-    <Button
-        x:Name="button"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Stretch"
-        HorizontalContentAlignment="Stretch"
-        VerticalContentAlignment="Stretch"
-        Visibility="Collapsed">
-        <RelativePanel>
+        <RelativePanel         
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
             <Image
                 x:Name="image"
                 HorizontalAlignment="Center"
@@ -37,14 +32,13 @@
                 RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.AlignVerticalCenterWithPanel="True" />
             <Grid
-                Background="{StaticResource ThumbnailNameBackground}"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True">
-                
+                    Background="{StaticResource ThumbnailNameBackground}"
+                    RelativePanel.AlignBottomWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.AlignRightWithPanel="True">
+                <TextBlock x:Name="label" Padding="2,2,2,2" />
             </Grid>
         </RelativePanel>
-    </Button>
-        <TextBlock x:Name="label" Padding="2,2,2,2" />
+
     </Grid>
 </UserControl>
