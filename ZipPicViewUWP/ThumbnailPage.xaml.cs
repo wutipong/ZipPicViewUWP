@@ -33,6 +33,7 @@
         public ThumbnailPage()
         {
             this.InitializeComponent();
+            this.ThumbnailItemLoading += this.ThumbnailPage_ThumbnailItemLoading;
         }
 
         /// <summary>
@@ -74,11 +75,20 @@
         public CancellationTokenSource CancellationToken { get; private set; }
 
         /// <summary>
-        /// Set the entries to display thumbnail.
+        /// Set the current folder entry to display thumbnail.
         /// </summary>
-        /// <param name="entries">Entries to display.</param>
-        public void SetEntries(string[] entries)
+        /// <param name="folder">Entries to display.</param>
+        public async void SetFolderEntry(string folder)
         {
+            var (entries, error) = await MediaManager.Provider.GetChildEntries(folder);
+            if (error != null)
+            {
+                throw error;
+            }
+
+            this.FolderName.Text = (folder == MediaManager.Provider.Root) ? "<Root>" : folder.ExtractFilename();
+            this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
+
             this.Thumbnails = new Thumbnail[entries.Length];
             this.ThumbnailGrid.Items.Clear();
 
@@ -92,6 +102,25 @@
 
                 this.Thumbnails[i] = thumbnail;
                 this.ThumbnailGrid.Items.Add(thumbnail);
+            }
+
+            var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
+            if (cover != null && cover != string.Empty)
+            {
+                IRandomAccessStream stream;
+                (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(cover);
+                if (error != null)
+                {
+                    stream = await GetErrorImageStream();
+                }
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+
+                var source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(bitmap);
+
+                this.CoverImage.Source = source;
             }
         }
 
@@ -148,7 +177,6 @@
             }
             catch (Exception)
             {
-
             }
         }
 
@@ -156,6 +184,21 @@
         {
             var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
             return await file.OpenReadAsync();
+        }
+
+        private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
+        {
+            this.Progress.Maximum = count;
+            this.Progress.Value = current;
+
+            if (current == count)
+            {
+                this.ProgressBorder.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current, count);
+            }
         }
     }
 }

@@ -530,27 +530,11 @@ namespace ZipPicViewUWP
                 }
 
                 this.thumbnailPages[i] = new ThumbnailPage();
-                var (entries, _) = await MediaManager.Provider.GetChildEntries(folder);
-                this.thumbnailPages[i].SetEntries(entries);
+                this.thumbnailPages[i].SetFolderEntry(folder);
                 this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
-                this.thumbnailPages[i].ThumbnailItemLoading += this.ThumbnailPage_ThumbnailItemLoading;
             }
 
             this.subFolderListCtrl.SelectedIndex = 0;
-        }
-
-        private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
-        {
-            this.thumbProgress.Value = count;
-            this.thumbProgress.Value = current;
-            if (current == count)
-            {
-                this.thumbProgressText.Text = "Idle";
-            }
-            else
-            {
-                this.thumbProgressText.Text = string.Format("Loading Thumbnails {0}/{1}", current, count);
-            }
         }
 
         private async void ThumbnailPage_ItemClicked(object source, string entry)
@@ -564,7 +548,6 @@ namespace ZipPicViewUWP
 
             if (this.viewerPanel.Visibility == Visibility.Visible)
             {
-                //this.ThumbnailBorder.IsEnabled = false;
                 this.splitView.IsEnabled = false;
             }
         }
@@ -634,6 +617,8 @@ namespace ZipPicViewUWP
 
         private async Task<Exception> ChangeMediaProvider(AbstractMediaProvider provider)
         {
+            this.thumbnailPages?[this.subFolderListCtrl.SelectedIndex].CancellationToken.Cancel();
+
             FolderReadingDialog dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
             var waitTask = Task.Delay(1000);

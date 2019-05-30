@@ -35,7 +35,6 @@
                     <Grid>
                         <Border Name="ThumbnailBorder" />
                     </Grid>
-                    
                 </SplitView.Content>
                 <SplitView.Pane>
                     <Grid Background="{StaticResource SidebarBackground}">
@@ -62,23 +61,6 @@
                                 DataFetchSize="2"
                                 SelectionChanged="SubFolderListSelectionChanged" />
                         </ScrollViewer>
-                        <StackPanel
-                            Grid.Row="2"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <controls:RadialProgressBar
-                                x:Name="thumbProgress"
-                                Width="30"
-                                Height="30"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center" />
-                            <TextBlock
-                                x:Name="thumbProgressText"
-                                Margin="10,10,10,10"
-                                VerticalAlignment="Bottom"
-                                Text="Idle" />
-                        </StackPanel>
                     </Grid>
                 </SplitView.Pane>
             </SplitView>
