@@ -21,11 +21,6 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// Event handler that will be called when the control is clicked.
-        /// </summary>
-        public event RoutedEventHandler Click;
-
-        /// <summary>
         /// Gets the thumbnail image.
         /// </summary>
         public Image Image => this.image;

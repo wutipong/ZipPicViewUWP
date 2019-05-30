@@ -37,7 +37,6 @@ namespace ZipPicViewUWP
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
-        private Task thumbnailTask = null;
         private ThumbnailPage[] thumbnailPages;
 
         /// <summary>
@@ -200,7 +199,6 @@ namespace ZipPicViewUWP
             this.imageControl.Visibility = Visibility.Collapsed;
             this.hiddenImageControl.Visibility = Visibility.Collapsed;
             this.viewerPanel.Visibility = Visibility.Collapsed;
-            // this.ThumbnailBorder.Child.IsEnabled = true;
             this.imageControl.AutoEnabled = false;
             this.splitView.IsEnabled = true;
 
@@ -564,7 +562,6 @@ namespace ZipPicViewUWP
 
             if (this.viewerPanel.Visibility == Visibility.Visible)
             {
-                //this.ThumbnailBorder.IsEnabled = false;
                 this.splitView.IsEnabled = false;
             }
         }

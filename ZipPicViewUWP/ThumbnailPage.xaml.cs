@@ -1,25 +1,18 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="ThumbnailPage.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
-    using Windows.Foundation;
-    using Windows.Foundation.Collections;
     using Windows.Graphics.Imaging;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Controls.Primitives;
-    using Windows.UI.Xaml.Data;
-    using Windows.UI.Xaml.Input;
-    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
-    using Windows.UI.Xaml.Navigation;
     using ZipPicViewUWP.Utility;
 
     /// <summary>
@@ -95,20 +88,10 @@
             }
         }
 
-        private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var thumbnail = e.ClickedItem as Thumbnail;
-            var entry = thumbnail.UserData;
-
-            MediaManager.CurrentEntry = entry;
-
-            this.ItemClicked?.Invoke(this, entry);
-        }
-
         /// <summary>
         /// Resume the thumbnail loading operation.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Nothing.</returns>
         public async Task ResumeLoadThumbnail()
         {
             this.CancellationToken = new CancellationTokenSource();
@@ -146,16 +129,27 @@
 
                 this.ThumbnailItemLoading?.Invoke(this, this.Thumbnails.Length, this.Thumbnails.Length);
             }
-            catch (Exception)
+            finally
             {
 
             }
+
         }
 
         private static async Task<IRandomAccessStream> GetErrorImageStream()
         {
             var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
             return await file.OpenReadAsync();
+        }
+
+        private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var thumbnail = e.ClickedItem as Thumbnail;
+            var entry = thumbnail.UserData;
+
+            MediaManager.CurrentEntry = entry;
+
+            this.ItemClicked?.Invoke(this, entry);
         }
     }
 }
