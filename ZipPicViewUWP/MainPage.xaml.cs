@@ -223,37 +223,6 @@ namespace ZipPicViewUWP
             this.subFolderListCtrl.SelectedIndex = folderIndex;
         }
 
-        private async void ImageControlCopyButtonClick(object sender, RoutedEventArgs e)
-        {
-            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
-            if (error != null)
-            {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
-                await dialog.ShowAsync();
-
-                return;
-            }
-
-            var dataPackage = new DataPackage();
-
-            var memoryStream = new InMemoryRandomAccessStream();
-
-            await RandomAccessStream.CopyAsync(stream, memoryStream);
-
-            dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
-
-            try
-            {
-                Clipboard.SetContent(dataPackage);
-
-                this.inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", MediaManager.CurrentEntry.ExtractFilename()), 1000);
-            }
-            catch (Exception ex)
-            {
-                this.inAppNotification.Show(ex.Message, 5000);
-            }
-        }
-
         private async void ImageControlNextButtonClick(object sender, RoutedEventArgs e)
         {
             await this.AdvanceImage(1);
@@ -272,61 +241,6 @@ namespace ZipPicViewUWP
         private async void ImageControlPrevButtonClick(object sender, RoutedEventArgs e)
         {
             await this.AdvanceImage(-1);
-        }
-
-        private async void ImageControlPrintButtonClick(object sender, RoutedEventArgs e)
-        {
-            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
-            if (error != null)
-            {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
-                await dialog.ShowAsync();
-
-                return;
-            }
-
-            var output = new BitmapImage();
-            output.SetSource(stream);
-
-            this.printHelper.BitmapImage = output;
-
-            await this.printHelper.ShowPrintUIAsync("ZipPicView - " + MediaManager.CurrentEntry.ExtractFilename());
-        }
-
-        private async void ImageControlSaveButtonClick(object sender, RoutedEventArgs e)
-        {
-            var filename = MediaManager.CurrentEntry;
-            var (stream, suggestedFileName, error) = await MediaManager.Provider.OpenEntryAsync(filename);
-
-            if (error != null)
-            {
-                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
-                await dialog.ShowAsync();
-
-                return;
-            }
-
-            var picker = new FileSavePicker
-            {
-                SuggestedFileName = suggestedFileName,
-            };
-
-            picker.FileTypeChoices.Add("All", new List<string>() { "." });
-            var file = await picker.PickSaveFileAsync();
-            if (file != null)
-            {
-                var output = await file.OpenStreamForWriteAsync();
-
-                if (error != null)
-                {
-                    throw error;
-                }
-
-                stream.CopyTo(output);
-                output.Dispose();
-            }
-
-            stream.Dispose();
         }
 
         private async Task<MediaElement> LoadSound(string filename)

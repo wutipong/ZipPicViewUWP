@@ -5,8 +5,15 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using Windows.ApplicationModel.DataTransfer;
+    using Windows.Storage.Pickers;
+    using Windows.Storage.Streams;
+    using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
 
     /// <summary>
@@ -64,33 +71,14 @@ namespace ZipPicViewUWP
             applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var durationIndex);
             this.DurationList.SelectedIndex = durationIndex == null ? 0 : (int)durationIndex;
 
-            this.DurationList.SelectionChanged += (_, __) =>
-            {
-                applicationData.LocalSettings.Values["durationIndex"] = this.DurationList.SelectedIndex;
-            };
-
             applicationData.LocalSettings.Values.TryGetValue("randomAdvance", out var randomAdvance);
             this.RandomToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
-
-            this.RandomToggle.Toggled += (_, __) =>
-            {
-                applicationData.LocalSettings.Values["randomAdvance"] = this.RandomToggle.IsOn;
-            };
 
             applicationData.LocalSettings.Values.TryGetValue("globalAdvance", out var globalAdvance);
             this.GlobalToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
 
-            this.GlobalToggle.Toggled += (_, __) =>
-            {
-                applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
-            };
-
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
             this.PrecountToggle.IsOn = precount == null ? false : (bool)precount;
-            this.PrecountToggle.Toggled += (_, __) =>
-            {
-                applicationData.LocalSettings.Values["precount"] = this.PrecountToggle.IsOn;
-            };
 
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {
@@ -117,15 +105,6 @@ namespace ZipPicViewUWP
         {
             add { this.CloseButton.Click += value; }
             remove { this.CloseButton.Click -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when copy button is clicked.
-        /// </summary>
-        public event RoutedEventHandler CopyButtonClick
-        {
-            add { this.CopyButton.Click += value; }
-            remove { this.CopyButton.Click -= value; }
         }
 
         /// <summary>
@@ -162,24 +141,6 @@ namespace ZipPicViewUWP
         {
             add { this.PreviousButton.Click += value; }
             remove { this.PreviousButton.Click -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when print button is clicked.
-        /// </summary>
-        public event RoutedEventHandler PrintButtonClick
-        {
-            add { this.PrintButton.Click += value; }
-            remove { this.PrintButton.Click -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when save button is clicked.
-        /// </summary>
-        public event RoutedEventHandler SaveButtonClick
-        {
-            add { this.SaveButton.Click += value; }
-            remove { this.SaveButton.Click -= value; }
         }
 
         /// <summary>
@@ -289,6 +250,116 @@ namespace ZipPicViewUWP
 
                 this.timer.Stop();
             }
+        }
+
+        private async void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
+            var dataPackage = new DataPackage();
+
+            var memoryStream = new InMemoryRandomAccessStream();
+
+            await RandomAccessStream.CopyAsync(stream, memoryStream);
+
+            dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
+
+            try
+            {
+                Clipboard.SetContent(dataPackage);
+
+                // this.inAppNotification.Show(string.Format("The image {0} has been copied to the clipboard", MediaManager.CurrentEntry.ExtractFilename()), 1000);
+            }
+            catch (Exception ex)
+            {
+                // this.inAppNotification.Show(ex.Message, 5000);
+            }
+        }
+
+        private async void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
+            var output = new BitmapImage();
+            output.SetSource(stream);
+
+            // this.printHelper.BitmapImage = output;
+
+            // await this.printHelper.ShowPrintUIAsync("ZipPicView - " + MediaManager.CurrentEntry.ExtractFilename());
+        }
+
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var filename = MediaManager.CurrentEntry;
+            var (stream, suggestedFileName, error) = await MediaManager.Provider.OpenEntryAsync(filename);
+
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot open image file: {0}.", MediaManager.CurrentEntry), "Error");
+                await dialog.ShowAsync();
+
+                return;
+            }
+
+            var picker = new FileSavePicker
+            {
+                SuggestedFileName = suggestedFileName,
+            };
+
+            picker.FileTypeChoices.Add("All", new List<string>() { "." });
+            var file = await picker.PickSaveFileAsync();
+            if (file != null)
+            {
+                var output = await file.OpenStreamForWriteAsync();
+
+                if (error != null)
+                {
+                    throw error;
+                }
+
+                stream.CopyTo(output);
+                output.Dispose();
+            }
+
+            stream.Dispose();
+        }
+
+        private void DurationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            applicationData.LocalSettings.Values["durationIndex"] = this.DurationList.SelectedIndex;
+        }
+
+        private void PrecountToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            applicationData.LocalSettings.Values["precount"] = this.PrecountToggle.IsOn;
+        }
+
+        private void RandomToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            applicationData.LocalSettings.Values["randomAdvance"] = this.RandomToggle.IsOn;
+        }
+
+        private void GlobalToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
         }
     }
 }

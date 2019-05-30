@@ -136,16 +136,13 @@
             <local:ViewerControl
                 x:Name="imageControl"
                 CloseButtonClick="ImageControlCloseButtonClick"
-                CopyButtonClick="ImageControlCopyButtonClick"
                 NextButtonClick="ImageControlNextButtonClick"
                 OnAutoAdvance="ImageControlOnAutoAdvance"
                 PreviousButtonClick="ImageControlPrevButtonClick"
-                PrintButtonClick="ImageControlPrintButtonClick"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignTopWithPanel="True"
-                SaveButtonClick="ImageControlSaveButtonClick"
                 Visibility="Collapsed" />
 
             <Border

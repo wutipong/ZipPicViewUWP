@@ -65,15 +65,15 @@
                 (dimension)
             </TextBlock>
 
-            <Button Name="CopyButton" VerticalAlignment="Stretch">
+            <Button Name="CopyButton" VerticalAlignment="Stretch" Click="CopyButton_Click">
                 <SymbolIcon Symbol="Paste" />
             </Button>
 
-            <Button Name="SaveButton" VerticalAlignment="Stretch">
+            <Button Name="SaveButton" VerticalAlignment="Stretch" Click="SaveButton_Click">
                 <SymbolIcon Symbol="Save" />
             </Button>
 
-            <Button Name="PrintButton" VerticalAlignment="Stretch">
+            <Button Name="PrintButton" VerticalAlignment="Stretch" Click="PrintButton_Click">
                 <SymbolIcon Symbol="Print" />
             </Button>
 
@@ -93,11 +93,11 @@
                 <Button.Flyout>
                     <Flyout>
                         <StackPanel VerticalAlignment="Top">
-                            <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" />
-                            <ToggleSwitch x:Name="RandomToggle" Header="Random" />
-                            <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" />
+                            <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" Toggled="PrecountToggle_Toggled" />
+                            <ToggleSwitch x:Name="RandomToggle" Header="Random" Toggled="RandomToggle_Toggled" />
+                            <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" Toggled="GlobalToggle_Toggled" />
                             <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
-                                <ListBox x:Name="DurationList">
+                                <ListBox x:Name="DurationList" SelectionChanged="DurationList_SelectionChanged">
                                     <ListBoxItem Content="5 seconds" IsSelected="True" />
                                     <ListBoxItem Content="10 seconds" />
                                     <ListBoxItem Content="15 seconds" />
