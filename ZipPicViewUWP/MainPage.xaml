@@ -34,11 +34,6 @@
                 <SplitView.Content>
                     <Grid>
                         <Border Name="ThumbnailBorder" />
-                        <controls:AdaptiveGridView
-                        x:Name="thumbnailGrid"
-                        DesiredWidth="250"
-                        ItemHeight="200" 
-                        Visibility="Collapsed"/>
                     </Grid>
                     
                 </SplitView.Content>

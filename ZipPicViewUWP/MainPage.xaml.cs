@@ -32,8 +32,6 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private readonly Random random = new Random();
-        private CancellationTokenSource cancellationTokenSource;
         private MediaElement clickSound;
         private DisplayRequest displayRequest;
         private FileOpenPicker fileOpenPicker = null;
@@ -57,27 +55,6 @@ namespace ZipPicViewUWP
             return await file.OpenReadAsync();
         }
 
-        private static async Task SetThumbnailImage(AbstractMediaProvider provider, string file, Thumbnail thumbnail, CancellationToken token)
-        {
-            var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(file);
-            if (error != null)
-            {
-                stream = await GetErrorImageStream();
-            }
-
-            thumbnail.ProgressRing.Visibility = Visibility.Visible;
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            token.ThrowIfCancellationRequested();
-            SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 250, 200);
-            token.ThrowIfCancellationRequested();
-            var source = new SoftwareBitmapSource();
-            await source.SetBitmapAsync(bitmap);
-
-            token.ThrowIfCancellationRequested();
-            thumbnail.Image.Source = source;
-            thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
-        }
-
         private async void AboutButtonClick(object sender, RoutedEventArgs e)
         {
             AboutDialog dialog = new AboutDialog();
@@ -88,51 +65,6 @@ namespace ZipPicViewUWP
         {
             MediaManager.Advance(true, false, step);
             await this.ChangeCurrentEntry(MediaManager.CurrentEntry);
-        }
-
-        private async Task CreateThumbnails(string selected, AbstractMediaProvider provider)
-        {
-            this.cancellationTokenSource = new CancellationTokenSource();
-            var token = this.cancellationTokenSource.Token;
-
-            this.thumbnailGrid.Items.Clear();
-
-            MediaManager.CurrentFolder = selected;
-
-            var (currentFolderFileEntries, _) = await MediaManager.GetCurrentFolderFileEntries();
-            try
-            {
-                this.thumbProgress.Maximum = currentFolderFileEntries.Length;
-                Thumbnail[] thumbnails = new Thumbnail[currentFolderFileEntries.Length];
-
-                for (int i = 0; i < currentFolderFileEntries.Length; i++)
-                {
-                    var file = currentFolderFileEntries[i];
-                    thumbnails[i] = new Thumbnail();
-                    var thumbnail = thumbnails[i];
-
-                    thumbnail.Click += this.ThumbnailClick;
-                    thumbnail.Label.Text = file.ExtractFilename().Ellipses(25);
-                    thumbnail.UserData = file;
-                    thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
-
-                    this.thumbnailGrid.Items.Add(thumbnail);
-
-                    token.ThrowIfCancellationRequested();
-                }
-
-                for (int i = 0; i < currentFolderFileEntries.Length; i++)
-                {
-                    await SetThumbnailImage(provider, currentFolderFileEntries[i], thumbnails[i], token);
-                }
-            }
-            catch
-            {
-            }
-            finally
-            {
-                this.cancellationTokenSource = null;
-            }
         }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
@@ -268,7 +200,7 @@ namespace ZipPicViewUWP
             this.imageControl.Visibility = Visibility.Collapsed;
             this.hiddenImageControl.Visibility = Visibility.Collapsed;
             this.viewerPanel.Visibility = Visibility.Collapsed;
-            this.thumbnailGrid.IsEnabled = true;
+            // this.ThumbnailBorder.Child.IsEnabled = true;
             this.imageControl.AutoEnabled = false;
             this.splitView.IsEnabled = true;
 
@@ -632,7 +564,7 @@ namespace ZipPicViewUWP
 
             if (this.viewerPanel.Visibility == Visibility.Visible)
             {
-                this.thumbnailGrid.IsEnabled = false;
+                //this.ThumbnailBorder.IsEnabled = false;
                 this.splitView.IsEnabled = false;
             }
         }
@@ -749,42 +681,14 @@ namespace ZipPicViewUWP
 
             var selected = ((FolderListItem)e.AddedItems.First()).Value;
 
-            if (this.cancellationTokenSource != null)
-            {
-                this.cancellationTokenSource.Cancel();
-            }
-
-            if (this.thumbnailTask != null)
-            {
-                await this.thumbnailTask;
-            }
-
             foreach (var removed in e.RemovedItems)
             {
                 int index = Array.IndexOf(this.subFolderListCtrl.Items.ToArray(), removed);
                 this.thumbnailPages[index].CancellationToken?.Cancel();
             }
 
-            this.thumbnailTask = this.CreateThumbnails(selected, MediaManager.Provider);
             this.ThumbnailBorder.Child = this.thumbnailPages[this.subFolderListCtrl.SelectedIndex];
             await this.thumbnailPages[this.subFolderListCtrl.SelectedIndex].ResumeLoadThumbnail();
-        }
-
-        private async void ThumbnailClick(object sender, RoutedEventArgs e)
-        {
-            this.BlurBehavior.Value = 10;
-            this.BlurBehavior.StartAnimation();
-            this.imageControl.Visibility = Visibility.Visible;
-            this.viewerPanel.Visibility = Visibility.Visible;
-
-            var file = ((Thumbnail)sender).UserData;
-
-            await this.ChangeCurrentEntry(file, false);
-            if (this.viewerPanel.Visibility == Visibility.Visible)
-            {
-                this.thumbnailGrid.IsEnabled = false;
-                this.splitView.IsEnabled = false;
-            }
         }
 
         private void SetFileNameTextBox(string filename)
