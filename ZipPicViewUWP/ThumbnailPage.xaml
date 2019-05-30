@@ -8,6 +8,28 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="ProgressBorderHideStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="70" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="ProgressBorderShowStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="70" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
 
     <RelativePanel>
         <controls:AdaptiveGridView
@@ -55,7 +77,11 @@
             Name="ProgressBorder"
             Background="{StaticResource ThumbnailNameBackground}"
             RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True">
+            RelativePanel.AlignRightWithPanel="True"
+            RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <CompositeTransform />
+            </Border.RenderTransform>
             <StackPanel
                 Margin="10"
                 VerticalAlignment="Center"

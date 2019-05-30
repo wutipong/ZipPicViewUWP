@@ -142,7 +142,7 @@
         {
             this.CancellationToken = new CancellationTokenSource();
             CancellationToken token = this.CancellationToken.Token;
-
+            this.ProgressBorderShowStoryBoard.Begin();
             try
             {
                 for (int i = 0; i < this.Thumbnails.Length; i++)
@@ -193,7 +193,8 @@
 
             if (current == count)
             {
-                this.ProgressBorder.Visibility = Visibility.Collapsed;
+                this.ProgressBorderHideStoryBoard.Begin();
+                this.ProgressBorderHideStoryBoard.Completed += (_, __) => this.ProgressBorder.Visibility = Visibility.Collapsed;
             }
             else
             {
