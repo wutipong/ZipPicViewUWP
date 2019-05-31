@@ -6,7 +6,6 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Page"
-    KeyUp="PageKeyUp"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
     <Page.Resources>

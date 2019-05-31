@@ -14,6 +14,7 @@ namespace ZipPicViewUWP
     using Windows.Storage.Streams;
     using Windows.System;
     using Windows.System.Display;
+    using Windows.UI.Core;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
@@ -403,6 +404,31 @@ namespace ZipPicViewUWP
             this.printHelper.RegisterForPrinting();
 
             this.clickSound = await MediaManager.LoadSound("beep.wav");
+
+            CoreWindow.GetForCurrentThread().KeyUp += Keyboard_KeyUp;
+        }
+
+        private void Keyboard_KeyUp(CoreWindow sender, KeyEventArgs e)
+        {
+            if (this.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+
+            var key = e.VirtualKey;
+            if (key == VirtualKey.Left ||
+                key == VirtualKey.PageUp)
+            {
+                this.AdvanceBackward();
+            }
+            else if (key == VirtualKey.Right ||
+                key == VirtualKey.PageDown ||
+                key == VirtualKey.Space)
+            {
+                this.AdvanceForward();
+            }
+
+            e.Handled = true;
         }
 
         private void HideStoryBoard_Completed(object sender, object e)

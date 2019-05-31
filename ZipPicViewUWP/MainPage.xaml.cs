@@ -381,23 +381,5 @@ namespace ZipPicViewUWP
             this.Page.TopAppBar.Visibility = e;
             await this.ViewerControl.UpdateImage();
         }
-
-        private void PageKeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            var key = e.Key;
-            if (key == VirtualKey.Left ||
-                key == VirtualKey.PageUp)
-            {
-                this.ViewerControl.AdvanceBackward();
-            }
-            else if (key == VirtualKey.Right ||
-                key == VirtualKey.PageDown ||
-                key == VirtualKey.Space)
-            {
-                this.ViewerControl.AdvanceForward();
-            }
-
-            e.Handled = true;
-        }
     }
 }
