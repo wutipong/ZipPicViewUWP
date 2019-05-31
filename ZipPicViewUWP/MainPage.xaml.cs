@@ -124,7 +124,7 @@ namespace ZipPicViewUWP
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
-        private async void HideImageControl()
+        private void HideImageControl()
         {
             this.imageControl.Hide();
             this.imageControl.AutoEnabled = false;

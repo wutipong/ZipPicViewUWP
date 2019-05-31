@@ -190,10 +190,10 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="withDelay">A flag whether or not to delay 250ms before display a loading control.</param>
         /// <returns>A Task.</returns>
-        public async Task UpdateImage(bool withDelay = true)
+        public async Task UpdateImage(bool withDelay = false)
         {
             var file = MediaManager.CurrentEntry;
-            var delayTask = Task.Delay(withDelay ? 250 : 0);
+            bool showLoading = true;
 
             uint width = (uint)this.ImageBorder.RenderSize.Width;
             uint height = (uint)this.ImageBorder.RenderSize.Height;
@@ -210,11 +210,19 @@ namespace ZipPicViewUWP
                 var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
 
                 stream.Dispose();
+                showLoading = false;
                 return (output, decoder.PixelWidth, decoder.PixelHeight);
             });
 
-            await delayTask;
-            this.LoadingControl.IsLoading = true;
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(withDelay ? 500 : 0);
+                if (showLoading)
+                {
+                    this.LoadingControl.IsLoading = true;
+                }
+            });
+
             this.FilenameTextBlock.Text = file.ExtractFilename();
 
             var source = new SoftwareBitmapSource();
@@ -253,7 +261,7 @@ namespace ZipPicViewUWP
             this.AdvanceForward();
         }
 
-        private async void Timer_Tick(object sender, object e)
+        private void Timer_Tick(object sender, object e)
         {
             this.counter--;
             if (this.counter < 5 && this.counter > 0 && this.PrecountToggle.IsOn)
@@ -263,10 +271,7 @@ namespace ZipPicViewUWP
 
             if (this.counter == 0)
             {
-                bool current = !this.GlobalToggle.IsOn;
-                bool random = this.RandomToggle.IsOn;
-
-                await MediaManager.Advance(current, random);
+                this.AdvanceAutoBeginStoryboard.Begin();
 
                 this.timer.Stop();
             }
@@ -415,16 +420,14 @@ namespace ZipPicViewUWP
             applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
         }
 
-        private async void AdvanceForward()
+        private void AdvanceForward()
         {
-            await MediaManager.Advance(true, false, 1);
-            await this.UpdateImage();
+            this.AdvanceBeginStoryboard.Begin();
         }
 
-        private async void AdvanceBackward()
+        private void AdvanceBackward()
         {
-            await MediaManager.Advance(true, false, -1);
-            await this.UpdateImage();
+            this.AdvanceBackwardBeginStoryboard.Begin();
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -440,6 +443,30 @@ namespace ZipPicViewUWP
         private void HideStoryBoard_Completed(object sender, object e)
         {
             this.Visibility = Visibility.Collapsed;
+        }
+
+        private async void AdvanceBeginStoryboard_Completed(object sender, object e)
+        {
+            await MediaManager.Advance(true, false, 1);
+            await this.UpdateImage();
+            this.AdvanceEndStoryBoard.Begin();
+        }
+
+        private async void AdvanceBackwardBeginStoryboard_Completed(object sender, object e)
+        {
+            await MediaManager.Advance(true, false, -1);
+            await this.UpdateImage();
+            this.AdvanceBackwardEndStoryBoard.Begin();
+        }
+
+        private async void AdvanceAutoBeginStoryboard_Completed(object sender, object e)
+        {
+            bool current = !this.GlobalToggle.IsOn;
+            bool random = this.RandomToggle.IsOn;
+
+            await MediaManager.Advance(current, random);
+            await this.UpdateImage();
+            this.AdvanceAutoEndStoryBoard.Begin();
         }
     }
 }
