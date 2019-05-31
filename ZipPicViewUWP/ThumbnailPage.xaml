@@ -101,17 +101,16 @@
                 <CompositeTransform />
             </Border.RenderTransform>
             <StackPanel
-                Margin="10"
                 VerticalAlignment="Center"
                 Orientation="Horizontal">
                 <controls:RadialProgressBar
                     Name="Progress"
                     Width="30"
                     Height="30"
-                    Margin="10" />
+                    Margin="10,0,4,0" />
                 <TextBlock
                     Name="ProgressText"
-                    Margin="10"
+                    Margin="10,10,4,8"
                     VerticalAlignment="Center">
                     Loading Thumbnails  {0}/{1}.
                 </TextBlock>
