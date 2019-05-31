@@ -8,7 +8,7 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="page"
+    x:Name="Page"
     KeyUp="PageKeyUp"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
@@ -25,7 +25,6 @@
         </Storyboard>
     </Page.Resources>
     <RelativePanel
-        x:Name="displayPanel"
         AllowDrop="True"
         DragOver="DisplayPanelDragOver"
         Drop="DisplayPanelDrop">
@@ -35,9 +34,8 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
-            <Grid x:Name="printPanel" Opacity="0" />
             <SplitView
-                x:Name="splitView"
+                x:Name="SplitView"
                 CompactPaneLength="50"
                 DisplayMode="CompactOverlay"
                 OpenPaneLength="300"
@@ -71,7 +69,7 @@
                         </StackPanel>
                         <ScrollViewer Grid.Row="1">
                             <ListView
-                                x:Name="subFolderListCtrl"
+                                x:Name="SubFolderControl"
                                 Margin="-10,0,0,0"
                                 DataFetchSize="2"
                                 SelectionChanged="SubFolderListSelectionChanged" />
@@ -80,52 +78,27 @@
                 </SplitView.Pane>
             </SplitView>
         </Grid>
-        <RelativePanel
-            x:Name="viewerPanel"
+        <local:ViewerControl
+            x:Name="ViewerControl"
+            CloseButtonClick="ImageControlCloseButtonClick"
+            ControlLayerVisibilityChange="ImageControl_ControlLayerVisibilityChange"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
-            Visibility="Collapsed">
-            <interactivity:Interaction.Behaviors>
-                <behaviors:Fade
-                    x:Name="ControlCloseBehavior"
-                    AutomaticallyStart="True"
-                    Delay="0"
-                    EasingType="Linear"
-                    Value="1.0"
-                    Duration="100" />
-            </interactivity:Interaction.Behaviors>
-
-            <local:ViewerControl
-                x:Name="imageControl"
-                CloseButtonClick="ImageControlCloseButtonClick"
-                ControlLayerVisibilityChange="ImageControl_ControlLayerVisibilityChange"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Visibility="Collapsed" />
-        </RelativePanel>
-        <Grid
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True">
-            <controls:InAppNotification x:Name="inAppNotification" />
-        </Grid>
+            Visibility="Collapsed" />
     </RelativePanel>
     <Page.TopAppBar>
         <CommandBar VerticalAlignment="Center" VerticalContentAlignment="Center">
             <CommandBar.Content>
                 <TextBlock
-                    x:Name="filenameTextBlock"
+                    x:Name="FilenameTextBlock"
                     Margin="10,0,0,0"
                     Text="&lt;None&gt;"
                     UseLayoutRounding="True" />
             </CommandBar.Content>
             <AppBarToggleButton
-                x:Name="fullscreenButton"
+                x:Name="FullScreenButton"
                 Checked="FullscreenButton_Checked"
                 Icon="FullScreen"
                 Label="FullScreen"

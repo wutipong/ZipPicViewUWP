@@ -99,29 +99,29 @@ namespace ZipPicViewUWP
 
         private async void FullscreenButton_Checked(object sender, RoutedEventArgs e)
         {
-            this.fullscreenButton.Icon = new SymbolIcon(Symbol.BackToWindow);
-            this.fullscreenButton.Label = "Exit Fullscreen";
+            this.FullScreenButton.Icon = new SymbolIcon(Symbol.BackToWindow);
+            this.FullScreenButton.Label = "Exit Fullscreen";
             var view = ApplicationView.GetForCurrentView();
             if (view.TryEnterFullScreenMode())
             {
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
             }
 
-            await this.imageControl.UpdateImage();
+            await this.ViewerControl.UpdateImage();
         }
 
         private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)
         {
-            this.fullscreenButton.Icon = new SymbolIcon(Symbol.FullScreen);
-            this.fullscreenButton.Label = "Fullscreen";
+            this.FullScreenButton.Icon = new SymbolIcon(Symbol.FullScreen);
+            this.FullScreenButton.Label = "Fullscreen";
             ApplicationView.GetForCurrentView().ExitFullScreenMode();
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
         private void HideImageControl()
         {
-            this.imageControl.Hide();
-            this.splitView.IsEnabled = true;
+            this.ViewerControl.Hide();
+            this.SplitView.IsEnabled = true;
         }
 
         private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
@@ -130,7 +130,7 @@ namespace ZipPicViewUWP
 
             var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
-            this.subFolderListCtrl.SelectedIndex = folderIndex;
+            this.SubFolderControl.SelectedIndex = folderIndex;
         }
 
         private async Task OpenFile(StorageFile selected)
@@ -190,7 +190,7 @@ namespace ZipPicViewUWP
                 }
             }
 
-            this.page.TopAppBar.Visibility = Visibility.Visible;
+            this.Page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private async void OpenFileButtonClick(object sender, RoutedEventArgs e)
@@ -225,7 +225,7 @@ namespace ZipPicViewUWP
             await this.ChangeMediaProvider(new FileSystemMediaProvider(selected));
             this.SetFileNameTextBox(selected.Name);
 
-            this.page.TopAppBar.Visibility = Visibility.Visible;
+            this.Page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private async void OpenFolderButtonClick(object sender, RoutedEventArgs e)
@@ -247,12 +247,12 @@ namespace ZipPicViewUWP
 
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.fullscreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
+            this.FullScreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
         }
 
         private async Task RebuildSubFolderList()
         {
-            this.subFolderListCtrl.Items.Clear();
+            this.SubFolderControl.Items.Clear();
             this.thumbnailPages = new ThumbnailPage[MediaManager.FolderEntries.Length];
 
             for (int i = 0; i < MediaManager.FolderEntries.Length; i++)
@@ -276,7 +276,7 @@ namespace ZipPicViewUWP
                 }
 
                 var item = new FolderListItem { Text = name, Value = folder };
-                this.subFolderListCtrl.Items.Add(item);
+                this.SubFolderControl.Items.Add(item);
 
                 var cover = await MediaManager.FindFolderThumbnailEntry(folder);
 
@@ -290,19 +290,14 @@ namespace ZipPicViewUWP
                 this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
 
-            this.subFolderListCtrl.SelectedIndex = 0;
+            this.SubFolderControl.SelectedIndex = 0;
         }
 
         private void ThumbnailPage_ItemClicked(object source, string entry)
         {
-            this.imageControl.Show();
-            this.viewerPanel.Visibility = Visibility.Visible;
-
+            this.ViewerControl.Show();
             MediaManager.CurrentEntry = entry;
-            if (this.viewerPanel.Visibility == Visibility.Visible)
-            {
-                this.splitView.IsEnabled = false;
-            }
+            this.SplitView.IsEnabled = false;
         }
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
@@ -324,7 +319,7 @@ namespace ZipPicViewUWP
 
         private async Task<Exception> ChangeMediaProvider(AbstractMediaProvider provider)
         {
-            this.thumbnailPages?[this.subFolderListCtrl.SelectedIndex].CancellationToken.Cancel();
+            this.thumbnailPages?[this.SubFolderControl.SelectedIndex].CancellationToken.Cancel();
 
             FolderReadingDialog dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
@@ -352,7 +347,7 @@ namespace ZipPicViewUWP
 
         private void SubFolderButtonClick(object sender, RoutedEventArgs e)
         {
-            this.splitView.IsPaneOpen = true;
+            this.SplitView.IsPaneOpen = true;
         }
 
         private async void SubFolderListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -366,25 +361,25 @@ namespace ZipPicViewUWP
 
             foreach (var removed in e.RemovedItems)
             {
-                int index = Array.IndexOf(this.subFolderListCtrl.Items.ToArray(), removed);
+                int index = Array.IndexOf(this.SubFolderControl.Items.ToArray(), removed);
                 this.thumbnailPages[index].CancellationToken?.Cancel();
             }
 
             this.ThumbnailBorderOpenStoryboard.Begin();
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[this.subFolderListCtrl.SelectedIndex];
-            await this.thumbnailPages[this.subFolderListCtrl.SelectedIndex].ResumeLoadThumbnail();
+            this.ThumbnailBorder.Child = this.thumbnailPages[this.SubFolderControl.SelectedIndex];
+            await this.thumbnailPages[this.SubFolderControl.SelectedIndex].ResumeLoadThumbnail();
         }
 
         private void SetFileNameTextBox(string filename)
         {
-            this.filenameTextBlock.Text = filename.Ellipses(100);
+            this.FilenameTextBlock.Text = filename.Ellipses(100);
         }
 
         private async void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
         {
-            this.page.TopAppBar.Visibility = e;
-            await this.imageControl.UpdateImage();
+            this.Page.TopAppBar.Visibility = e;
+            await this.ViewerControl.UpdateImage();
         }
 
         private void PageKeyUp(object sender, KeyRoutedEventArgs e)
@@ -393,13 +388,13 @@ namespace ZipPicViewUWP
             if (key == VirtualKey.Left ||
                 key == VirtualKey.PageUp)
             {
-                this.imageControl.AdvanceBackward();
+                this.ViewerControl.AdvanceBackward();
             }
             else if (key == VirtualKey.Right ||
                 key == VirtualKey.PageDown ||
                 key == VirtualKey.Space)
             {
-                this.imageControl.AdvanceForward();
+                this.ViewerControl.AdvanceForward();
             }
 
             e.Handled = true;
