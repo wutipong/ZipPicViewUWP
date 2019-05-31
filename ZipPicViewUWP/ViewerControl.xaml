@@ -236,7 +236,7 @@
                 Grid.Row="1"
                 MinWidth="250"
                 MinHeight="50"
-                Margin="20"
+                Margin="60"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 Background="{StaticResource FloatControlBackground}"
