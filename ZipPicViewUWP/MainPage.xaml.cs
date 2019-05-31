@@ -30,7 +30,6 @@ namespace ZipPicViewUWP
     {
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
-        private PrintHelper printHelper;
         private ThumbnailPage[] thumbnailPages;
 
         /// <summary>
@@ -271,8 +270,6 @@ namespace ZipPicViewUWP
 
         private async void PageLoaded(object sender, RoutedEventArgs e)
         {
-            this.printHelper = new PrintHelper(this);
-            this.printHelper.RegisterForPrinting();
         }
 
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)

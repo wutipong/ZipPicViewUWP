@@ -43,7 +43,7 @@ namespace ZipPicViewUWP
 
         private readonly DispatcherTimer timer;
         private int counter;
-        private string filename;
+        private PrintHelper printHelper;
         private DisplayRequest displayRequest;
         private MediaElement clickSound;
 
@@ -281,9 +281,9 @@ namespace ZipPicViewUWP
             var output = new BitmapImage();
             output.SetSource(stream);
 
-            // this.printHelper.BitmapImage = output;
+            this.printHelper.BitmapImage = output;
 
-            // await this.printHelper.ShowPrintUIAsync("ZipPicView - " + MediaManager.CurrentEntry.ExtractFilename());
+            await this.printHelper.ShowPrintUIAsync("ZipPicView - " + MediaManager.CurrentEntry.ExtractFilename());
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -398,6 +398,9 @@ namespace ZipPicViewUWP
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            this.printHelper = new PrintHelper(this);
+            this.printHelper.RegisterForPrinting();
+
             this.clickSound = await MediaManager.LoadSound("beep.wav");
         }
 
