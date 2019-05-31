@@ -1,4 +1,8 @@
-﻿namespace ZipPicViewUWP
+﻿// <copyright file="ThumbnailPage.xaml.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
+
+namespace ZipPicViewUWP
 {
     using System;
     using System.Threading;
@@ -66,6 +70,7 @@
         /// Set the current folder entry to display thumbnail.
         /// </summary>
         /// <param name="folder">Entries to display.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task SetFolderEntry(string folder)
         {
             var (entries, error) = await MediaManager.Provider.GetChildEntries(folder);
@@ -85,7 +90,7 @@
                 var entry = entries[i];
                 var thumbnail = new Thumbnail();
                 thumbnail.Label.Text = entry.ExtractFilename().Ellipses(25);
-                thumbnail.UserData = entry;
+                thumbnail.Entry = entry;
                 thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
 
                 this.Thumbnails[i] = thumbnail;
@@ -112,20 +117,10 @@
             }
         }
 
-        private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var thumbnail = e.ClickedItem as Thumbnail;
-            var entry = thumbnail.UserData;
-
-            MediaManager.CurrentEntry = entry;
-
-            this.ItemClicked?.Invoke(this, entry);
-        }
-
         /// <summary>
         /// Resume the thumbnail loading operation.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task ResumeLoadThumbnail()
         {
             this.CancellationToken = new CancellationTokenSource();
@@ -141,7 +136,7 @@
                         continue;
                     }
 
-                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.UserData);
+                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.Entry);
                     if (error != null)
                     {
                         stream = await MediaManager.CreateErrorImageStream();
@@ -167,6 +162,16 @@
             catch (Exception)
             {
             }
+        }
+
+        private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var thumbnail = e.ClickedItem as Thumbnail;
+            var entry = thumbnail.Entry;
+
+            MediaManager.CurrentEntry = entry;
+
+            this.ItemClicked?.Invoke(this, entry);
         }
 
         private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)

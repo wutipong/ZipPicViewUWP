@@ -121,7 +121,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Load Sound.
         /// </summary>
-        /// <param name="filename">sound file name</param>
+        /// <param name="filename">sound file name.</param>
         /// <returns>A sound load<see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public static async Task<MediaElement> LoadSound(string filename)
         {
@@ -165,6 +165,7 @@ namespace ZipPicViewUWP
         /// <param name="current">Use entries under current folder.</param>
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task Advance(bool current, bool random, int step = 1)
         {
             string[] entries;
