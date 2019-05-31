@@ -288,6 +288,9 @@ namespace ZipPicViewUWP
                 }
 
                 this.thumbnailPages[i] = new ThumbnailPage();
+                this.thumbnailPages[i].Title = folder.ExtractFilename();
+                this.thumbnailPages[i].TitleStyle = Windows.UI.Text.FontStyle.Normal;
+
                 await this.thumbnailPages[i].SetFolderEntry(folder);
                 this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
@@ -368,12 +371,13 @@ namespace ZipPicViewUWP
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
+            this.thumbnailPages[0].Title = filename + "\\<ROOT>";
+            this.thumbnailPages[0].TitleStyle = Windows.UI.Text.FontStyle.Italic;
         }
 
-        private async void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
+        private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
         {
             this.Page.TopAppBar.Visibility = e;
-            await this.ViewerControl.UpdateImage();
         }
     }
 }

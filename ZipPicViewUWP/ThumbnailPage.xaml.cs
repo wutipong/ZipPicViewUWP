@@ -62,6 +62,24 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        public string Title
+        {
+            get => this.FolderName.Text;
+            set => this.FolderName.Text = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the style of title text.
+        /// </summary>
+        public Windows.UI.Text.FontStyle TitleStyle
+        {
+            get => this.FolderName.FontStyle;
+            set => this.FolderName.FontStyle = value;
+        }
+
+        /// <summary>
         /// Gets the cancellation token of thumbnail loading.
         /// </summary>
         public CancellationTokenSource CancellationToken { get; private set; }
@@ -79,9 +97,6 @@ namespace ZipPicViewUWP
                 throw error;
             }
 
-            this.FolderName.Text = (folder == MediaManager.Provider.Root) ? "<Root>" : folder.ExtractFilename();
-            this.FolderName.FontStyle = (folder == MediaManager.Provider.Root) ?
-                Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal;
             this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
 
             this.Thumbnails = new Thumbnail[entries.Length];
