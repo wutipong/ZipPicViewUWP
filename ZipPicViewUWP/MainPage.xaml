@@ -2,19 +2,25 @@
     x:Class="ZipPicViewUWP.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Animations.Behaviors"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="page"
-    KeyUp="PageKeyUp"
-    Loaded="PageLoaded"
+    x:Name="Page"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="ThumbnailBorderOpenStoryboard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="-50" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
     <RelativePanel
-        x:Name="displayPanel"
         AllowDrop="True"
         DragOver="DisplayPanelDragOver"
         Drop="DisplayPanelDrop">
@@ -24,18 +30,20 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
-            <Grid x:Name="printPanel" Opacity="0" />
             <SplitView
-                x:Name="splitView"
+                x:Name="SplitView"
                 CompactPaneLength="50"
                 DisplayMode="CompactOverlay"
                 OpenPaneLength="300"
                 PanePlacement="Left">
                 <SplitView.Content>
                     <Grid>
-                        <Border Name="ThumbnailBorder" />
+                        <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <CompositeTransform />
+                            </Border.RenderTransform>
+                        </Border>
                     </Grid>
-                    
                 </SplitView.Content>
                 <SplitView.Pane>
                     <Grid Background="{StaticResource SidebarBackground}">
@@ -57,131 +65,36 @@
                         </StackPanel>
                         <ScrollViewer Grid.Row="1">
                             <ListView
-                                x:Name="subFolderListCtrl"
+                                x:Name="SubFolderControl"
                                 Margin="-10,0,0,0"
                                 DataFetchSize="2"
                                 SelectionChanged="SubFolderListSelectionChanged" />
                         </ScrollViewer>
-                        <StackPanel
-                            Grid.Row="2"
-                            VerticalAlignment="Center"
-                            Orientation="Horizontal">
-                            <controls:RadialProgressBar
-                                x:Name="thumbProgress"
-                                Width="30"
-                                Height="30"
-                                Margin="10,10,10,10"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center" />
-                            <TextBlock
-                                x:Name="thumbProgressText"
-                                Margin="10,10,10,10"
-                                VerticalAlignment="Bottom"
-                                Text="Idle" />
-                        </StackPanel>
                     </Grid>
                 </SplitView.Pane>
             </SplitView>
-            <interactivity:Interaction.Behaviors>
-                <behaviors:Blur
-                    x:Name="BlurBehavior"
-                    AutomaticallyStart="False"
-                    Duration="500" />
-            </interactivity:Interaction.Behaviors>
         </Grid>
-        <RelativePanel
-            x:Name="viewerPanel"
+        <local:ViewerControl
+            x:Name="ViewerControl"
+            CloseButtonClick="ImageControlCloseButtonClick"
+            ControlLayerVisibilityChange="ImageControl_ControlLayerVisibilityChange"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
-            Visibility="Collapsed">
-            <interactivity:Interaction.Behaviors>
-                <behaviors:Fade
-                    x:Name="ControlCloseBehavior"
-                    AutomaticallyStart="True"
-                    Delay="0"
-                    EasingType="Linear"
-                    Value="1.0"
-                    Duration="100" />
-            </interactivity:Interaction.Behaviors>
-
-            <Border
-                x:Name="imageBorder"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Visibility="Collapsed">
-                <Image x:Name="image">
-                    <interactivity:Interaction.Behaviors>
-                        <behaviors:Blur
-                            x:Name="ImageTransitionBehavior"
-                            AutomaticallyStart="False"
-                            Duration="500" />
-                    </interactivity:Interaction.Behaviors>
-                </Image>
-            </Border>
-
-            <Border
-                x:Name="hiddenImageControl"
-                Background="#00000000"
-                ManipulationCompleted="HiddenImageControlManipulationCompleted"
-                ManipulationMode="TranslateX"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Tapped="HiddenImageControlTapped"
-                Visibility="Collapsed" />
-
-            <local:ViewerControl
-                x:Name="imageControl"
-                CloseButtonClick="ImageControlCloseButtonClick"
-                CopyButtonClick="ImageControlCopyButtonClick"
-                NextButtonClick="ImageControlNextButtonClick"
-                OnAutoAdvance="ImageControlOnAutoAdvance"
-                PreviousButtonClick="ImageControlPrevButtonClick"
-                PrintButtonClick="ImageControlPrintButtonClick"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                SaveButtonClick="ImageControlSaveButtonClick"
-                Visibility="Collapsed" />
-
-            <Border
-                x:Name="loadingBorder"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Visibility="Collapsed">
-                <ProgressRing
-                    Width="100"
-                    Height="100"
-                    IsActive="True" />
-            </Border>
-        </RelativePanel>
-        <Grid
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True">
-            <controls:InAppNotification x:Name="inAppNotification" />
-        </Grid>
+            Visibility="Collapsed" />
     </RelativePanel>
     <Page.TopAppBar>
         <CommandBar VerticalAlignment="Center" VerticalContentAlignment="Center">
             <CommandBar.Content>
                 <TextBlock
-                    x:Name="filenameTextBlock"
+                    x:Name="FilenameTextBlock"
                     Margin="10,0,0,0"
                     Text="&lt;None&gt;"
                     UseLayoutRounding="True" />
             </CommandBar.Content>
             <AppBarToggleButton
-                x:Name="fullscreenButton"
+                x:Name="FullScreenButton"
                 Checked="FullscreenButton_Checked"
                 Icon="FullScreen"
                 Label="FullScreen"

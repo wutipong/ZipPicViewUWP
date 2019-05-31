@@ -2,14 +2,120 @@
     x:Class="ZipPicViewUWP.ThumbnailPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ZipPicViewUWP"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:ZipPicViewUWP"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <Storyboard x:Name="ProgressBorderHideStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="70" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="ProgressBorderShowStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="70" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Page.Resources>
 
-    <controls:AdaptiveGridView ItemHeight="200" DesiredWidth="250" Name="ThumbnailGrid" ItemClick="ThumbnailGrid_ItemClick" IsItemClickEnabled="True">
-        
-    </controls:AdaptiveGridView>
+    <RelativePanel>
+        <controls:AdaptiveGridView
+            Name="ThumbnailGrid"
+            DesiredWidth="250"
+            IsItemClickEnabled="True"
+            ItemClick="ThumbnailGrid_ItemClick"
+            ItemHeight="200"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True">
+            <controls:AdaptiveGridView.Header>
+                <controls:ScrollHeader Mode="Fade">
+                    <RelativePanel>
+                        <Border
+                            Name="CoverBorder"
+                            Width="200"
+                            Height="200"
+                            Margin="20"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True">
+                            <Image Name="CoverImage" />
+                        </Border>
+
+                        <TextBlock
+                            Name="FolderName"
+                            Margin="20,0"
+                            FontSize="48"
+                            Foreground="{StaticResource PrimaryColor1}"
+                            RelativePanel.RightOf="CoverBorder">
+                            Folder Name
+                        </TextBlock>
+                        <TextBlock
+                            Name="ImageCount"
+                            Margin="20,0"
+                            Foreground="{StaticResource PrimaryColor3}"
+                            RelativePanel.Below="FolderName"
+                            RelativePanel.RightOf="CoverBorder">
+                            Image Count
+                        </TextBlock>
+                    </RelativePanel>
+                </controls:ScrollHeader>
+            </controls:AdaptiveGridView.Header>
+        </controls:AdaptiveGridView>
+        <Border
+            Name="ProgressBorder"
+            Background="{StaticResource ThumbnailNameBackground}"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RenderTransformOrigin="0.5,0.5">
+            <Border.RenderTransform>
+                <CompositeTransform />
+            </Border.RenderTransform>
+            <StackPanel
+                Margin="10"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <controls:RadialProgressBar
+                    Name="Progress"
+                    Width="30"
+                    Height="30"
+                    Margin="10" />
+                <TextBlock
+                    Name="ProgressText"
+                    Margin="10"
+                    VerticalAlignment="Center">
+                    Loading Thumbnails  {0}/{1}.
+                </TextBlock>
+            </StackPanel>
+        </Border>
+    </RelativePanel>
 </Page>

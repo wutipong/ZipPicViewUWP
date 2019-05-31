@@ -6,123 +6,349 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    x:Name="Control"
+    Loaded="UserControl_Loaded"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Storyboard x:Name="ShowStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Control" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="HideStoryBoard" Completed="HideStoryBoard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Control" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="AdvanceBeginStoryboard" Completed="AdvanceBeginStoryboard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-100" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
 
-    <Grid>
+        <Storyboard x:Name="AdvanceEndStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="100" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Name="AdvanceAutoBeginStoryboard" Completed="AdvanceAutoBeginStoryboard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="-100" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Name="AdvanceAutoEndStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="100" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+
+        <Storyboard x:Name="AdvanceBackwardBeginStoryboard" Completed="AdvanceBackwardBeginStoryboard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="100" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="AdvanceBackwardEndStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+            </DoubleAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Image" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="-100" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="ControlLayerHideStoryBoard" Completed="ControlLayerHideStoryBoard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlLayer" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="ControlLayerShowStoryBoard" Completed="ControlLayerShowStoryBoard_Completed">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ControlLayer" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <RelativePanel>
         <Border
-            Width="50"
-            Height="100"
-            Margin="0,100,20,100"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Center"
-            Background="{StaticResource FloatControlBackground}">
-            <Button
-                x:Name="NextButton"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Next" />
-            </Button>
+            Name="ImageBorder"
+            ManipulationCompleted="ImageBorder_ManipulationCompleted"
+            ManipulationMode="TranslateX"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True"
+            RenderTransformOrigin="0.5,0.5"
+            Tapped="ImageBorder_Tapped">
+            <Border.RenderTransform>
+                <CompositeTransform />
+            </Border.RenderTransform>
+            <Border.Background>
+                <media:BackdropBlurBrush Amount="3.0" />
+            </Border.Background>
+            <Image Name="Image" RenderTransformOrigin="0.5,0.5">
+                <Image.RenderTransform>
+                    <CompositeTransform />
+                </Image.RenderTransform>
+                <Image.Projection>
+                    <PlaneProjection />
+                </Image.Projection>
+            </Image>
         </Border>
-
-        <Border
-            Width="50"
-            Height="100"
-            Margin="20,100,0,100"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Background="{StaticResource FloatControlBackground}">
-            <Button
-                x:Name="PreviousButton"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Previous" />
-            </Button>
-        </Border>
-
-        <StackPanel
-            Grid.Row="1"
-            MinWidth="250"
-            MinHeight="50"
-            Margin="20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Background="{StaticResource FloatControlBackground}"
-            Orientation="Horizontal">
-
-            <TextBlock
-                x:Name="FilenameTextBlock"
-                Width="400"
-                Margin="10"
+        <Grid
+            Name="ControlLayer"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True"
+            RenderTransformOrigin="0.5,0.5">
+            <Grid.RenderTransform>
+                <CompositeTransform />
+            </Grid.RenderTransform>
+            <Border
+                Width="50"
+                Height="100"
+                Margin="0,100,20,100"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Text="&lt;&lt;filename&gt;&gt;"
-                TextAlignment="Right" />
+                Background="{StaticResource FloatControlBackground}">
+                <Button
+                    x:Name="NextButton"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="NextButton_Click">
+                    <SymbolIcon Symbol="Next" />
+                </Button>
+            </Border>
 
-            <TextBlock
-                x:Name="OriginalDimension"
-                Width="100"
-                Margin="10"
-                VerticalAlignment="Center">
-                (dimension)
-            </TextBlock>
+            <Border
+                Width="50"
+                Height="100"
+                Margin="20,100,0,100"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Background="{StaticResource FloatControlBackground}">
+                <Button
+                    x:Name="PreviousButton"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Click="PreviousButton_Click">
+                    <SymbolIcon Symbol="Previous" />
+                </Button>
+            </Border>
 
-            <Button Name="CopyButton" VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Paste" />
-            </Button>
+            <StackPanel
+                Grid.Row="1"
+                MinWidth="250"
+                MinHeight="50"
+                Margin="60"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Background="{StaticResource FloatControlBackground}"
+                Orientation="Horizontal">
 
-            <Button Name="SaveButton" VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Save" />
-            </Button>
+                <TextBlock
+                    x:Name="FilenameTextBlock"
+                    Width="400"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    Text="&lt;&lt;filename&gt;&gt;"
+                    TextAlignment="Right" />
 
-            <Button Name="PrintButton" VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Print" />
-            </Button>
+                <TextBlock
+                    x:Name="OriginalDimension"
+                    Width="100"
+                    Margin="10"
+                    VerticalAlignment="Center">
+                    (dimension)
+                </TextBlock>
 
-            <Rectangle Width="20" />
-            <ToggleButton
-                Name="AutoButton"
-                VerticalAlignment="Stretch"
-                Checked="AutoButton_Checked"
-                Unchecked="AutoButton_Unchecked">
-                <SymbolIcon Symbol="Play" />
-            </ToggleButton>
+                <Button
+                    Name="CopyButton"
+                    VerticalAlignment="Stretch"
+                    Click="CopyButton_Click">
+                    <SymbolIcon Symbol="Paste" />
+                </Button>
 
-            <Button
-                Name="AutoDurationButton"
-                VerticalAlignment="Stretch"
-                Content="&#8711;">
-                <Button.Flyout>
-                    <Flyout>
-                        <StackPanel VerticalAlignment="Top">
-                            <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" />
-                            <ToggleSwitch x:Name="RandomToggle" Header="Random" />
-                            <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" />
-                            <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
-                                <ListBox x:Name="DurationList">
-                                    <ListBoxItem Content="5 seconds" IsSelected="True" />
-                                    <ListBoxItem Content="10 seconds" />
-                                    <ListBoxItem Content="15 seconds" />
-                                    <ListBoxItem Content="30 seconds" />
-                                </ListBox>
-                            </controls:HeaderedContentControl>
-                        </StackPanel>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
-        </StackPanel>
+                <Button
+                    Name="SaveButton"
+                    VerticalAlignment="Stretch"
+                    Click="SaveButton_Click">
+                    <SymbolIcon Symbol="Save" />
+                </Button>
 
-        <Border
-            Width="50"
-            Height="50"
-            Margin="20"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Background="{StaticResource FloatControlBackground}">
-            <Button
-                x:Name="CloseButton"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch">
-                <SymbolIcon Symbol="Cancel" />
-            </Button>
-        </Border>
-    </Grid>
+                <Button
+                    Name="PrintButton"
+                    VerticalAlignment="Stretch"
+                    Click="PrintButton_Click">
+                    <SymbolIcon Symbol="Print" />
+                </Button>
+
+                <Rectangle Width="20" />
+                <ToggleButton
+                    Name="AutoButton"
+                    VerticalAlignment="Stretch"
+                    Checked="AutoButton_Checked"
+                    Unchecked="AutoButton_Unchecked">
+                    <SymbolIcon Symbol="Play" />
+                </ToggleButton>
+
+                <Button
+                    Name="AutoDurationButton"
+                    VerticalAlignment="Stretch"
+                    Content="&#8711;">
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel VerticalAlignment="Top">
+                                <ToggleSwitch
+                                    x:Name="PrecountToggle"
+                                    Header="Pre-count"
+                                    Toggled="PrecountToggle_Toggled" />
+                                <ToggleSwitch
+                                    x:Name="RandomToggle"
+                                    Header="Random"
+                                    Toggled="RandomToggle_Toggled" />
+                                <ToggleSwitch
+                                    x:Name="GlobalToggle"
+                                    Header="All Folder"
+                                    Toggled="GlobalToggle_Toggled" />
+                                <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
+                                    <ListBox x:Name="DurationList" SelectionChanged="DurationList_SelectionChanged">
+                                        <ListBoxItem Content="5 seconds" IsSelected="True" />
+                                        <ListBoxItem Content="10 seconds" />
+                                        <ListBoxItem Content="15 seconds" />
+                                        <ListBoxItem Content="30 seconds" />
+                                    </ListBox>
+                                </controls:HeaderedContentControl>
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+
+            <Border
+                Width="50"
+                Height="50"
+                Margin="20"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Background="{StaticResource FloatControlBackground}">
+                <Button
+                    x:Name="CloseButton"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch">
+                    <SymbolIcon Symbol="Cancel" />
+                </Button>
+            </Border>
+        </Grid>
+        <controls:Loading
+            x:Name="LoadingControl"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True">
+            <ProgressBar Foreground="{StaticResource PrimaryColor1}" IsIndeterminate="True" />
+        </controls:Loading>
+        <controls:InAppNotification
+            Name="Notification"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True" />
+    </RelativePanel>
 </UserControl>

@@ -5,19 +5,16 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-    <Grid>
-        <RelativePanel         
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch">
-            <Image
-                x:Name="image"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Stretch="UniformToFill" />
+    <UserControl.Resources>
+        <Storyboard x:Name="ThumbnailShowStoryBoard">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="image" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </UserControl.Resources>
+    <Border BorderBrush="Black" BorderThickness="1">
+        <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ProgressRing
                 x:Name="loading"
                 Width="100"
@@ -31,14 +28,23 @@
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.AlignVerticalCenterWithPanel="True" />
+            <Image
+                x:Name="image"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Opacity="0"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"
+                Stretch="UniformToFill" />
             <Grid
-                    Background="{StaticResource ThumbnailNameBackground}"
-                    RelativePanel.AlignBottomWithPanel="True"
-                    RelativePanel.AlignLeftWithPanel="True"
-                    RelativePanel.AlignRightWithPanel="True">
+                Background="{StaticResource ThumbnailNameBackground}"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True">
                 <TextBlock x:Name="label" Padding="2,2,2,2" />
             </Grid>
         </RelativePanel>
-
-    </Grid>
+    </Border>
 </UserControl>

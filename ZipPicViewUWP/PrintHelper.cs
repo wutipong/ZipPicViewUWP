@@ -8,6 +8,7 @@ namespace ZipPicViewUWP
     using System.Threading.Tasks;
     using Windows.Graphics.Printing;
     using Windows.Graphics.Printing.OptionDetails;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
     using Windows.UI.Xaml.Printing;
@@ -17,7 +18,7 @@ namespace ZipPicViewUWP
     /// </summary>
     public class PrintHelper
     {
-        private readonly Page caller;
+        private readonly UIElement caller;
         private PrintDocument printDocument;
         private IPrintDocumentSource printDocumentSource;
         private PrintPanel.LayoutOption printLayout;
@@ -28,7 +29,7 @@ namespace ZipPicViewUWP
         /// Initializes a new instance of the <see cref="PrintHelper"/> class.
         /// </summary>
         /// <param name="page">The page instant requesting for printing.</param>
-        public PrintHelper(Page page)
+        public PrintHelper(UIElement page)
         {
             this.caller = page;
         }

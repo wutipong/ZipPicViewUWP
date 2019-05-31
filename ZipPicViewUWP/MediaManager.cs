@@ -7,6 +7,9 @@ namespace ZipPicViewUWP
     using System;
     using System.Threading.Tasks;
     using NaturalSort.Extension;
+    using Windows.ApplicationModel;
+    using Windows.Storage.Streams;
+    using Windows.UI.Xaml.Controls;
 
     /// <summary>
     /// MediaManager contains variuos functions to interact with the MediaProvider.
@@ -116,6 +119,22 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Load Sound.
+        /// </summary>
+        /// <param name="filename">sound file name.</param>
+        /// <returns>A sound load<see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public static async Task<MediaElement> LoadSound(string filename)
+        {
+            var sound = new MediaElement();
+            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(string.Format(@"Assets\{0}", filename));
+            sound.AutoPlay = false;
+            sound.SetSource(await soundFile.OpenReadAsync(), string.Empty);
+            sound.Stop();
+
+            return sound;
+        }
+
+        /// <summary>
         /// Change the media provider.
         /// </summary>
         /// <param name="newProvider">the new media provider.</param>
@@ -146,7 +165,8 @@ namespace ZipPicViewUWP
         /// <param name="current">Use entries under current folder.</param>
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
-        public static async void Advance(bool current, bool random, int step = 1)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task Advance(bool current, bool random, int step = 1)
         {
             string[] entries;
 
@@ -199,6 +219,16 @@ namespace ZipPicViewUWP
             var cover = Provider.FileFilter.FindCoverPage(children);
 
             return cover;
+        }
+
+        /// <summary>
+        /// Create an image for error.
+        /// </summary>
+        /// <returns>Task for creating image error stream.</returns>
+        public static async Task<IRandomAccessStream> CreateErrorImageStream()
+        {
+            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
+            return await file.OpenReadAsync();
         }
 
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)

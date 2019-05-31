@@ -36,8 +36,16 @@ namespace ZipPicViewUWP
         public ProgressRing ProgressRing => this.loading;
 
         /// <summary>
-        /// Gets or sets the custom user data assciated with the thumbnail.
+        /// Gets or sets the entry assciated with the thumbnail.
         /// </summary>
-        public string UserData { get; set; }
+        public string Entry { get; set; }
+
+        /// <summary>
+        /// Show the thumbnail Image.
+        /// </summary>
+        public void ShowImage()
+        {
+            this.ThumbnailShowStoryBoard.Begin();
+        }
     }
 }

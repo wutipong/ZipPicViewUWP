@@ -7,7 +7,6 @@ namespace ZipPicViewUWP
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Windows.ApplicationModel;
     using Windows.Graphics.Imaging;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml;
@@ -26,6 +25,7 @@ namespace ZipPicViewUWP
         public ThumbnailPage()
         {
             this.InitializeComponent();
+            this.ThumbnailItemLoading += this.ThumbnailPage_ThumbnailItemLoading;
         }
 
         /// <summary>
@@ -67,11 +67,23 @@ namespace ZipPicViewUWP
         public CancellationTokenSource CancellationToken { get; private set; }
 
         /// <summary>
-        /// Set the entries to display thumbnail.
+        /// Set the current folder entry to display thumbnail.
         /// </summary>
-        /// <param name="entries">Entries to display.</param>
-        public void SetEntries(string[] entries)
+        /// <param name="folder">Entries to display.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task SetFolderEntry(string folder)
         {
+            var (entries, error) = await MediaManager.Provider.GetChildEntries(folder);
+            if (error != null)
+            {
+                throw error;
+            }
+
+            this.FolderName.Text = (folder == MediaManager.Provider.Root) ? "<Root>" : folder.ExtractFilename();
+            this.FolderName.FontStyle = (folder == MediaManager.Provider.Root) ?
+                Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal;
+            this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
+
             this.Thumbnails = new Thumbnail[entries.Length];
             this.ThumbnailGrid.Items.Clear();
 
@@ -80,23 +92,42 @@ namespace ZipPicViewUWP
                 var entry = entries[i];
                 var thumbnail = new Thumbnail();
                 thumbnail.Label.Text = entry.ExtractFilename().Ellipses(25);
-                thumbnail.UserData = entry;
+                thumbnail.Entry = entry;
                 thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
 
                 this.Thumbnails[i] = thumbnail;
                 this.ThumbnailGrid.Items.Add(thumbnail);
+            }
+
+            var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
+            if (cover != null && cover != string.Empty)
+            {
+                IRandomAccessStream stream;
+                (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(cover);
+                if (error != null)
+                {
+                    stream = await MediaManager.CreateErrorImageStream();
+                }
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+
+                var source = new SoftwareBitmapSource();
+                await source.SetBitmapAsync(bitmap);
+
+                this.CoverImage.Source = source;
             }
         }
 
         /// <summary>
         /// Resume the thumbnail loading operation.
         /// </summary>
-        /// <returns>Nothing.</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task ResumeLoadThumbnail()
         {
             this.CancellationToken = new CancellationTokenSource();
             CancellationToken token = this.CancellationToken.Token;
-
+            this.ProgressBorderShowStoryBoard.Begin();
             try
             {
                 for (int i = 0; i < this.Thumbnails.Length; i++)
@@ -107,10 +138,10 @@ namespace ZipPicViewUWP
                         continue;
                     }
 
-                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.UserData);
+                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.Entry);
                     if (error != null)
                     {
-                        stream = await GetErrorImageStream();
+                        stream = await MediaManager.CreateErrorImageStream();
                     }
 
                     this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
@@ -125,31 +156,40 @@ namespace ZipPicViewUWP
 
                     thumbnail.Image.Source = source;
                     thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
+                    thumbnail.ShowImage();
                 }
 
                 this.ThumbnailItemLoading?.Invoke(this, this.Thumbnails.Length, this.Thumbnails.Length);
             }
-            finally
+            catch (Exception)
             {
-
             }
-
-        }
-
-        private static async Task<IRandomAccessStream> GetErrorImageStream()
-        {
-            var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
-            return await file.OpenReadAsync();
         }
 
         private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
         {
             var thumbnail = e.ClickedItem as Thumbnail;
-            var entry = thumbnail.UserData;
+            var entry = thumbnail.Entry;
 
             MediaManager.CurrentEntry = entry;
 
             this.ItemClicked?.Invoke(this, entry);
+        }
+
+        private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
+        {
+            this.Progress.Maximum = count;
+            this.Progress.Value = current;
+
+            if (current == count)
+            {
+                this.ProgressBorderHideStoryBoard.Begin();
+                this.ProgressBorderHideStoryBoard.Completed += (_, __) => this.ProgressBorder.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current, count);
+            }
         }
     }
 }
