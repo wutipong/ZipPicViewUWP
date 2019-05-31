@@ -9,33 +9,17 @@
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     mc:Ignorable="d" Loaded="UserControl_Loaded">
     <RelativePanel>
-        <RelativePanel
+        <Border
             Name="ImageBorder"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
-            <RelativePanel.Background>
+            <Border.Background>
                 <media:BackdropBlurBrush Amount="3.0" />
-            </RelativePanel.Background>
-            <Image
-                Name="Image"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"></Image>
-            <controls:Loading
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                x:Name="LoadingControl">
-                <ProgressRing
-                    Width="100"
-                    Height="100"
-                    IsActive="True" />
-            </controls:Loading>
-        </RelativePanel>
+            </Border.Background>
+            <Image Name="Image"></Image>
+        </Border>
         <Border
             x:Name="HiddenControl"
             Background="#00000000"
@@ -188,6 +172,14 @@
                 </Button>
             </Border>
         </Grid>
+        <controls:Loading
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"
+                x:Name="LoadingControl">
+            <ProgressBar IsIndeterminate="True" Foreground="{StaticResource PrimaryColor1}" />
+        </controls:Loading>
         <controls:InAppNotification
             Name="Notification"
             RelativePanel.AlignBottomWithPanel="True"
