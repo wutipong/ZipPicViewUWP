@@ -28,7 +28,6 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private MediaElement clickSound;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
@@ -132,11 +131,6 @@ namespace ZipPicViewUWP
             this.splitView.IsEnabled = true;
         }
 
-        private void ImageControlOnPreCount(object sender)
-        {
-            this.clickSound.Play();
-        }
-
         private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
         {
             this.HideImageControl();
@@ -144,25 +138,6 @@ namespace ZipPicViewUWP
             var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
             this.subFolderListCtrl.SelectedIndex = folderIndex;
-        }
-
-        private void ImageControlOnAutoAdvance(object sender)
-        {
-            bool current = !this.imageControl.GlobalEnabled;
-            bool random = this.imageControl.RandomEnabled;
-
-            MediaManager.Advance(current, random);
-        }
-
-        private async Task<MediaElement> LoadSound(string filename)
-        {
-            var sound = new MediaElement();
-            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(string.Format(@"Assets\{0}", filename));
-            sound.AutoPlay = false;
-            sound.SetSource(await soundFile.OpenReadAsync(), string.Empty);
-            sound.Stop();
-
-            return sound;
         }
 
         private async Task OpenFile(StorageFile selected)
@@ -297,8 +272,6 @@ namespace ZipPicViewUWP
 
         private async void PageLoaded(object sender, RoutedEventArgs e)
         {
-            this.clickSound = await this.LoadSound("beep.wav");
-            this.imageControl.OnPreCount += this.ImageControlOnPreCount;
             this.printHelper = new PrintHelper(this);
             this.printHelper.RegisterForPrinting();
         }
@@ -385,7 +358,7 @@ namespace ZipPicViewUWP
             this.thumbnailPages?[this.subFolderListCtrl.SelectedIndex].CancellationToken.Cancel();
 
             FolderReadingDialog dialog = new FolderReadingDialog();
-            _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
+            dialog.ShowAsync(ContentDialogPlacement.Popup);
             var waitTask = Task.Delay(1000);
 
             Exception error;
@@ -406,10 +379,6 @@ namespace ZipPicViewUWP
             dialog.Hide();
 
             return null;
-        }
-
-        private void ShowImage()
-        {
         }
 
         private void SubFolderButtonClick(object sender, RoutedEventArgs e)

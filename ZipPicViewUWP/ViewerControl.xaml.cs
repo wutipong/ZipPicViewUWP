@@ -44,9 +44,8 @@ namespace ZipPicViewUWP
         private readonly DispatcherTimer timer;
         private int counter;
         private string filename;
-        private AutoAdvanceEvent onAutoAdvance;
-        private PreCountEvent onPreCount;
         private DisplayRequest displayRequest;
+        private MediaElement clickSound;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
@@ -110,57 +109,12 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// An event triggered when auto advance event is triggered.
-        /// </summary>
-        public event AutoAdvanceEvent OnAutoAdvance
-        {
-            add { this.onAutoAdvance += value; }
-            remove { this.onAutoAdvance -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when pre-count event is triggered.
-        /// </summary>
-        public event PreCountEvent OnPreCount
-        {
-            add { this.onPreCount += value; }
-            remove { this.onPreCount -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when previous button is clicked.
-        /// </summary>
-        public event RoutedEventHandler PreviousButtonClick
-        {
-            add { this.PreviousButton.Click += value; }
-            remove { this.PreviousButton.Click -= value; }
-        }
-
-        /// <summary>
         /// Gets or sets whether or not auto advance is enabled.
         /// </summary>
         public bool? AutoEnabled
         {
             get { return this.AutoButton.IsChecked; }
             set { this.AutoButton.IsChecked = value; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether or not Auto Advance is randomly advanced.
-        /// </summary>
-        public bool RandomEnabled
-        {
-            get { return this.RandomToggle.IsOn; }
-            private set { this.RandomToggle.IsOn = value; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether or not Auto Advance is advanced to all folder.
-        /// </summary>
-        public bool GlobalEnabled
-        {
-            get { return this.GlobalToggle.IsOn; }
-            private set { this.GlobalToggle.IsOn = value; }
         }
 
         /// <summary>
@@ -208,7 +162,7 @@ namespace ZipPicViewUWP
         /// </summary>
         public async void Show()
         {
-            await this.UpdateImage();
+            await this.UpdateImage(false);
             this.Visibility = Visibility.Visible;
             this.displayRequest = new DisplayRequest();
             this.displayRequest.RequestActive();
@@ -234,7 +188,7 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="withDelay">A flag whether or not to delay 250ms before display a loading control.</param>
         /// <returns>A Task.</returns>
-        public async Task UpdateImage(bool withDelay = false)
+        public async Task UpdateImage(bool withDelay = true)
         {
             var file = MediaManager.CurrentEntry;
             var delayTask = Task.Delay(withDelay ? 250 : 0);
@@ -268,7 +222,7 @@ namespace ZipPicViewUWP
             this.Image.Source = source;
 
             this.ResetCounter();
-            this.LoadingControl.IsLoading = true;
+            this.LoadingControl.IsLoading = false;
         }
 
         private void AutoButton_Checked(object sender, RoutedEventArgs e)
@@ -302,12 +256,15 @@ namespace ZipPicViewUWP
             this.counter--;
             if (this.counter < 5 && this.counter > 0 && this.PrecountToggle.IsOn)
             {
-                this.onPreCount?.Invoke(this);
+                this.clickSound.Play();
             }
 
             if (this.counter == 0)
             {
-                this.onAutoAdvance?.Invoke(this);
+                bool current = !this.GlobalToggle.IsOn;
+                bool random = this.RandomToggle.IsOn;
+
+                MediaManager.Advance(current, random);
 
                 this.timer.Stop();
             }
@@ -458,19 +415,24 @@ namespace ZipPicViewUWP
 
         private async void AdvanceForward()
         {
-            MediaManager.Advance(true, false, 1);
+            await MediaManager.Advance(true, false, 1);
             await this.UpdateImage();
         }
 
         private async void AdvanceBackward()
         {
-            MediaManager.Advance(true, false, -1);
+            await MediaManager.Advance(true, false, -1);
             await this.UpdateImage();
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
             this.AdvanceBackward();
+        }
+
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.clickSound = await MediaManager.LoadSound("beep.wav");
         }
     }
 }
