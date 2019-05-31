@@ -163,7 +163,9 @@ namespace ZipPicViewUWP
         public async void Show()
         {
             await this.UpdateImage(false);
+            this.Opacity = 0;
             this.Visibility = Visibility.Visible;
+            this.ShowStoryBoard.Begin();
             this.displayRequest = new DisplayRequest();
             this.displayRequest.RequestActive();
         }
@@ -178,9 +180,9 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            this.Visibility = Visibility.Collapsed;
             this.displayRequest?.RequestActive();
             this.displayRequest = null;
+            this.HideStoryBoard.Begin();
         }
 
         /// <summary>
@@ -251,7 +253,7 @@ namespace ZipPicViewUWP
             this.AdvanceForward();
         }
 
-        private void Timer_Tick(object sender, object e)
+        private async void Timer_Tick(object sender, object e)
         {
             this.counter--;
             if (this.counter < 5 && this.counter > 0 && this.PrecountToggle.IsOn)
@@ -264,7 +266,7 @@ namespace ZipPicViewUWP
                 bool current = !this.GlobalToggle.IsOn;
                 bool random = this.RandomToggle.IsOn;
 
-                MediaManager.Advance(current, random);
+                await MediaManager.Advance(current, random);
 
                 this.timer.Stop();
             }
@@ -433,6 +435,11 @@ namespace ZipPicViewUWP
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             this.clickSound = await MediaManager.LoadSound("beep.wav");
+        }
+
+        private void HideStoryBoard_Completed(object sender, object e)
+        {
+            this.Visibility = Visibility.Collapsed;
         }
     }
 }

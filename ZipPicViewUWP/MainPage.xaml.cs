@@ -124,7 +124,7 @@ namespace ZipPicViewUWP
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
-        private void HideImageControl()
+        private async void HideImageControl()
         {
             this.imageControl.Hide();
             this.imageControl.AutoEnabled = false;
@@ -358,7 +358,7 @@ namespace ZipPicViewUWP
             this.thumbnailPages?[this.subFolderListCtrl.SelectedIndex].CancellationToken.Cancel();
 
             FolderReadingDialog dialog = new FolderReadingDialog();
-            dialog.ShowAsync(ContentDialogPlacement.Popup);
+            _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
             var waitTask = Task.Delay(1000);
 
             Exception error;
@@ -394,7 +394,6 @@ namespace ZipPicViewUWP
             }
 
             this.ThumbnailBorder.Opacity = 0;
-            var selected = ((FolderListItem)e.AddedItems.First()).Value;
 
             foreach (var removed in e.RemovedItems)
             {
