@@ -7,12 +7,12 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
-    x:Name="userControl"
+    x:Name="Control"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Name="ShowStoryBoard">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="userControl" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Control" Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <ExponentialEase EasingMode="EaseIn" />
@@ -26,7 +26,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Name="HideStoryBoard" Completed="HideStoryBoard_Completed">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="userControl" Storyboard.TargetProperty="(UIElement.Opacity)">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="Control" Storyboard.TargetProperty="(UIElement.Opacity)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
                     <EasingDoubleKeyFrame.EasingFunction>
                         <ExponentialEase EasingMode="EaseOut" />
