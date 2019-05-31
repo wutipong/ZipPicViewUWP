@@ -97,39 +97,9 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// Gets or sets whether or not auto advance is enabled.
+        /// An event triggered when control layer visibility is changed.
         /// </summary>
-        public bool? AutoEnabled
-        {
-            get { return this.AutoButton.IsChecked; }
-            set { this.AutoButton.IsChecked = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the image dimention text.
-        /// </summary>
-        public string DimensionText
-        {
-            get { return this.OriginalDimension.Text; }
-            set { this.OriginalDimension.Text = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets the image file name.
-        /// </summary>
-        public string Filename
-        {
-            get
-            {
-                return this.filename;
-            }
-
-            set
-            {
-                this.filename = value;
-                this.FilenameTextBlock.Text = this.filename.Ellipses(70);
-            }
-        }
+        public event EventHandler<Visibility> ControlLayerVisibilityChange;
 
         /// <summary>
         /// Reset the timer counter.
@@ -168,6 +138,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
+            this.AutoButton.IsChecked = false;
             this.displayRequest?.RequestActive();
             this.displayRequest = null;
             this.HideStoryBoard.Begin();
@@ -367,6 +338,8 @@ namespace ZipPicViewUWP
             {
                 this.ControlLayer.Visibility = this.ControlLayer.Visibility == Visibility.Collapsed ?
                     Visibility.Visible : Visibility.Collapsed;
+
+                this.ControlLayerVisibilityChange?.Invoke(this, this.ControlLayer.Visibility);
             }
         }
 

@@ -101,6 +101,7 @@
             <local:ViewerControl
                 x:Name="imageControl"
                 CloseButtonClick="ImageControlCloseButtonClick"
+                ControlLayerVisibilityChange="ImageControl_ControlLayerVisibilityChange"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"

@@ -127,7 +127,6 @@ namespace ZipPicViewUWP
         private void HideImageControl()
         {
             this.imageControl.Hide();
-            this.imageControl.AutoEnabled = false;
             this.splitView.IsEnabled = true;
         }
 
@@ -410,6 +409,12 @@ namespace ZipPicViewUWP
         private void SetFileNameTextBox(string filename)
         {
             this.filenameTextBlock.Text = filename.Ellipses(100);
+        }
+
+        private async void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
+        {
+            this.page.TopAppBar.Visibility = e;
+            await this.imageControl.UpdateImage();
         }
     }
 }
