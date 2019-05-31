@@ -88,18 +88,6 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// An event delegate. This is used to be implemented the event when the auto advance is enabled and is signaled.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        public delegate void AutoAdvanceEvent(object sender);
-
-        /// <summary>
-        /// An event delegate. This is used to be implemented the event triggered during pre-count.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        public delegate void PreCountEvent(object sender);
-
-        /// <summary>
         /// An event triggered when close button is clicked.
         /// </summary>
         public event RoutedEventHandler CloseButtonClick
@@ -363,36 +351,36 @@ namespace ZipPicViewUWP
             stream.Dispose();
         }
 
-        private void HiddenControl_Tapped(object sender, TappedRoutedEventArgs e)
+        private void ImageBorder_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var pos = e.GetPosition(this.HiddenControl);
+            var pos = e.GetPosition(this.ImageBorder);
 
             if (pos.X < 200)
             {
                 this.AdvanceBackward();
             }
-            else if (pos.X > this.HiddenControl.ActualWidth - 200)
+            else if (pos.X > this.ImageBorder.ActualWidth - 200)
             {
                 this.AdvanceForward();
             }
+            else
+            {
+                this.ControlLayer.Visibility = this.ControlLayer.Visibility == Visibility.Collapsed ?
+                    Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
-        private void HiddenControl_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void ImageBorder_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
-            if (this.AutoButton.IsChecked == true)
-            {
-                return;
-            }
-
             var deltaX = e.Cumulative.Translation.X;
 
             if (deltaX > 5)
             {
-                this.AdvanceForward();
+                this.AdvanceBackward();
             }
             else if (deltaX < -5)
             {
-                this.AdvanceBackward();
+                this.AdvanceForward();
             }
         }
 

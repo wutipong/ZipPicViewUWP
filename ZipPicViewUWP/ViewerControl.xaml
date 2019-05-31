@@ -92,7 +92,11 @@
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True" RenderTransformOrigin="0.5,0.5">
+            RelativePanel.AlignTopWithPanel="True"
+            RenderTransformOrigin="0.5,0.5"
+            ManipulationCompleted="ImageBorder_ManipulationCompleted"
+            ManipulationMode="TranslateX"
+            Tapped="ImageBorder_Tapped">
             <Border.RenderTransform>
                 <CompositeTransform />
             </Border.RenderTransform>
@@ -108,17 +112,6 @@
                 </Image.Projection>
             </Image>
         </Border>
-        <Border
-            x:Name="HiddenControl"
-            Background="#00000000"
-            ManipulationCompleted="HiddenControl_ManipulationCompleted"
-            ManipulationMode="TranslateX"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True"
-            Tapped="HiddenControl_Tapped"
-            Visibility="Collapsed" />
         <Grid
             Name="ControlLayer"
             RelativePanel.AlignBottomWithPanel="True"
