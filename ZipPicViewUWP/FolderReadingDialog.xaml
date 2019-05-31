@@ -12,7 +12,8 @@
             <ProgressRing
                 VerticalAlignment="Top"
                 IsActive="True"
-                IsFocusEngagementEnabled="False" />
+                IsFocusEngagementEnabled="False"
+                Margin="4" />
             <TextBlock>Reading folder structure ...</TextBlock>
         </StackPanel>
     </Grid>

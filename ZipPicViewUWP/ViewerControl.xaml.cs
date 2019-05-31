@@ -73,15 +73,23 @@ namespace ZipPicViewUWP
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var durationIndex);
             this.DurationList.SelectedIndex = durationIndex == null ? 0 : (int)durationIndex;
+            if (this.DurationList.SelectedIndex < 0 || this.DurationList.SelectedIndex >= this.DurationList.Items.Count)
+            {
+                this.DurationList.SelectedIndex = 0;
+            }
+            this.DurationList.SelectionChanged += this.DurationList_SelectionChanged;
 
             applicationData.LocalSettings.Values.TryGetValue("randomAdvance", out var randomAdvance);
             this.RandomToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
+            this.RandomToggle.Toggled += this.RandomToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("globalAdvance", out var globalAdvance);
             this.GlobalToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
+            this.GlobalToggle.Toggled += this.GlobalToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
             this.PrecountToggle.IsOn = precount == null ? false : (bool)precount;
+            this.PrecountToggle.Toggled += this.PrecountToggle_Toggled;
 
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {
@@ -122,9 +130,9 @@ namespace ZipPicViewUWP
         /// </summary>
         public async void Show()
         {
-            await this.UpdateImage(false);
             this.Opacity = 0;
             this.Visibility = Visibility.Visible;
+            await this.UpdateImage(false);
             this.ShowStoryBoard.Begin();
             this.displayRequest = new DisplayRequest();
             this.displayRequest.RequestActive();
@@ -156,8 +164,8 @@ namespace ZipPicViewUWP
             var file = MediaManager.CurrentEntry;
             bool showLoading = true;
 
-            uint width = (uint)this.ImageBorder.RenderSize.Width;
-            uint height = (uint)this.ImageBorder.RenderSize.Height;
+            uint width = (uint)this.Control.RenderSize.Width;
+            uint height = (uint)this.Control.RenderSize.Height;
 
             var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
             {
@@ -177,10 +185,13 @@ namespace ZipPicViewUWP
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(withDelay ? 500 : 0);
+                await Task.Delay(withDelay ? 100 : 0);
                 if (showLoading)
                 {
-                    this.LoadingControl.IsLoading = true;
+                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        this.LoadingControl.IsLoading = true;
+                    });
                 }
             });
 
@@ -367,6 +378,11 @@ namespace ZipPicViewUWP
 
         private void DurationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (this.DurationList.SelectedIndex == -1)
+            {
+                return;
+            }
+
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values["durationIndex"] = this.DurationList.SelectedIndex;
         }
