@@ -130,6 +130,7 @@ namespace ZipPicViewUWP
                         continue;
                     }
 
+                    this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
                     thumbnail.ProgressRing.Visibility = Visibility.Visible;
                     var bitmap = await MediaManager.CreateThumbnail(thumbnail.Entry, 250, 200);
 
@@ -170,7 +171,7 @@ namespace ZipPicViewUWP
             }
             else
             {
-                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current, count);
+                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current + 1, count);
             }
         }
     }
