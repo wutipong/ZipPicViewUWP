@@ -75,12 +75,14 @@
                             Name="FolderName"
                             Margin="20,0"
                             FontSize="48"
+                            Foreground="{StaticResource PrimaryColor1}"
                             RelativePanel.RightOf="CoverBorder">
                             Folder Name
                         </TextBlock>
                         <TextBlock
                             Name="ImageCount"
                             Margin="20,0"
+                            Foreground="{StaticResource PrimaryColor3}"
                             RelativePanel.Below="FolderName"
                             RelativePanel.RightOf="CoverBorder">
                             Image Count

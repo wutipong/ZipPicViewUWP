@@ -80,6 +80,8 @@ namespace ZipPicViewUWP
             }
 
             this.FolderName.Text = (folder == MediaManager.Provider.Root) ? "<Root>" : folder.ExtractFilename();
+            this.FolderName.FontStyle = (folder == MediaManager.Provider.Root) ?
+                Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal;
             this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
 
             this.Thumbnails = new Thumbnail[entries.Length];
