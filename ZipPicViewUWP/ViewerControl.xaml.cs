@@ -144,11 +144,13 @@ namespace ZipPicViewUWP
             this.Opacity = 0;
             this.Visibility = Visibility.Visible;
             var updateImage = this.UpdateImage(false);
+            this.Image.Opacity = 0;
             this.ShowStoryBoard.Begin();
             this.displayRequest = new DisplayRequest();
             this.displayRequest.RequestActive();
 
             await updateImage;
+            this.ImageShowStoryBoard.Begin();
         }
 
         /// <summary>
