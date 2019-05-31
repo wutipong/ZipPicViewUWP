@@ -338,10 +338,16 @@ namespace ZipPicViewUWP
             }
             else
             {
-                this.ControlLayer.Visibility = this.ControlLayer.Visibility == Visibility.Collapsed ?
-                    Visibility.Visible : Visibility.Collapsed;
-
-                this.ControlLayerVisibilityChange?.Invoke(this, this.ControlLayer.Visibility);
+                if (this.ControlLayer.Visibility == Visibility.Visible)
+                {
+                    this.ControlLayerHideStoryBoard.Begin();
+                }
+                else
+                {
+                    this.ControlLayer.Opacity = 0;
+                    this.ControlLayer.Visibility = Visibility.Visible;
+                    this.ControlLayerShowStoryBoard.Begin();
+                }
             }
         }
 
@@ -383,12 +389,12 @@ namespace ZipPicViewUWP
             applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
         }
 
-        public void AdvanceForward()
+        private void AdvanceForward()
         {
             this.AdvanceBeginStoryboard.Begin();
         }
 
-        public void AdvanceBackward()
+        private void AdvanceBackward()
         {
             this.AdvanceBackwardBeginStoryboard.Begin();
         }
@@ -405,7 +411,7 @@ namespace ZipPicViewUWP
 
             this.clickSound = await MediaManager.LoadSound("beep.wav");
 
-            CoreWindow.GetForCurrentThread().KeyUp += Keyboard_KeyUp;
+            CoreWindow.GetForCurrentThread().KeyUp += this.Keyboard_KeyUp;
         }
 
         private void Keyboard_KeyUp(CoreWindow sender, KeyEventArgs e)
@@ -458,6 +464,17 @@ namespace ZipPicViewUWP
             await MediaManager.Advance(current, random);
             await this.UpdateImage();
             this.AdvanceAutoEndStoryBoard.Begin();
+        }
+
+        private void ControlLayerHideStoryBoard_Completed(object sender, object e)
+        {
+            this.ControlLayer.Visibility = Visibility.Collapsed;
+            this.ControlLayerVisibilityChange?.Invoke(this, Visibility.Collapsed);
+        }
+
+        private void ControlLayerShowStoryBoard_Completed(object sender, object e)
+        {
+            this.ControlLayerVisibilityChange?.Invoke(this, Visibility.Visible);
         }
     }
 }
