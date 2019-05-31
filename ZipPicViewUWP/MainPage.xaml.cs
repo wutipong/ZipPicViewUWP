@@ -248,6 +248,8 @@ namespace ZipPicViewUWP
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.FullScreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
+            this.ViewerControl.ExpectedImageWidth = (int)e.NewSize.Width;
+            this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
 
         private async Task RebuildSubFolderList()
@@ -295,22 +297,14 @@ namespace ZipPicViewUWP
 
         private void ThumbnailPage_ItemClicked(object source, string entry)
         {
-            this.ViewerControl.Show();
             MediaManager.CurrentEntry = entry;
+            this.ViewerControl.Show();
             this.SplitView.IsEnabled = false;
         }
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
-            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-
-            if (error != null)
-            {
-                stream = await MediaManager.CreateErrorImageStream();
-            }
-
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var bitmap = await ImageHelper.CreateThumbnail(decoder, 40, 50);
+            var bitmap = await MediaManager.CreateThumbnail(entry, 40, 50);
             SoftwareBitmapSource source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 

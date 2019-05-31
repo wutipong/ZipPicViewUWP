@@ -102,15 +102,7 @@ namespace ZipPicViewUWP
             var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
             if (cover != null && cover != string.Empty)
             {
-                IRandomAccessStream stream;
-                (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(cover);
-                if (error != null)
-                {
-                    stream = await MediaManager.CreateErrorImageStream();
-                }
-
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+                var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200);
 
                 var source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(bitmap);
@@ -138,18 +130,8 @@ namespace ZipPicViewUWP
                         continue;
                     }
 
-                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.Entry);
-                    if (error != null)
-                    {
-                        stream = await MediaManager.CreateErrorImageStream();
-                    }
-
-                    this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
                     thumbnail.ProgressRing.Visibility = Visibility.Visible;
-
-                    var decoder = await BitmapDecoder.CreateAsync(stream);
-                    SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 250, 200);
-                    token.ThrowIfCancellationRequested();
+                    var bitmap = await MediaManager.CreateThumbnail(thumbnail.Entry, 250, 200);
 
                     var source = new SoftwareBitmapSource();
                     await source.SetBitmapAsync(bitmap);

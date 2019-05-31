@@ -77,6 +77,7 @@ namespace ZipPicViewUWP
             {
                 this.DurationList.SelectedIndex = 0;
             }
+
             this.DurationList.SelectionChanged += this.DurationList_SelectionChanged;
 
             applicationData.LocalSettings.Values.TryGetValue("randomAdvance", out var randomAdvance);
@@ -112,6 +113,16 @@ namespace ZipPicViewUWP
         public event EventHandler<Visibility> ControlLayerVisibilityChange;
 
         /// <summary>
+        /// Gets or sets the width of image to be display.
+        /// </summary>
+        public int ExpectedImageWidth { get; set; } = 200;
+
+        /// <summary>
+        /// Gets or sets the height of image to be display.
+        /// </summary>
+        public int ExpectedImageHeight { get; set; } = 200;
+
+        /// <summary>
         /// Reset the timer counter.
         /// </summary>
         public void ResetCounter()
@@ -132,10 +143,12 @@ namespace ZipPicViewUWP
         {
             this.Opacity = 0;
             this.Visibility = Visibility.Visible;
-            await this.UpdateImage(false);
+            var updateImage = this.UpdateImage(false);
             this.ShowStoryBoard.Begin();
             this.displayRequest = new DisplayRequest();
             this.displayRequest.RequestActive();
+
+            await updateImage;
         }
 
         /// <summary>
@@ -164,28 +177,18 @@ namespace ZipPicViewUWP
             var file = MediaManager.CurrentEntry;
             bool showLoading = true;
 
-            uint width = (uint)this.Control.RenderSize.Width;
-            uint height = (uint)this.Control.RenderSize.Height;
+            int width = this.ExpectedImageWidth;
+            int height = this.ExpectedImageHeight;
 
-            var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
-            {
-                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(file);
-                if (error != null)
-                {
-                    stream = await MediaManager.CreateErrorImageStream();
-                }
-
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
-
-                stream.Dispose();
-                showLoading = false;
-                return (output, decoder.PixelWidth, decoder.PixelHeight);
-            });
+            var createBitmapTask = MediaManager.CreateImage(file, width, height);
 
             _ = Task.Run(async () =>
             {
-                await Task.Delay(withDelay ? 100 : 0);
+                if (withDelay)
+                {
+                    await Task.Delay(100);
+                }
+
                 if (showLoading)
                 {
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
@@ -199,6 +202,7 @@ namespace ZipPicViewUWP
 
             var source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
+            showLoading = false;
             await source.SetBitmapAsync(bitmap);
             this.OriginalDimension.Text = string.Format("{0}x{1}", origWidth, origHeight);
             this.Image.Source = source;

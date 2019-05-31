@@ -5,9 +5,11 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Threading;
     using System.Threading.Tasks;
     using NaturalSort.Extension;
     using Windows.ApplicationModel;
+    using Windows.Graphics.Imaging;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml.Controls;
 
@@ -19,12 +21,14 @@ namespace ZipPicViewUWP
         private static string currentEntry;
         private static string currentFolder;
         private static string[] currentFolderEntries = null;
+        private static SemaphoreSlim semaphore;
 
         static MediaManager()
         {
             MediaProviderChange += MediaManager_MediaProviderChangeAsync;
             CurrentEntryChange += MediaManager_CurrentEntryChange;
             CurrentFolderChange += MediaManager_CurrentFolderChange;
+            semaphore = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
@@ -105,14 +109,22 @@ namespace ZipPicViewUWP
         {
             if (currentFolderEntries == null)
             {
-                var (entries, error) = await Provider.GetChildEntries(CurrentFolder);
-                if (error != null)
+                await semaphore.WaitAsync();
+                try
                 {
-                    return (null, error);
-                }
+                    var (entries, error) = await Provider.GetChildEntries(CurrentFolder);
+                    if (error != null)
+                    {
+                        return (null, error);
+                    }
 
-                currentFolderEntries = entries;
-                Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
+                    currentFolderEntries = entries;
+                    Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
             }
 
             return (currentFolderEntries, null);
@@ -141,22 +153,30 @@ namespace ZipPicViewUWP
         /// <returns>Exception when there're errors. Null otherwise.</returns>
         public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
         {
-            if (newProvider != Provider)
+            await semaphore.WaitAsync();
+            try
             {
-                var error = await MediaProviderChange(newProvider);
-                if (error != null)
+                if (newProvider != Provider)
                 {
-                    return error;
+                    var error = await MediaProviderChange(newProvider);
+                    if (error != null)
+                    {
+                        return error;
+                    }
                 }
-            }
 
-            if (Provider != null)
+                if (Provider != null)
+                {
+                    Provider.Dispose();
+                }
+
+                Provider = newProvider;
+                return null;
+            }
+            finally
             {
-                Provider.Dispose();
+                semaphore.Release();
             }
-
-            Provider = newProvider;
-            return null;
         }
 
         /// <summary>
@@ -229,6 +249,66 @@ namespace ZipPicViewUWP
         {
             var file = await Package.Current.InstalledLocation.GetFileAsync(@"Assets\ErrorImage.png");
             return await file.OpenReadAsync();
+        }
+
+        /// <summary>
+        /// Create thumbnail image of the input entry.
+        /// </summary>
+        /// <param name="entry">input.</param>
+        /// <param name="width">expected image width.</param>
+        /// <param name="height">expected image height.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task<SoftwareBitmap> CreateThumbnail(string entry, int width, int height)
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
+
+                if (error != null)
+                {
+                    stream = await CreateErrorImageStream();
+                }
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
+
+                return bitmap;
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
+
+        /// <summary>
+        /// Create an resized image of the entry. The output is resized to the largest size smaller then the input size.
+        /// </summary>
+        /// <param name="entry">Entry.</param>
+        /// <param name="width">Expected Width.</param>
+        /// <param name="height">Expected Height.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
+        public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(string entry, int width, int height)
+        {
+            await semaphore.WaitAsync();
+            try
+            {
+                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
+                if (error != null)
+                {
+                    stream = await MediaManager.CreateErrorImageStream();
+                }
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var output = await ImageHelper.CreateResizedBitmap(decoder, (uint)width, (uint)height);
+
+                stream.Dispose();
+                return (output, (int)decoder.PixelWidth, (int)decoder.PixelHeight);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)
