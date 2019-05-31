@@ -47,11 +47,6 @@ namespace ZipPicViewUWP
             await dialog.ShowAsync();
         }
 
-        private void AdvanceImage(int step)
-        {
-            MediaManager.Advance(true, false, step);
-        }
-
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Link;
@@ -250,28 +245,6 @@ namespace ZipPicViewUWP
             await this.OpenFolder(selected);
         }
 
-        private async void PageKeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            var key = e.Key;
-            if (key == VirtualKey.Left ||
-                key == VirtualKey.PageUp)
-            {
-                //await this.AdvanceImage(-1);
-            }
-            else if (key == VirtualKey.Right ||
-                key == VirtualKey.PageDown ||
-                key == VirtualKey.Space)
-            {
-                //await this.AdvanceImage(1);
-            }
-
-            //e.Handled = true;
-        }
-
-        private async void PageLoaded(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.fullscreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
@@ -412,6 +385,24 @@ namespace ZipPicViewUWP
         {
             this.page.TopAppBar.Visibility = e;
             await this.imageControl.UpdateImage();
+        }
+
+        private void PageKeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            var key = e.Key;
+            if (key == VirtualKey.Left ||
+                key == VirtualKey.PageUp)
+            {
+                this.imageControl.AdvanceBackward();
+            }
+            else if (key == VirtualKey.Right ||
+                key == VirtualKey.PageDown ||
+                key == VirtualKey.Space)
+            {
+                this.imageControl.AdvanceForward();
+            }
+
+            e.Handled = true;
         }
     }
 }

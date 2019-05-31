@@ -12,6 +12,7 @@ namespace ZipPicViewUWP
     using Windows.Graphics.Imaging;
     using Windows.Storage.Pickers;
     using Windows.Storage.Streams;
+    using Windows.System;
     using Windows.System.Display;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
@@ -381,12 +382,12 @@ namespace ZipPicViewUWP
             applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
         }
 
-        private void AdvanceForward()
+        public void AdvanceForward()
         {
             this.AdvanceBeginStoryboard.Begin();
         }
 
-        private void AdvanceBackward()
+        public void AdvanceBackward()
         {
             this.AdvanceBackwardBeginStoryboard.Begin();
         }
