@@ -11,8 +11,16 @@
     <Page.Resources>
         <Storyboard x:Name="ProgressBorderHideStoryBoard">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1" />
-                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseOut" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                 <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
@@ -21,8 +29,16 @@
         </Storyboard>
         <Storyboard x:Name="ProgressBorderShowStoryBoard">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
-                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
+                <EasingDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1">
+                    <EasingDoubleKeyFrame.EasingFunction>
+                        <ExponentialEase EasingMode="EaseIn" />
+                    </EasingDoubleKeyFrame.EasingFunction>
+                </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="70" />

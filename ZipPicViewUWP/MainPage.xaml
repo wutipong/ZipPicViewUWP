@@ -12,11 +12,11 @@
         <Storyboard x:Name="ThumbnailBorderOpenStoryboard">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="-50" />
-                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="0" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                <SplineDoubleKeyFrame KeyTime="00:00:00.5000000" Value="1" />
+                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
