@@ -80,12 +80,6 @@
                     </Grid>
                 </SplitView.Pane>
             </SplitView>
-            <interactivity:Interaction.Behaviors>
-                <behaviors:Blur
-                    x:Name="BlurBehavior"
-                    AutomaticallyStart="False"
-                    Duration="500" />
-            </interactivity:Interaction.Behaviors>
         </Grid>
         <RelativePanel
             x:Name="viewerPanel"
@@ -104,59 +98,15 @@
                     Duration="100" />
             </interactivity:Interaction.Behaviors>
 
-            <Border
-                x:Name="imageBorder"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Visibility="Collapsed">
-                <Image x:Name="image">
-                    <interactivity:Interaction.Behaviors>
-                        <behaviors:Blur
-                            x:Name="ImageTransitionBehavior"
-                            AutomaticallyStart="False"
-                            Duration="500" />
-                    </interactivity:Interaction.Behaviors>
-                </Image>
-            </Border>
-
-            <Border
-                x:Name="hiddenImageControl"
-                Background="#00000000"
-                ManipulationCompleted="HiddenImageControlManipulationCompleted"
-                ManipulationMode="TranslateX"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Tapped="HiddenImageControlTapped"
-                Visibility="Collapsed" />
-
             <local:ViewerControl
                 x:Name="imageControl"
                 CloseButtonClick="ImageControlCloseButtonClick"
-                NextButtonClick="ImageControlNextButtonClick"
                 OnAutoAdvance="ImageControlOnAutoAdvance"
-                PreviousButtonClick="ImageControlPrevButtonClick"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignTopWithPanel="True"
                 Visibility="Collapsed" />
-
-            <Border
-                x:Name="loadingBorder"
-                RelativePanel.AlignBottomWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignTopWithPanel="True"
-                Visibility="Collapsed">
-                <ProgressRing
-                    Width="100"
-                    Height="100"
-                    IsActive="True" />
-            </Border>
         </RelativePanel>
         <Grid
             RelativePanel.AlignBottomWithPanel="True"

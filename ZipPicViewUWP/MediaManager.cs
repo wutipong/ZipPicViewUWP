@@ -4,9 +4,9 @@
 
 namespace ZipPicViewUWP
 {
+    using NaturalSort.Extension;
     using System;
     using System.Threading.Tasks;
-    using NaturalSort.Extension;
     using Windows.ApplicationModel;
     using Windows.Storage.Streams;
 

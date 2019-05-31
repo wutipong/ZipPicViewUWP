@@ -5,10 +5,8 @@
 namespace ZipPicViewUWP
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Core;
@@ -16,9 +14,7 @@ namespace ZipPicViewUWP
     using Windows.Graphics.Imaging;
     using Windows.Storage;
     using Windows.Storage.Pickers;
-    using Windows.Storage.Streams;
     using Windows.System;
-    using Windows.System.Display;
     using Windows.UI.Popups;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -33,11 +29,9 @@ namespace ZipPicViewUWP
     public sealed partial class MainPage : Page
     {
         private MediaElement clickSound;
-        private DisplayRequest displayRequest;
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private PrintHelper printHelper;
-        private Task thumbnailTask = null;
         private ThumbnailPage[] thumbnailPages;
 
         /// <summary>
@@ -55,10 +49,9 @@ namespace ZipPicViewUWP
             await dialog.ShowAsync();
         }
 
-        private async Task AdvanceImage(int step)
+        private void AdvanceImage(int step)
         {
             MediaManager.Advance(true, false, step);
-            await this.ChangeCurrentEntry(MediaManager.CurrentEntry);
         }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
@@ -111,7 +104,7 @@ namespace ZipPicViewUWP
             }
         }
 
-        private void FullscreenButton_Checked(object sender, RoutedEventArgs e)
+        private async void FullscreenButton_Checked(object sender, RoutedEventArgs e)
         {
             this.fullscreenButton.Icon = new SymbolIcon(Symbol.BackToWindow);
             this.fullscreenButton.Label = "Exit Fullscreen";
@@ -120,6 +113,8 @@ namespace ZipPicViewUWP
             {
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
             }
+
+            await this.imageControl.UpdateImage();
         }
 
         private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)
@@ -130,79 +125,11 @@ namespace ZipPicViewUWP
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
-        private async void HiddenImageControlManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            if (this.imageControl.AutoEnabled == true)
-            {
-                return;
-            }
-
-            var deltaX = e.Cumulative.Translation.X;
-
-            if (deltaX > 5)
-            {
-                await this.AdvanceImage(-1);
-            }
-            else if (deltaX < -5)
-            {
-                await this.AdvanceImage(1);
-            }
-        }
-
-        private async void HiddenImageControlTapped(object sender, TappedRoutedEventArgs e)
-        {
-            var pos = e.GetPosition(this.hiddenImageControl);
-
-            if (pos.X < 200)
-            {
-                if (this.imageControl.AutoEnabled == false)
-                {
-                    await this.AdvanceImage(-1);
-                }
-            }
-            else if (pos.X > this.hiddenImageControl.ActualWidth - 200)
-            {
-                if (this.imageControl.AutoEnabled == false)
-                {
-                    await this.AdvanceImage(1);
-                }
-            }
-            else
-            {
-                this.imageControl.Visibility = (this.imageControl.Visibility == Visibility.Visible) ?
-                    Visibility.Collapsed :
-                    Visibility.Visible;
-
-                this.page.TopAppBar.Visibility = (this.page.TopAppBar.Visibility == Visibility.Visible) ?
-                    Visibility.Collapsed :
-                    Visibility.Visible;
-            }
-        }
-
-        private void HideImage()
-        {
-            this.loadingBorder.Visibility = Visibility.Visible;
-            this.ImageTransitionBehavior.Value = 10;
-            this.ImageTransitionBehavior.StartAnimation();
-        }
-
         private void HideImageControl()
         {
-            this.BlurBehavior.Value = 0;
-            this.BlurBehavior.StartAnimation();
-            this.imageBorder.Visibility = Visibility.Collapsed;
-            this.imageControl.Visibility = Visibility.Collapsed;
-            this.hiddenImageControl.Visibility = Visibility.Collapsed;
-            this.viewerPanel.Visibility = Visibility.Collapsed;
-            // this.ThumbnailBorder.Child.IsEnabled = true;
+            this.imageControl.Hide();
             this.imageControl.AutoEnabled = false;
             this.splitView.IsEnabled = true;
-
-            if (this.displayRequest != null)
-            {
-                this.displayRequest.RequestRelease();
-                this.displayRequest = null;
-            }
         }
 
         private void ImageControlOnPreCount(object sender)
@@ -210,37 +137,21 @@ namespace ZipPicViewUWP
             this.clickSound.Play();
         }
 
-        private async void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
+        private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
         {
-            this.ControlCloseBehavior.StartAnimation();
-            this.ControlCloseBehavior.Value = 0;
-            await Task.Delay((int)this.ControlCloseBehavior.Duration);
             this.HideImageControl();
-            this.ControlCloseBehavior.Value = 1.0;
 
             var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
             this.subFolderListCtrl.SelectedIndex = folderIndex;
         }
 
-        private async void ImageControlNextButtonClick(object sender, RoutedEventArgs e)
-        {
-            await this.AdvanceImage(1);
-        }
-
-        private async void ImageControlOnAutoAdvance(object sender)
+        private void ImageControlOnAutoAdvance(object sender)
         {
             bool current = !this.imageControl.GlobalEnabled;
             bool random = this.imageControl.RandomEnabled;
 
             MediaManager.Advance(current, random);
-
-            await this.ChangeCurrentEntry(MediaManager.CurrentEntry);
-        }
-
-        private async void ImageControlPrevButtonClick(object sender, RoutedEventArgs e)
-        {
-            await this.AdvanceImage(-1);
         }
 
         private async Task<MediaElement> LoadSound(string filename)
@@ -368,25 +279,20 @@ namespace ZipPicViewUWP
 
         private async void PageKeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (this.imageBorder.Visibility == Visibility.Collapsed)
-            {
-                return;
-            }
-
             var key = e.Key;
             if (key == VirtualKey.Left ||
                 key == VirtualKey.PageUp)
             {
-                await this.AdvanceImage(-1);
+                //await this.AdvanceImage(-1);
             }
             else if (key == VirtualKey.Right ||
                 key == VirtualKey.PageDown ||
                 key == VirtualKey.Space)
             {
-                await this.AdvanceImage(1);
+                //await this.AdvanceImage(1);
             }
 
-            e.Handled = true;
+            //e.Handled = true;
         }
 
         private async void PageLoaded(object sender, RoutedEventArgs e)
@@ -445,65 +351,16 @@ namespace ZipPicViewUWP
             this.subFolderListCtrl.SelectedIndex = 0;
         }
 
-        private async void ThumbnailPage_ItemClicked(object source, string entry)
+        private void ThumbnailPage_ItemClicked(object source, string entry)
         {
-            this.BlurBehavior.Value = 10;
-            this.BlurBehavior.StartAnimation();
-            this.imageControl.Visibility = Visibility.Visible;
+            this.imageControl.Show();
             this.viewerPanel.Visibility = Visibility.Visible;
 
-            await this.ChangeCurrentEntry(MediaManager.CurrentEntry, false);
-
+            MediaManager.CurrentEntry = entry;
             if (this.viewerPanel.Visibility == Visibility.Visible)
             {
                 this.splitView.IsEnabled = false;
             }
-        }
-
-        private async Task ChangeCurrentEntry(string file, bool withDelay = true)
-        {
-            MediaManager.CurrentEntry = file;
-            var delayTask = Task.Delay(withDelay ? 250 : 0);
-
-            uint width = (uint)this.displayPanel.RenderSize.Width;
-            uint height = (uint)this.displayPanel.RenderSize.Height;
-
-            var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
-            {
-                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(file);
-                if (error != null)
-                {
-                    stream = await MediaManager.CreateErrorImageStream();
-                }
-
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
-
-                stream.Dispose();
-                return (output, decoder.PixelWidth, decoder.PixelHeight);
-            });
-
-            await delayTask;
-            this.HideImage();
-            this.imageControl.Filename = file.ExtractFilename();
-
-            var source = new SoftwareBitmapSource();
-            var (bitmap, origWidth, origHeight) = await createBitmapTask;
-            await source.SetBitmapAsync(bitmap);
-            this.imageControl.DimensionText = string.Format("{0}x{1}", origWidth, origHeight);
-            this.image.Source = source;
-
-            this.ShowImage();
-            this.imageControl.ResetCounter();
-
-            if (this.viewerPanel.Visibility == Visibility.Collapsed)
-            {
-                this.imageBorder.Visibility = Visibility.Collapsed;
-                this.hiddenImageControl.Visibility = Visibility.Collapsed;
-            }
-
-            this.displayRequest = new DisplayRequest();
-            this.displayRequest.RequestActive();
         }
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
@@ -553,11 +410,6 @@ namespace ZipPicViewUWP
 
         private void ShowImage()
         {
-            this.loadingBorder.Visibility = Visibility.Collapsed;
-            this.imageBorder.Visibility = Visibility.Visible;
-            this.hiddenImageControl.Visibility = Visibility.Visible;
-            this.ImageTransitionBehavior.Value = 0;
-            this.ImageTransitionBehavior.StartAnimation();
         }
 
         private void SubFolderButtonClick(object sender, RoutedEventArgs e)

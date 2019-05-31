@@ -7,12 +7,16 @@ namespace ZipPicViewUWP
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
+    using Windows.Graphics.Imaging;
     using Windows.Storage.Pickers;
     using Windows.Storage.Streams;
+    using Windows.System.Display;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
 
@@ -40,9 +44,9 @@ namespace ZipPicViewUWP
         private readonly DispatcherTimer timer;
         private int counter;
         private string filename;
-        private RoutedEventHandler nextButtonClick;
         private AutoAdvanceEvent onAutoAdvance;
         private PreCountEvent onPreCount;
+        private DisplayRequest displayRequest;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
@@ -53,8 +57,6 @@ namespace ZipPicViewUWP
             this.timer = new DispatcherTimer();
             this.timer.Tick += this.Timer_Tick;
             this.timer.Interval = new TimeSpan(0, 0, 1);
-
-            this.NextButton.Click += this.NextButton_Click;
 
             this.DurationList.Items.Clear();
             var oneMinute = TimeSpan.FromMinutes(1.00);
@@ -105,15 +107,6 @@ namespace ZipPicViewUWP
         {
             add { this.CloseButton.Click += value; }
             remove { this.CloseButton.Click -= value; }
-        }
-
-        /// <summary>
-        /// An event triggered when next button is clicked.
-        /// </summary>
-        public event RoutedEventHandler NextButtonClick
-        {
-            add { this.nextButtonClick += value; }
-            remove { this.nextButtonClick -= value; }
         }
 
         /// <summary>
@@ -210,6 +203,74 @@ namespace ZipPicViewUWP
             this.timer.Start();
         }
 
+        /// <summary>
+        /// Show the viewer control.
+        /// </summary>
+        public async void Show()
+        {
+            await this.UpdateImage();
+            this.Visibility = Visibility.Visible;
+            this.displayRequest = new DisplayRequest();
+            this.displayRequest.RequestActive();
+        }
+
+        /// <summary>
+        /// Hide the viewer control.
+        /// </summary>
+        public void Hide()
+        {
+            if (this.Visibility == Visibility.Collapsed)
+            {
+                return;
+            }
+
+            this.Visibility = Visibility.Collapsed;
+            this.displayRequest?.RequestActive();
+            this.displayRequest = null;
+        }
+
+        /// <summary>
+        /// Update the Image Control with new content.
+        /// </summary>
+        /// <param name="withDelay">A flag whether or not to delay 250ms before display a loading control.</param>
+        /// <returns>A Task.</returns>
+        public async Task UpdateImage(bool withDelay = false)
+        {
+            var file = MediaManager.CurrentEntry;
+            var delayTask = Task.Delay(withDelay ? 250 : 0);
+
+            uint width = (uint)this.ImageBorder.RenderSize.Width;
+            uint height = (uint)this.ImageBorder.RenderSize.Height;
+
+            var createBitmapTask = Task.Run<(SoftwareBitmap Bitmap, uint PixelWidth, uint PixelHeight)>(async () =>
+            {
+                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(file);
+                if (error != null)
+                {
+                    stream = await MediaManager.CreateErrorImageStream();
+                }
+
+                var decoder = await BitmapDecoder.CreateAsync(stream);
+                var output = await ImageHelper.CreateResizedBitmap(decoder, width, height);
+
+                stream.Dispose();
+                return (output, decoder.PixelWidth, decoder.PixelHeight);
+            });
+
+            await delayTask;
+            this.LoadingControl.IsLoading = true;
+            this.FilenameTextBlock.Text = file.ExtractFilename();
+
+            var source = new SoftwareBitmapSource();
+            var (bitmap, origWidth, origHeight) = await createBitmapTask;
+            await source.SetBitmapAsync(bitmap);
+            this.OriginalDimension.Text = string.Format("{0}x{1}", origWidth, origHeight);
+            this.Image.Source = source;
+
+            this.ResetCounter();
+            this.LoadingControl.IsLoading = true;
+        }
+
         private void AutoButton_Checked(object sender, RoutedEventArgs e)
         {
             this.AutoButton.Content = new SymbolIcon(Symbol.Pause);
@@ -233,7 +294,7 @@ namespace ZipPicViewUWP
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            this.nextButtonClick?.Invoke(this, e);
+            this.AdvanceForward();
         }
 
         private void Timer_Tick(object sender, object e)
@@ -338,6 +399,39 @@ namespace ZipPicViewUWP
             stream.Dispose();
         }
 
+        private void HiddenControl_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var pos = e.GetPosition(this.HiddenControl);
+
+            if (pos.X < 200)
+            {
+                this.AdvanceBackward();
+            }
+            else if (pos.X > this.HiddenControl.ActualWidth - 200)
+            {
+                this.AdvanceForward();
+            }
+        }
+
+        private void HiddenControl_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            if (this.AutoButton.IsChecked == true)
+            {
+                return;
+            }
+
+            var deltaX = e.Cumulative.Translation.X;
+
+            if (deltaX > 5)
+            {
+                this.AdvanceForward();
+            }
+            else if (deltaX < -5)
+            {
+                this.AdvanceBackward();
+            }
+        }
+
         private void DurationList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var applicationData = Windows.Storage.ApplicationData.Current;
@@ -360,6 +454,23 @@ namespace ZipPicViewUWP
         {
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values["globalAdvance"] = this.GlobalToggle.IsOn;
+        }
+
+        private async void AdvanceForward()
+        {
+            MediaManager.Advance(true, false, 1);
+            await this.UpdateImage();
+        }
+
+        private async void AdvanceBackward()
+        {
+            MediaManager.Advance(true, false, -1);
+            await this.UpdateImage();
+        }
+
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.AdvanceBackward();
         }
     }
 }

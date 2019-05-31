@@ -6,8 +6,47 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
     mc:Ignorable="d">
     <RelativePanel>
+        <RelativePanel
+            Name="ImageBorder"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True">
+            <RelativePanel.Background>
+                <media:BackdropBlurBrush Amount="3.0" />
+            </RelativePanel.Background>
+            <Image
+                Name="Image"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"></Image>
+            <controls:Loading
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"
+                x:Name="LoadingControl">
+                <ProgressRing
+                    Width="100"
+                    Height="100"
+                    IsActive="True" />
+            </controls:Loading>
+        </RelativePanel>
+        <Border
+            x:Name="HiddenControl"
+            Background="#00000000"
+            ManipulationCompleted="HiddenControl_ManipulationCompleted"
+            ManipulationMode="TranslateX"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True"
+            Tapped="HiddenControl_Tapped"
+            Visibility="Collapsed" />
         <Grid
             Name="ControlLayer"
             RelativePanel.AlignBottomWithPanel="True"
@@ -24,7 +63,8 @@
                 <Button
                     x:Name="NextButton"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch"
+                    Click="NextButton_Click">
                     <SymbolIcon Symbol="Next" />
                 </Button>
             </Border>
@@ -39,7 +79,7 @@
                 <Button
                     x:Name="PreviousButton"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch" Click="PreviousButton_Click">
                     <SymbolIcon Symbol="Previous" />
                 </Button>
             </Border>
