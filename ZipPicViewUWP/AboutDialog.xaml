@@ -17,7 +17,7 @@
         <TextBlock>
             Licensed Under<Hyperlink NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/LICENSE">MIT License</Hyperlink>
         </TextBlock>
-        <HyperlinkButton NavigateUri="https://github.com/wutipong/ZipPicViewUWP/blob/master/">GitHub</HyperlinkButton>
+        <HyperlinkButton NavigateUri="https://github.com/wutipong/ZipPicViewUWP/">GitHub</HyperlinkButton>
         <ScrollViewer Height="300">
             <controls:MarkdownTextBlock x:Name="ReleaseNote" Padding="16,16,16,16" />
         </ScrollViewer>

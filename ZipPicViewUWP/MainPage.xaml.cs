@@ -46,6 +46,12 @@ namespace ZipPicViewUWP
         {
             this.InitializeComponent();
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            Package package = Package.Current;
+            PackageId packageId = package.Id;
+            PackageVersion version = packageId.Version;
+
+            this.VersionText.Text = (package.IsDevelopmentMode ? "(Debug)" : string.Empty) +
+                string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private async void AboutButtonClick(object sender, RoutedEventArgs e)
