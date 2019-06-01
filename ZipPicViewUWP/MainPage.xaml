@@ -34,7 +34,7 @@
             <controls:NavigationView
                 x:Name="NavigationPane"
                 CompactPaneLength="50"
-                OpenPaneLength="300">
+                OpenPaneLength="300" SelectionChanged="NavigationPane_SelectionChanged">
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />

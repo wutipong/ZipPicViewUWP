@@ -27,6 +27,7 @@ namespace ZipPicViewUWP
     using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
     using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
     using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
+    using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
 
     /// <summary>
     /// Main page of the program.
@@ -36,6 +37,7 @@ namespace ZipPicViewUWP
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
         private Dictionary<string, ThumbnailPage> thumbnailPages;
+        private string currentFolder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -366,29 +368,6 @@ namespace ZipPicViewUWP
             this.NavigationPane.IsPaneOpen = true;
         }
 
-        private async void SubFolderListSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.AddedItems.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var removed in e.RemovedItems)
-            {
-                var removedItem = removed as NavigationViewItem;
-                var content = (FolderListItem)removedItem.Content;
-                this.thumbnailPages[content.Value].CancellationToken?.Cancel();
-            }
-
-            this.ThumbnailBorderOpenStoryboard.Begin();
-
-            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
-            var item = (FolderListItem)selectedItem.Content;
-
-            this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
-            await this.thumbnailPages[item.Value].ResumeLoadThumbnail();
-        }
-
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
@@ -399,6 +378,23 @@ namespace ZipPicViewUWP
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
         {
             this.Page.TopAppBar.Visibility = e;
+        }
+
+        private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
+        {
+            if (this.currentFolder != null)
+            {
+                this.thumbnailPages[this.currentFolder]?.CancellationToken?.Cancel();
+            }
+
+            this.ThumbnailBorderOpenStoryboard.Begin();
+
+            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
+            var item = (FolderListItem)selectedItem.Content;
+
+            this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
+            this.currentFolder = item.Value;
+            await this.thumbnailPages[item.Value].ResumeLoadThumbnail();
         }
     }
 }
