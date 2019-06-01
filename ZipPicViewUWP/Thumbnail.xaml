@@ -4,6 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    PointerEntered="UserControl_PointerEntered"
+    PointerExited="UserControl_PointerExited"
     mc:Ignorable="d">
     <UserControl.Resources>
         <Storyboard x:Name="ThumbnailShowStoryBoard">
@@ -13,7 +16,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </UserControl.Resources>
-    <Border BorderBrush="Black" BorderThickness="1">
+    <Border BorderThickness="2" Margin="2">
         <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ProgressRing
                 x:Name="loading"
@@ -45,6 +48,17 @@
                 RelativePanel.AlignRightWithPanel="True">
                 <TextBlock x:Name="label" Padding="2,2,2,2" />
             </Grid>
+            <Canvas
+                Name="Highlight"
+                Opacity="0"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True">
+                <Canvas.Background>
+                    <media:BackdropSaturationBrush Saturation="0.5" />
+                </Canvas.Background>
+            </Canvas>
         </RelativePanel>
     </Border>
 </UserControl>

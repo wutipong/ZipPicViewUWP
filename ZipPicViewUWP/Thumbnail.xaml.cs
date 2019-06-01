@@ -47,5 +47,15 @@ namespace ZipPicViewUWP
         {
             this.ThumbnailShowStoryBoard.Begin();
         }
+
+        private void UserControl_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            this.Highlight.Opacity = 100;
+        }
+
+        private void UserControl_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            this.Highlight.Opacity = 0;
+        }
     }
 }
