@@ -62,6 +62,24 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        public string Title
+        {
+            get => this.FolderName.Text;
+            set => this.FolderName.Text = value;
+        }
+
+        /// <summary>
+        /// Gets or sets the style of title text.
+        /// </summary>
+        public Windows.UI.Text.FontStyle TitleStyle
+        {
+            get => this.FolderName.FontStyle;
+            set => this.FolderName.FontStyle = value;
+        }
+
+        /// <summary>
         /// Gets the cancellation token of thumbnail loading.
         /// </summary>
         public CancellationTokenSource CancellationToken { get; private set; }
@@ -79,9 +97,6 @@ namespace ZipPicViewUWP
                 throw error;
             }
 
-            this.FolderName.Text = (folder == MediaManager.Provider.Root) ? "<Root>" : folder.ExtractFilename();
-            this.FolderName.FontStyle = (folder == MediaManager.Provider.Root) ?
-                Windows.UI.Text.FontStyle.Italic : Windows.UI.Text.FontStyle.Normal;
             this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
 
             this.Thumbnails = new Thumbnail[entries.Length];
@@ -102,15 +117,7 @@ namespace ZipPicViewUWP
             var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
             if (cover != null && cover != string.Empty)
             {
-                IRandomAccessStream stream;
-                (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(cover);
-                if (error != null)
-                {
-                    stream = await MediaManager.CreateErrorImageStream();
-                }
-
-                var decoder = await BitmapDecoder.CreateAsync(stream);
-                var bitmap = await ImageHelper.CreateResizedBitmap(decoder, 200, 200);
+                var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200);
 
                 var source = new SoftwareBitmapSource();
                 await source.SetBitmapAsync(bitmap);
@@ -138,18 +145,9 @@ namespace ZipPicViewUWP
                         continue;
                     }
 
-                    var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(thumbnail.Entry);
-                    if (error != null)
-                    {
-                        stream = await MediaManager.CreateErrorImageStream();
-                    }
-
                     this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
                     thumbnail.ProgressRing.Visibility = Visibility.Visible;
-
-                    var decoder = await BitmapDecoder.CreateAsync(stream);
-                    SoftwareBitmap bitmap = await ImageHelper.CreateThumbnail(decoder, 250, 200);
-                    token.ThrowIfCancellationRequested();
+                    var bitmap = await MediaManager.CreateThumbnail(thumbnail.Entry, 250, 200);
 
                     var source = new SoftwareBitmapSource();
                     await source.SetBitmapAsync(bitmap);
@@ -188,7 +186,7 @@ namespace ZipPicViewUWP
             }
             else
             {
-                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current, count);
+                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current + 1, count);
             }
         }
     }

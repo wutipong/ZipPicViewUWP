@@ -107,7 +107,7 @@ namespace ZipPicViewUWP
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
             }
 
-            await this.ViewerControl.UpdateImage();
+            await this.ViewerControl?.UpdateImage();
         }
 
         private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)
@@ -248,6 +248,8 @@ namespace ZipPicViewUWP
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
             this.FullScreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
+            this.ViewerControl.ExpectedImageWidth = (int)e.NewSize.Width;
+            this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
 
         private async Task RebuildSubFolderList()
@@ -286,6 +288,9 @@ namespace ZipPicViewUWP
                 }
 
                 this.thumbnailPages[i] = new ThumbnailPage();
+                this.thumbnailPages[i].Title = folder.ExtractFilename();
+                this.thumbnailPages[i].TitleStyle = Windows.UI.Text.FontStyle.Normal;
+
                 await this.thumbnailPages[i].SetFolderEntry(folder);
                 this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
@@ -295,22 +300,14 @@ namespace ZipPicViewUWP
 
         private void ThumbnailPage_ItemClicked(object source, string entry)
         {
-            this.ViewerControl.Show();
             MediaManager.CurrentEntry = entry;
+            this.ViewerControl.Show();
             this.SplitView.IsEnabled = false;
         }
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
-            var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-
-            if (error != null)
-            {
-                stream = await MediaManager.CreateErrorImageStream();
-            }
-
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var bitmap = await ImageHelper.CreateThumbnail(decoder, 40, 50);
+            var bitmap = await MediaManager.CreateThumbnail(entry, 40, 50);
             SoftwareBitmapSource source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
@@ -374,12 +371,13 @@ namespace ZipPicViewUWP
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
+            this.thumbnailPages[0].Title = filename + "\\<ROOT>";
+            this.thumbnailPages[0].TitleStyle = Windows.UI.Text.FontStyle.Italic;
         }
 
-        private async void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
+        private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
         {
             this.Page.TopAppBar.Visibility = e;
-            await this.ViewerControl.UpdateImage();
         }
     }
 }

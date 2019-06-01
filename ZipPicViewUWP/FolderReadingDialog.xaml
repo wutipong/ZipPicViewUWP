@@ -7,13 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Now Loading"
     mc:Ignorable="d">
-    <Grid>
-        <StackPanel Orientation="Horizontal">
-            <ProgressRing
-                VerticalAlignment="Top"
-                IsActive="True"
-                IsFocusEngagementEnabled="False" />
-            <TextBlock>Reading folder structure ...</TextBlock>
-        </StackPanel>
-    </Grid>
+    <StackPanel>
+        <TextBlock Margin="8">Reading folder structure ...</TextBlock>
+        <ProgressBar IsIndeterminate="True" />
+    </StackPanel>
 </ContentDialog>
