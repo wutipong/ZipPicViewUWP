@@ -174,7 +174,7 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="withDelay">A flag whether or not to delay 250ms before display a loading control.</param>
         /// <returns>A Task.</returns>
-        public async Task UpdateImage(bool withDelay = false)
+        public async Task UpdateImage(bool withDelay = true)
         {
             var file = MediaManager.CurrentEntry;
             if (file == null)
