@@ -5,6 +5,7 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace ZipPicViewUWP
     {
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
-        private ThumbnailPage[] thumbnailPages;
+        private Dictionary<string, ThumbnailPage> thumbnailPages;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -121,7 +122,7 @@ namespace ZipPicViewUWP
         private void HideImageControl()
         {
             this.ViewerControl.Hide();
-            this.SplitView.IsEnabled = true;
+            this.NavigationPane.IsEnabled = true;
         }
 
         private void ImageControlCloseButtonClick(object sender, RoutedEventArgs e)
@@ -130,7 +131,7 @@ namespace ZipPicViewUWP
 
             var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
-            this.SubFolderControl.SelectedIndex = folderIndex;
+            this.NavigationPane.SelectedItem = parent;
         }
 
         private async Task OpenFile(StorageFile selected)
@@ -254,8 +255,8 @@ namespace ZipPicViewUWP
 
         private async Task RebuildSubFolderList()
         {
-            this.SubFolderControl.Items.Clear();
-            this.thumbnailPages = new ThumbnailPage[MediaManager.FolderEntries.Length];
+            this.NavigationPane.MenuItems.Clear();
+            this.thumbnailPages = new Dictionary<string, ThumbnailPage>();
 
             for (int i = 0; i < MediaManager.FolderEntries.Length; i++)
             {
@@ -277,32 +278,33 @@ namespace ZipPicViewUWP
                     name = prefix + name;
                 }
 
-                var item = new FolderListItem { Text = name, Value = folder };
-                this.SubFolderControl.Items.Add(item);
+                // var item = new FolderListItem { Text = name, Value = folder };
+                var item = folder;
+                this.NavigationPane.MenuItems.Add(item);
 
                 var cover = await MediaManager.FindFolderThumbnailEntry(folder);
 
                 if (cover != null)
                 {
-                    var t = this.UpdateFolderThumbnail(cover, item);
+                    // var t = this.UpdateFolderThumbnail(cover, item);
                 }
 
-                this.thumbnailPages[i] = new ThumbnailPage();
-                this.thumbnailPages[i].Title = folder.ExtractFilename();
-                this.thumbnailPages[i].TitleStyle = Windows.UI.Text.FontStyle.Normal;
+                this.thumbnailPages[folder] = new ThumbnailPage();
+                this.thumbnailPages[folder].Title = folder.ExtractFilename();
+                this.thumbnailPages[folder].TitleStyle = Windows.UI.Text.FontStyle.Normal;
 
-                await this.thumbnailPages[i].SetFolderEntry(folder);
-                this.thumbnailPages[i].ItemClicked += this.ThumbnailPage_ItemClicked;
+                await this.thumbnailPages[folder].SetFolderEntry(folder);
+                this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
 
-            this.SubFolderControl.SelectedIndex = 0;
+            this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems[0];
         }
 
         private void ThumbnailPage_ItemClicked(object source, string entry)
         {
             MediaManager.CurrentEntry = entry;
             this.ViewerControl.Show();
-            this.SplitView.IsEnabled = false;
+            this.NavigationPane.IsEnabled = false;
         }
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
@@ -316,7 +318,7 @@ namespace ZipPicViewUWP
 
         private async Task<Exception> ChangeMediaProvider(AbstractMediaProvider provider)
         {
-            this.thumbnailPages?[this.SubFolderControl.SelectedIndex].CancellationToken.Cancel();
+            this.thumbnailPages?[(string)this.NavigationPane.SelectedItem].CancellationToken.Cancel();
 
             FolderReadingDialog dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
@@ -344,7 +346,7 @@ namespace ZipPicViewUWP
 
         private void SubFolderButtonClick(object sender, RoutedEventArgs e)
         {
-            this.SplitView.IsPaneOpen = true;
+            this.NavigationPane.IsPaneOpen = true;
         }
 
         private async void SubFolderListSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -354,25 +356,22 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            this.ThumbnailBorder.Opacity = 0;
-
             foreach (var removed in e.RemovedItems)
             {
-                int index = Array.IndexOf(this.SubFolderControl.Items.ToArray(), removed);
-                this.thumbnailPages[index].CancellationToken?.Cancel();
+                this.thumbnailPages[(string)removed].CancellationToken?.Cancel();
             }
 
             this.ThumbnailBorderOpenStoryboard.Begin();
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[this.SubFolderControl.SelectedIndex];
-            await this.thumbnailPages[this.SubFolderControl.SelectedIndex].ResumeLoadThumbnail();
+            this.ThumbnailBorder.Child = this.thumbnailPages[(string)this.NavigationPane.SelectedItem];
+            await this.thumbnailPages[(string)this.NavigationPane.SelectedItem].ResumeLoadThumbnail();
         }
 
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
-            this.thumbnailPages[0].Title = filename + "\\<ROOT>";
-            this.thumbnailPages[0].TitleStyle = Windows.UI.Text.FontStyle.Italic;
+            this.thumbnailPages[(string)this.NavigationPane.MenuItems[0]].Title = filename + "\\<ROOT>";
+            this.thumbnailPages[(string)this.NavigationPane.MenuItems[0]].TitleStyle = Windows.UI.Text.FontStyle.Italic;
         }
 
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
