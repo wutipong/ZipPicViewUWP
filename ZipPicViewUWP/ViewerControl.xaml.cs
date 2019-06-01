@@ -200,7 +200,7 @@ namespace ZipPicViewUWP
                 {
                     await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
-                        this.LoadingControl.IsLoading = true;
+                        this.LoadingShowStoryboard.Begin();
                     });
                 }
             });
@@ -215,7 +215,7 @@ namespace ZipPicViewUWP
             this.Image.Source = source;
 
             this.ResetCounter();
-            this.LoadingControl.IsLoading = false;
+            this.LoadingControl.Visibility = Visibility.Collapsed;
         }
 
         private void AutoButton_Checked(object sender, RoutedEventArgs e)

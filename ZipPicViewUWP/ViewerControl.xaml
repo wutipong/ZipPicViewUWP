@@ -189,6 +189,24 @@
                 </EasingDoubleKeyFrame>
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+        <Storyboard x:Name="LoadingShowStoryboard">
+            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LoadingControl" Storyboard.TargetProperty="(UIElement.Visibility)">
+                <DiscreteObjectKeyFrame KeyTime="00:00:00">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Visible</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+                <DiscreteObjectKeyFrame KeyTime="00:00:00.2000000">
+                    <DiscreteObjectKeyFrame.Value>
+                        <Visibility>Visible</Visibility>
+                    </DiscreteObjectKeyFrame.Value>
+                </DiscreteObjectKeyFrame>
+            </ObjectAnimationUsingKeyFrames>
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LoadingControl" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                <EasingDoubleKeyFrame KeyTime="00:00:00.2000000" Value="1" />
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
     </UserControl.Resources>
     <RelativePanel>
         <Border
@@ -353,30 +371,29 @@
                 </Button>
             </Border>
         </Grid>
-        <controls:Loading
+
+        <RelativePanel
             x:Name="LoadingControl"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
-            <RelativePanel>
-                <TextBlock
-                    Name="LoadingText"
-                    Margin="4"
-                    Foreground="{StaticResource PrimaryColor1}"
-                    RelativePanel.AlignHorizontalCenterWithPanel="True"
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    RelativePanel.Below="">
-                    Reading Image File.
-                </TextBlock>
-                <ProgressBar
-                    Foreground="{StaticResource PrimaryColor1}"
-                    IsIndeterminate="True"
-                    RelativePanel.AlignLeftWith="LoadingText"
-                    RelativePanel.AlignRightWith="LoadingText"
-                    RelativePanel.Below="LoadingText" />
-            </RelativePanel>
-        </controls:Loading>
+            <TextBlock
+                Name="LoadingText"
+                Margin="4"
+                Foreground="{StaticResource PrimaryColor1}"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.Below="">
+                Reading Image File.
+            </TextBlock>
+            <ProgressBar
+                Foreground="{StaticResource PrimaryColor1}"
+                IsIndeterminate="True"
+                RelativePanel.AlignLeftWith="LoadingText"
+                RelativePanel.AlignRightWith="LoadingText"
+                RelativePanel.Below="LoadingText" />
+        </RelativePanel>
         <controls:InAppNotification
             Name="Notification"
             RelativePanel.AlignBottomWithPanel="True"
