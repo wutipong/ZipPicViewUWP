@@ -9,25 +9,26 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
 
-    <RelativePanel Height="50">
+    <RelativePanel>
         <Canvas
             Name="thumb"
-            Width="40"
-            Height="50"
-            Margin="3,0,0,0"
-            RelativePanel.AlignLeftWithPanel="True">
+            Width="32"
+            Height="32"
+            Margin="0,0,0,0"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignVerticalCenterWithPanel="True">
             <Image
                 Name="image"
-                Width="40"
-                Height="50"
+                Width="32"
+                Height="32"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Stretch="UniformToFill"
                 Visibility="Collapsed" />
             <SymbolIcon
                 Name="folderIcon"
-                Width="40"
-                Height="50"
+                Width="32"
+                Height="32"
                 HorizontalAlignment="Left"
                 Symbol="Folder" />
         </Canvas>

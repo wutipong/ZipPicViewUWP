@@ -24,6 +24,10 @@ namespace ZipPicViewUWP
     using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
 
+    using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
+    using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
+    using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
+
     /// <summary>
     /// Main page of the program.
     /// </summary>
@@ -131,7 +135,13 @@ namespace ZipPicViewUWP
 
             var parent = MediaManager.CurrentFolder;
             var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
-            this.NavigationPane.SelectedItem = parent;
+            this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems.First((obj) =>
+            {
+                var selectedItem = obj as NavigationViewItem;
+                var item = (FolderListItem)selectedItem.Content;
+
+                return item.Value == parent;
+            });
         }
 
         private async Task OpenFile(StorageFile selected)
@@ -278,15 +288,16 @@ namespace ZipPicViewUWP
                     name = prefix + name;
                 }
 
-                // var item = new FolderListItem { Text = name, Value = folder };
-                var item = folder;
-                this.NavigationPane.MenuItems.Add(item);
+                var item = new FolderListItem { Text = name, Value = folder };
+                var navigationitem = new NavigationViewItem() { Content = item };
+
+                this.NavigationPane.MenuItems.Add(navigationitem);
 
                 var cover = await MediaManager.FindFolderThumbnailEntry(folder);
 
                 if (cover != null)
                 {
-                    // var t = this.UpdateFolderThumbnail(cover, item);
+                    await this.UpdateFolderThumbnail(cover, item);
                 }
 
                 this.thumbnailPages[folder] = new ThumbnailPage();
@@ -318,7 +329,13 @@ namespace ZipPicViewUWP
 
         private async Task<Exception> ChangeMediaProvider(AbstractMediaProvider provider)
         {
-            this.thumbnailPages?[(string)this.NavigationPane.SelectedItem].CancellationToken.Cancel();
+            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
+            if (selectedItem != null)
+            {
+                var item = (FolderListItem)selectedItem.Content;
+
+                this.thumbnailPages?[item.Value].CancellationToken.Cancel();
+            }
 
             FolderReadingDialog dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
@@ -358,20 +375,25 @@ namespace ZipPicViewUWP
 
             foreach (var removed in e.RemovedItems)
             {
-                this.thumbnailPages[(string)removed].CancellationToken?.Cancel();
+                var removedItem = removed as NavigationViewItem;
+                var content = (FolderListItem)removedItem.Content;
+                this.thumbnailPages[content.Value].CancellationToken?.Cancel();
             }
 
             this.ThumbnailBorderOpenStoryboard.Begin();
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[(string)this.NavigationPane.SelectedItem];
-            await this.thumbnailPages[(string)this.NavigationPane.SelectedItem].ResumeLoadThumbnail();
+            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
+            var item = (FolderListItem)selectedItem.Content;
+
+            this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
+            await this.thumbnailPages[item.Value].ResumeLoadThumbnail();
         }
 
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
-            this.thumbnailPages[(string)this.NavigationPane.MenuItems[0]].Title = filename + "\\<ROOT>";
-            this.thumbnailPages[(string)this.NavigationPane.MenuItems[0]].TitleStyle = Windows.UI.Text.FontStyle.Italic;
+            this.thumbnailPages[MediaManager.Provider.Root].Title = filename + "\\<ROOT>";
+            this.thumbnailPages[MediaManager.Provider.Root].TitleStyle = Windows.UI.Text.FontStyle.Italic;
         }
 
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
