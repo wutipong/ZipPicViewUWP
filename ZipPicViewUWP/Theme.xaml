@@ -1,7 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:ZipPicViewUWP">
+    xmlns:local="using:ZipPicViewUWP"
+    xmlns:muxm="using:Microsoft.UI.Xaml.Media">
 
     <Color x:Key="PrimaryColor1">#FFAAAA</Color>
     <Color x:Key="PrimaryColor2">#D46A6A</Color>
@@ -16,8 +17,26 @@
         Color="{StaticResource PrimaryColor5}" />
     <SolidColorBrush x:Key="FloatControlBackground" Color="#A0000000" />
 
-    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{ThemeResource PrimaryColor3}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{ThemeResource PrimaryColor3}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{ThemeResource PrimaryColor2}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{ThemeResource PrimaryColor1}" />
+    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource PrimaryColor3}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource PrimaryColor3}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource PrimaryColor2}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource PrimaryColor1}" />
+
+    <muxm:AcrylicBrush
+        x:Key="NavigationViewDefaultPaneBackground"
+        BackgroundSource="Backdrop"
+        TintColor="{StaticResource PrimaryColor5}"
+        TintOpacity=".6" />
+
+    <muxm:AcrylicBrush
+        x:Key="NavigationViewTopPaneBackground"
+        BackgroundSource="Backdrop"
+        TintColor="{StaticResource PrimaryColor5}"
+        TintOpacity=".6" />
+    <LinearGradientBrush x:Key="NavigationViewExpandedPaneBackground" StartPoint="0.5,0" EndPoint="0.5,1">
+        <GradientStop Offset="0.0" Color="{StaticResource PrimaryColor5}" />
+        <GradientStop Offset="1.0" Color="{StaticResource PrimaryColor4}" />
+    </LinearGradientBrush>
+
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor1}" />
 </ResourceDictionary>

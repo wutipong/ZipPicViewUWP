@@ -33,8 +33,11 @@
             RelativePanel.AlignTopWithPanel="True">
             <controls:NavigationView
                 x:Name="NavigationPane"
-                CompactPaneLength="50"
-                OpenPaneLength="300" SelectionChanged="NavigationPane_SelectionChanged">
+                IsBackButtonVisible="Collapsed"
+                IsBackEnabled="False"
+                IsSettingsVisible="False"
+                OpenPaneLength="300"
+                SelectionChanged="NavigationPane_SelectionChanged">
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />

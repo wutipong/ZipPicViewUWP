@@ -12,14 +12,13 @@
     <RelativePanel>
         <Canvas
             Name="thumb"
-            Width="32"
+            Width="28"
             Height="32"
-            Margin="0,0,0,0"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True">
             <Image
                 Name="image"
-                Width="32"
+                Width="28"
                 Height="32"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -27,7 +26,7 @@
                 Visibility="Collapsed" />
             <SymbolIcon
                 Name="folderIcon"
-                Width="32"
+                Width="28"
                 Height="32"
                 HorizontalAlignment="Left"
                 Symbol="Folder" />
