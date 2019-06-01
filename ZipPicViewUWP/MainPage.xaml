@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wctcontrols="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="Page"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
@@ -42,23 +43,103 @@
                     <Border.RenderTransform>
                         <CompositeTransform />
                     </Border.RenderTransform>
-                    <StackPanel Margin="8,8,8,8">
-                        <TextBlock
-                            FontSize="48"
-                            FontWeight="Bold"
-                            Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">
-                            ZipPicView
-                        </TextBlock>
-                        <TextBlock x:Name="VersionText">($version)</TextBlock>
-                        <TextBlock>Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
-                        <TextBlock>To get started, press Open File or Open Folder on the top bar.</TextBlock>
-                        <Button Name="OpenFileMain" Click="OpenFileButtonClick">
-                            Open File
-                        </Button>
-                        <Button Name="OpenFolderMain" Click="OpenFolderButtonClick">
-                            Open Folder
-                        </Button>
-                    </StackPanel>
+                    <wctcontrols:DockPanel Margin="64,64,64,64">
+                        <StackPanel
+                            Margin="0,0,0,32"
+                            wctcontrols:DockPanel.Dock="Top"
+                            Orientation="Horizontal">
+                            <Image
+                                Width="200"
+                                Height="200"
+                                Source="/Assets/applogo.png" />
+                            <TextBlock
+                                VerticalAlignment="Bottom"
+                                FontSize="48"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">
+                                ZipPicView
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel
+                            Padding="0,64,0,0"
+                            VerticalAlignment="Bottom"
+                            wctcontrols:DockPanel.Dock="Bottom"
+                            Orientation="Horizontal">
+                            <TextBlock
+                                VerticalAlignment="Bottom"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">
+                                ZipPicView
+                            </TextBlock>
+                            <TextBlock x:Name="VersionText" Margin="8,0,0,0">($version)</TextBlock>
+                            <TextBlock Margin="8,0,0,0">Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
+                        </StackPanel>
+
+                        <Grid ColumnSpacing="8" RowSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2">
+                                To get started, press Open File or Open Folder.
+                            </TextBlock>
+
+                            <Button
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="1"
+                                Width="130"
+                                Click="OpenFileButtonClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="OpenFile" />
+                                    <TextBlock Margin="8,0,0,0">Open File</TextBlock>
+                                </StackPanel>
+                            </Button>
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe UI"
+                                TextWrapping="Wrap">
+                                Use this to open archive file (*.zip, *.7zip, *.rar) or PDF file (*.pdf). It is possible to open some other file types, eg. *.cbz or *.cbr.
+                                Also some version of the file format are not supported.
+                            </TextBlock>
+
+                            <Button
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Width="130"
+                                VerticalAlignment="Center"
+                                Click="OpenFolderButtonClick">
+                                <StackPanel Orientation="Horizontal">
+                                    <SymbolIcon Symbol="Folder" />
+                                    <TextBlock Margin="8,0,0,0">Open Folder</TextBlock>
+                                </StackPanel>
+                            </Button>
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                FontFamily="Segoe UI"
+                                TextWrapping="Wrap">
+                                Use this to open a folder. All subfolder will be populated in the program, including folder that does not contains any supported image file.
+                            </TextBlock>
+                        </Grid>
+                    </wctcontrols:DockPanel>
                 </Border>
             </controls:NavigationView>
         </Grid>
