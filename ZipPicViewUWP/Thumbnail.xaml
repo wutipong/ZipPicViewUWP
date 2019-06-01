@@ -46,7 +46,7 @@
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True">
-                <TextBlock x:Name="label" Padding="2,2,2,2" />
+                <TextBlock x:Name="label" Padding="8,4,4,8" />
             </Grid>
             <Canvas
                 Name="Highlight"
