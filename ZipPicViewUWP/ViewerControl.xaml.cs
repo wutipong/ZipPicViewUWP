@@ -193,16 +193,17 @@ namespace ZipPicViewUWP
             {
                 if (withDelay)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(250);
                 }
 
-                if (showLoading)
+                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                 {
-                    await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    if (showLoading)
                     {
+                        this.LoadingControl.Visibility = Visibility.Visible;
                         this.LoadingShowStoryboard.Begin();
-                    });
-                }
+                    }
+                });
             });
 
             this.FilenameTextBlock.Text = file.ExtractFilename();
@@ -210,12 +211,12 @@ namespace ZipPicViewUWP
             var source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
             showLoading = false;
+
             await source.SetBitmapAsync(bitmap);
             this.OriginalDimension.Text = string.Format("{0}x{1}", origWidth, origHeight);
             this.Image.Source = source;
-
-            this.ResetCounter();
             this.LoadingControl.Visibility = Visibility.Collapsed;
+            this.ResetCounter();
         }
 
         private void AutoButton_Checked(object sender, RoutedEventArgs e)
