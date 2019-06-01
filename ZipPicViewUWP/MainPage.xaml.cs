@@ -107,7 +107,7 @@ namespace ZipPicViewUWP
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
             }
 
-            await this.ViewerControl.UpdateImage();
+            await this.ViewerControl?.UpdateImage();
         }
 
         private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)

@@ -177,6 +177,11 @@ namespace ZipPicViewUWP
         public async Task UpdateImage(bool withDelay = false)
         {
             var file = MediaManager.CurrentEntry;
+            if (file == null)
+            {
+                return;
+            }
+
             bool showLoading = true;
 
             int width = this.ExpectedImageWidth;
