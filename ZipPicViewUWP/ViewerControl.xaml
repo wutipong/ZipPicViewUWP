@@ -382,11 +382,5 @@
                 RelativePanel.AlignRightWith="LoadingText"
                 RelativePanel.Below="LoadingText" />
         </RelativePanel>
-        <controls:InAppNotification
-            Name="Notification"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True" />
     </RelativePanel>
 </UserControl>

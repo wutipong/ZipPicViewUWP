@@ -4,6 +4,7 @@
 
 namespace ZipPicViewUWP
 {
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
@@ -78,6 +79,11 @@ namespace ZipPicViewUWP
             get => this.FolderName.FontStyle;
             set => this.FolderName.FontStyle = value;
         }
+
+        /// <summary>
+        /// Gets or sets the notification control.
+        /// </summary>
+        public InAppNotification Notification;
 
         /// <summary>
         /// Gets the cancellation token of thumbnail loading.

@@ -4,6 +4,7 @@
 
 namespace ZipPicViewUWP
 {
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -125,6 +126,11 @@ namespace ZipPicViewUWP
         /// Gets or sets the print helper.
         /// </summary>
         public PrintHelper PrintHelper { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification control.
+        /// </summary>
+        public InAppNotification Notification { get; set; }
 
         /// <summary>
         /// Reset the timer counter.

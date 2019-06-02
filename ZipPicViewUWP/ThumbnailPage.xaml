@@ -115,11 +115,5 @@
                 </TextBlock>
             </StackPanel>
         </Border>
-        <controls:InAppNotification
-            Name="Notification"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True" />
     </RelativePanel>
 </Page>

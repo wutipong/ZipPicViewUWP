@@ -148,11 +148,19 @@
             x:Name="ViewerControl"
             CloseButtonClick="ImageControlCloseButtonClick"
             ControlLayerVisibilityChange="ImageControl_ControlLayerVisibilityChange"
+            Notification="{x:Bind Notification}"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
             Visibility="Collapsed" />
+
+        <wctcontrols:InAppNotification
+            Name="Notification"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True" />
     </RelativePanel>
     <Page.TopAppBar>
         <CommandBar VerticalAlignment="Center" VerticalContentAlignment="Center">
