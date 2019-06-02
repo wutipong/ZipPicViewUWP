@@ -62,7 +62,7 @@
                 RelativePanel.AlignTopWithPanel="True"
                 Stretch="UniformToFill" />
             <Grid
-                Background="{StaticResource ThumbnailNameBackground}"
+                Background="{ThemeResource SystemChromeMediumColor}"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True">

@@ -10,7 +10,7 @@
     <Color x:Key="PrimaryColor4">#801515</Color>
     <Color x:Key="PrimaryColor5">#550000</Color>
 
-    <SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}" />
+    <!-- SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}" />
     <SolidColorBrush
         x:Key="ThumbnailNameBackground"
         Opacity="0.5"
@@ -38,5 +38,5 @@
         <GradientStop Offset="1.0" Color="{StaticResource PrimaryColor4}" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor1}" />
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor1}" /-->
 </ResourceDictionary>

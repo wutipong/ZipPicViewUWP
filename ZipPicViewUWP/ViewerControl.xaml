@@ -239,7 +239,7 @@
                 Margin="0,100,20,100"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Background="{StaticResource FloatControlBackground}">
+                Background="{ThemeResource SystemChromeMediumColor}">
                 <Button
                     x:Name="NextButton"
                     HorizontalAlignment="Stretch"
@@ -255,7 +255,7 @@
                 Margin="20,100,0,100"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Background="{StaticResource FloatControlBackground}">
+                Background="{ThemeResource SystemChromeMediumColor}">
                 <Button
                     x:Name="PreviousButton"
                     HorizontalAlignment="Stretch"
@@ -356,7 +356,7 @@
                 Margin="20"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Background="{StaticResource FloatControlBackground}">
+                Background="{ThemeResource SystemChromeMediumColor}">
                 <Button
                     x:Name="CloseButton"
                     HorizontalAlignment="Stretch"

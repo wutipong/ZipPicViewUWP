@@ -94,7 +94,7 @@
         </controls:AdaptiveGridView>
         <Border
             Name="ProgressBorder"
-            Background="{StaticResource ThumbnailNameBackground}"
+            Background="{ThemeResource SystemChromeMediumColor}"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RenderTransformOrigin="0.5,0.5">
