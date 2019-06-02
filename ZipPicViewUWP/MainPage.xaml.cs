@@ -271,24 +271,30 @@ namespace ZipPicViewUWP
             this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
 
-        private async Task RebuildSubFolderList()
+        private async Task RebuildSubFolderList(FolderReadingDialog dialog)
         {
             this.NavigationPane.MenuItems.Clear();
             this.thumbnailPages = new Dictionary<string, ThumbnailPage>();
 
-            for (int i = 0; i < MediaManager.FolderEntries.Length; i++)
+            var count = MediaManager.FolderEntries.Length;
+            dialog.IsIndeterminate = false;
+            dialog.Maximum = count;
+
+            for (int i = 0; i < count; i++)
             {
                 var folder = MediaManager.FolderEntries[i];
                 var name = folder;
 
+                dialog.Value = i;
+
                 if (name != MediaManager.Provider.Root)
                 {
-                    int count = name.Count(c => c == MediaManager.Provider.Separator);
+                    int prefixCount = name.Count(c => c == MediaManager.Provider.Separator);
 
                     name = name.Substring(name.LastIndexOf(MediaManager.Provider.Separator) + 1);
 
                     var prefix = string.Empty;
-                    for (int s = 0; s < count; s++)
+                    for (int s = 0; s < prefixCount; s++)
                     {
                         prefix += "  ";
                     }
@@ -315,6 +321,8 @@ namespace ZipPicViewUWP
                 await this.thumbnailPages[folder].SetFolderEntry(folder);
                 this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
             }
+
+            dialog.Value = count;
 
             this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems[0];
         }
@@ -359,7 +367,7 @@ namespace ZipPicViewUWP
                 return error;
             }
 
-            await this.RebuildSubFolderList();
+            await this.RebuildSubFolderList(dialog);
 
             this.HideImageControl();
             this.IsEnabled = true;
@@ -369,11 +377,6 @@ namespace ZipPicViewUWP
             dialog.Hide();
 
             return null;
-        }
-
-        private void SubFolderButtonClick(object sender, RoutedEventArgs e)
-        {
-            this.NavigationPane.IsPaneOpen = true;
         }
 
         private void SetFileNameTextBox(string filename)

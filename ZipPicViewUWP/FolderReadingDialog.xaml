@@ -9,6 +9,16 @@
     mc:Ignorable="d">
     <StackPanel>
         <TextBlock Margin="8">Reading folder structure ...</TextBlock>
-        <ProgressBar IsIndeterminate="True" />
+        <ProgressBar
+            Name="Progress"
+            Margin="0,8,0,0"
+            IsIndeterminate="True" />
+        <RelativePanel>
+            <StackPanel Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True">
+                <TextBlock Name="ValueText">-</TextBlock>
+                <TextBlock>/</TextBlock>
+                <TextBlock Name="MaximumText">-</TextBlock>
+            </StackPanel>
+        </RelativePanel>
     </StackPanel>
 </ContentDialog>
