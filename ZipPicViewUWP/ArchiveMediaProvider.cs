@@ -174,14 +174,14 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
+        public override Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
         {
-            return Task.Run<(Stream, string, Exception)>(() =>
+            return Task.Run<(Stream, Exception)>(() =>
             {
                 var outputStream = new MemoryStream();
                 if (this.Archive == null)
                 {
-                    return (null, null, new Exception("Cannot Read Archive"));
+                    return (null, new Exception("Cannot Read Archive"));
                 }
 
                 try
@@ -194,12 +194,12 @@ namespace ZipPicViewUWP
                             outputStream.Seek(0, SeekOrigin.Begin);
                         }
 
-                        return (outputStream, entry.ExtractFilename(), null);
+                        return (outputStream, null);
                     }
                 }
                 catch (Exception e)
                 {
-                    return (null, null, e);
+                    return (null, e);
                 }
             });
         }
@@ -226,7 +226,7 @@ namespace ZipPicViewUWP
         {
             try
             {
-                var (stream, name, error) = await this.OpenEntryAsync(entry);
+                var (stream, error) = await this.OpenEntryAsync(entry);
                 return (stream.AsRandomAccessStream(), error);
             }
             catch (Exception e)

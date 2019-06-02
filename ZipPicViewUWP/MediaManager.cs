@@ -5,13 +5,19 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using NaturalSort.Extension;
     using Windows.ApplicationModel;
+    using Windows.ApplicationModel.DataTransfer;
     using Windows.Graphics.Imaging;
+    using Windows.Storage;
     using Windows.Storage.Streams;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Imaging;
+    using ZipPicViewUWP.Utility;
 
     /// <summary>
     /// MediaManager contains variuos functions to interact with the MediaProvider.
@@ -309,6 +315,88 @@ namespace ZipPicViewUWP
             {
                 Semaphore.Release();
             }
+        }
+
+        /// <summary>
+        /// Copy the content of this file to clipboard.
+        /// </summary>
+        /// <param name="entry">File to copy.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task<Exception> CopyToClipboard(string entry)
+        {
+            try
+            {
+                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+                if (error != null)
+                {
+                    return error;
+                }
+
+                var dataPackage = new DataPackage();
+                var memoryStream = new InMemoryRandomAccessStream();
+
+                await RandomAccessStream.CopyAsync(stream, memoryStream);
+
+                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
+
+                Clipboard.SetContent(dataPackage);
+            }
+            catch (Exception ex)
+            {
+                return ex;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Save file as.
+        /// </summary>
+        /// <param name="entry">Source entry</param>
+        /// <param name="file">Output file.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task<Exception> SaveFileAs(string entry, StorageFile file)
+        {
+            var (stream, error) = await MediaManager.Provider.OpenEntryAsync(entry);
+            var output = await file.OpenStreamForWriteAsync();
+
+            if (error != null)
+            {
+                return error;
+            }
+
+            stream.CopyTo(output);
+            output.Dispose();
+
+            stream.Dispose();
+
+            return null;
+        }
+
+        /// <summary>
+        /// Print the image file.
+        /// </summary>
+        /// <param name="printHelper">Print helper object.</param>
+        /// <param name="entry">Entry to print.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task<Exception> Print(PrintHelper printHelper, string entry)
+        {
+            {
+                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+                if (error != null)
+                {
+                    return error;
+                }
+
+                var output = new BitmapImage();
+                output.SetSource(stream);
+
+                printHelper.BitmapImage = output;
+
+                await printHelper.ShowPrintUIAsync("Printing - " + MediaManager.CurrentEntry.ExtractFilename());
+            }
+
+            return null;
         }
 
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)

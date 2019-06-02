@@ -10,6 +10,7 @@ namespace ZipPicViewUWP
     using System.Threading.Tasks;
     using NaturalSort.Extension;
     using Windows.Storage.Streams;
+    using ZipPicViewUWP.Utility;
 
     /// <summary>
     /// Abstract base class for media providers. Media provider is an object that provides images to the viewer.
@@ -160,7 +161,17 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entry">entry to read from.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public abstract Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry);
+        public abstract Task<(Stream stream, Exception error)> OpenEntryAsync(string entry);
+
+        /// <summary>
+        /// Suggest the filename to be saved.
+        /// </summary>
+        /// <param name="entry">Entry</param>
+        /// <returns>A file name.</returns>
+        public virtual string SuggestFileNameToSave(string entry)
+        {
+            return entry.ExtractFilename();
+        }
 
         /// <summary>
         /// Get the list of folder entries in this media provider.

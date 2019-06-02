@@ -58,13 +58,13 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
+        public override async Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
         {
             var (irs, error) = await this.OpenEntryAsRandomAccessStreamAsync(entry);
 
             if (error != null)
             {
-                return (null, null, error);
+                return (null, error);
             }
 
             var decoder = await BitmapDecoder.CreateAsync(irs);
@@ -84,7 +84,7 @@ namespace ZipPicViewUWP
             outputIrs.Dispose();
             outputStream.Seek(0, SeekOrigin.Begin);
 
-            return (outputStream, entry + ".png", null);
+            return (outputStream, null);
         }
 
         /// <inheritdoc/>
@@ -111,6 +111,12 @@ namespace ZipPicViewUWP
         public override string GetParentEntry(string entry)
         {
             return this.Root;
+        }
+
+        /// <inheritdoc/>
+        public override string SuggestFileNameToSave(string entry)
+        {
+            return entry + ".png";
         }
 
         /// <inheritdoc/>

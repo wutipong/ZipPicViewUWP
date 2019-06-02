@@ -35,15 +35,15 @@ namespace ZipPicViewUWP
         }
 
         /// <inheritdoc/>
-        public override async Task<(Stream stream, string suggestedFileName, Exception error)> OpenEntryAsync(string entry)
+        public override async Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
         {
             try
             {
-                return (await this.folder.OpenStreamForReadAsync(entry), entry.ExtractFilename(), null);
+                return (await this.folder.OpenStreamForReadAsync(entry), null);
             }
             catch (Exception err)
             {
-                return (null, string.Empty, err);
+                return (null, err);
             }
         }
 
@@ -88,7 +88,7 @@ namespace ZipPicViewUWP
         /// <inheritdoc/>
         public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            var (results, _, error) = await this.OpenEntryAsync(entry);
+            var (results, error) = await this.OpenEntryAsync(entry);
             if (error != null)
             {
                 return (null, error);
