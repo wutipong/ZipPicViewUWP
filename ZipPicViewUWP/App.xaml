@@ -15,38 +15,38 @@
                 <ResourceDictionary x:Key="Default">
                     <ResourceDictionary.MergedDictionaries>
                         <Windows10version1809:ColorPaletteResources
-                            Accent="#FF801515"
+                            Accent="#FF2E4272"
                             AltHigh="#FF000000"
                             AltLow="#FF000000"
                             AltMedium="#FF000000"
                             AltMediumHigh="#FF000000"
                             AltMediumLow="#FF000000"
                             BaseHigh="#FFFFFFFF"
-                            BaseLow="#FF550000"
-                            BaseMedium="#FFB37E7E"
-                            BaseMediumHigh="#FFCB9D9D"
-                            BaseMediumLow="#FF843F3F"
-                            ChromeAltLow="#FFCB9D9D"
+                            BaseLow="#FF162955"
+                            BaseMedium="#FF8795B3"
+                            BaseMediumHigh="#FFA3B0CB"
+                            BaseMediumLow="#FF4E5F84"
+                            ChromeAltLow="#FFA3B0CB"
                             ChromeBlackHigh="#FF000000"
-                            ChromeBlackLow="#FFCB9D9D"
+                            ChromeBlackLow="#FFA3B0CB"
                             ChromeBlackMedium="#FF000000"
                             ChromeBlackMediumLow="#FF000000"
-                            ChromeDisabledHigh="#FF550000"
-                            ChromeDisabledLow="#FFB37E7E"
-                            ChromeGray="#FF9C5E5E"
-                            ChromeHigh="#FF9C5E5E"
-                            ChromeLow="#FF350000"
-                            ChromeMedium="#FF3D0000"
-                            ChromeMediumLow="#FF4D0000"
+                            ChromeDisabledHigh="#FF162955"
+                            ChromeDisabledLow="#FF8795B3"
+                            ChromeGray="#FF6B7A9C"
+                            ChromeHigh="#FF6B7A9C"
+                            ChromeLow="#FF04113A"
+                            ChromeMedium="#FF091741"
+                            ChromeMediumLow="#FF12234E"
                             ChromeWhite="#FFFFFFFF"
-                            ListLow="#FF3D0000"
-                            ListMedium="#FF550000" />
+                            ListLow="#FF091741"
+                            ListMedium="#FF162955" />
                         <ResourceDictionary>
-                            <Color x:Key="SystemChromeAltMediumHighColor">#CC000000</Color>
-                            <Color x:Key="SystemChromeAltHighColor">#FF000000</Color>
-                            <Color x:Key="SystemRevealListLowColor">#FF3D0000</Color>
-                            <Color x:Key="SystemRevealListMediumColor">#FF550000</Color>
-                            <Color x:Key="RegionColor">#FF000000</Color>
+                            <Color x:Key="SystemChromeAltMediumHighColor">#CC061539</Color>
+                            <Color x:Key="SystemChromeAltHighColor">#FF061539</Color>
+                            <Color x:Key="SystemRevealListLowColor">#FF091741</Color>
+                            <Color x:Key="SystemRevealListMediumColor">#FF162955</Color>
+                            <Color x:Key="RegionColor">#FF061539</Color>
                             <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource RegionColor}" />
                         </ResourceDictionary>
                     </ResourceDictionary.MergedDictionaries>
@@ -54,43 +54,43 @@
                 <ResourceDictionary x:Key="Light">
                     <ResourceDictionary.MergedDictionaries>
                         <Windows10version1809:ColorPaletteResources
-                            Accent="#FFD46A6A"
+                            Accent="#FF2E4272"
                             AltHigh="#FFFFFFFF"
                             AltLow="#FFFFFFFF"
                             AltMedium="#FFFFFFFF"
                             AltMediumHigh="#FFFFFFFF"
                             AltMediumLow="#FFFFFFFF"
                             BaseHigh="#FF000000"
-                            BaseLow="#FFFFAAAA"
-                            BaseMedium="#FFBE6468"
-                            BaseMediumHigh="#FF92363C"
-                            BaseMediumLow="#FFA84D52"
-                            ChromeAltLow="#FF92363C"
+                            BaseLow="#FF4F628E"
+                            BaseMedium="#FF203969"
+                            BaseMediumHigh="#FF001E51"
+                            BaseMediumLow="#FF102C5D"
+                            ChromeAltLow="#FF001E51"
                             ChromeBlackHigh="#FF000000"
-                            ChromeBlackLow="#FFFFAAAA"
-                            ChromeBlackMedium="#FF92363C"
-                            ChromeBlackMediumLow="#FFBE6468"
-                            ChromeDisabledHigh="#FFFFAAAA"
-                            ChromeDisabledLow="#FFBE6468"
-                            ChromeGray="#FFA84D52"
-                            ChromeHigh="#FFFFAAAA"
-                            ChromeLow="#FFFFDCDC"
-                            ChromeMedium="#FFFFD2D2"
-                            ChromeMediumLow="#FFFFDCDC"
+                            ChromeBlackLow="#FF4F628E"
+                            ChromeBlackMedium="#FF001E51"
+                            ChromeBlackMediumLow="#FF203969"
+                            ChromeDisabledHigh="#FF4F628E"
+                            ChromeDisabledLow="#FF203969"
+                            ChromeGray="#FF102C5D"
+                            ChromeHigh="#FF4F628E"
+                            ChromeLow="#FFB8C5E1"
+                            ChromeMedium="#FFA3B1D0"
+                            ChromeMediumLow="#FFB8C5E1"
                             ChromeWhite="#FFFFFFFF"
-                            ListLow="#FFFFD2D2"
-                            ListMedium="#FFFFAAAA" />
+                            ListLow="#FFA3B1D0"
+                            ListMedium="#FF4F628E" />
                         <ResourceDictionary>
-                            <Color x:Key="SystemChromeAltMediumHighColor">#CCFFFFFF</Color>
-                            <Color x:Key="SystemChromeAltHighColor">#FFFFFFFF</Color>
-                            <Color x:Key="SystemRevealListLowColor">#FFFFD2D2</Color>
-                            <Color x:Key="SystemRevealListMediumColor">#FFFFAAAA</Color>
+                            <Color x:Key="SystemChromeAltMediumHighColor">#CC7887AB</Color>
+                            <Color x:Key="SystemChromeAltHighColor">#FF7887AB</Color>
+                            <Color x:Key="SystemRevealListLowColor">#FFA3B1D0</Color>
+                            <Color x:Key="SystemRevealListMediumColor">#FF4F628E</Color>
                             <RevealBackgroundBrush
                                 x:Key="SystemControlHighlightListLowRevealBackgroundBrush"
                                 FallbackColor="{StaticResource SystemListMediumColor}"
                                 TargetTheme="Light"
                                 Color="{ThemeResource SystemRevealListMediumColor}" />
-                            <Color x:Key="RegionColor">#FFFFFFFF</Color>
+                            <Color x:Key="RegionColor">#FF7887AB</Color>
                             <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource RegionColor}" />
                         </ResourceDictionary>
                     </ResourceDictionary.MergedDictionaries>
