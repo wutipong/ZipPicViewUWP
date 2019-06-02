@@ -7,7 +7,7 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Loaded="Page_Loaded">
     <Page.Resources>
         <Storyboard x:Name="ProgressBorderHideStoryBoard">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ProgressBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
@@ -76,16 +76,16 @@
                             Margin="20,0,8,0"
                             FontSize="48"
                             Foreground="{StaticResource PrimaryColor1}"
-                            RelativePanel.RightOf="CoverBorder"
-                            RelativePanel.Above="ImageCount">
+                            RelativePanel.Above="ImageCount"
+                            RelativePanel.RightOf="CoverBorder">
                             Folder Name
                         </TextBlock>
                         <TextBlock
                             Name="ImageCount"
                             Margin="20,0"
                             Foreground="{StaticResource PrimaryColor3}"
-                            RelativePanel.RightOf="CoverBorder"
-                            RelativePanel.AlignBottomWith="CoverBorder">
+                            RelativePanel.AlignBottomWith="CoverBorder"
+                            RelativePanel.RightOf="CoverBorder">
                             Image Count
                         </TextBlock>
                     </RelativePanel>
@@ -101,9 +101,7 @@
             <Border.RenderTransform>
                 <CompositeTransform />
             </Border.RenderTransform>
-            <StackPanel
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
+            <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
                 <controls:RadialProgressBar
                     Name="Progress"
                     Width="30"
@@ -117,5 +115,11 @@
                 </TextBlock>
             </StackPanel>
         </Border>
+        <controls:InAppNotification
+            Name="Notification"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="True" />
     </RelativePanel>
 </Page>

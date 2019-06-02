@@ -18,19 +18,23 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
 
-        <muxcontrols:CommandBarFlyout x:Name="CommandBarFlyout" Placement="Right">
+        <muxcontrols:CommandBarFlyout x:Name="CommandBarFlyout">
             <AppBarButton
                 x:Name="CopyButton"
+                Click="CopyButton_Click"
                 Icon="Copy"
                 Label="Copy" />
             <AppBarButton
                 x:Name="SaveButton"
+                Click="SaveButton_Click"
                 Icon="Save"
                 Label="Save" />
             <AppBarButton
                 x:Name="PrintButton"
+                Click="PrintButton_Click"
                 Icon="Print"
-                Label="Print" />
+                Label="Print"
+                Visibility="Collapsed" />
         </muxcontrols:CommandBarFlyout>
     </UserControl.Resources>
     <Border Margin="2" BorderThickness="2">

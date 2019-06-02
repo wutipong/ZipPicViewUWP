@@ -326,7 +326,7 @@ namespace ZipPicViewUWP
         {
             try
             {
-                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
                 if (error != null)
                 {
                     return error;

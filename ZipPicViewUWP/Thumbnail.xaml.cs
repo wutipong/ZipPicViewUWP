@@ -4,8 +4,14 @@
 
 namespace ZipPicViewUWP
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Windows.Storage.Pickers;
+    using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using ZipPicViewUWP.Utility;
 
     /// <summary>
     /// A thumbnail control.
@@ -41,6 +47,16 @@ namespace ZipPicViewUWP
         public string Entry { get; set; }
 
         /// <summary>
+        /// Gets or sets the print helper object.
+        /// </summary>
+        public PrintHelper PrintHelper { get; set; }
+
+        /// <summary>
+        /// Gets or sets the notification object.
+        /// </summary>
+        public InAppNotification Notification { get; set; }
+
+        /// <summary>
         /// Show the thumbnail Image.
         /// </summary>
         public void ShowImage()
@@ -61,6 +77,58 @@ namespace ZipPicViewUWP
         private void UserControl_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
             this.CommandBarFlyout.ShowAt(this);
+        }
+
+        private async void CopyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var error = await MediaManager.CopyToClipboard(this.Entry);
+
+            if (error == null)
+            {
+                this.Notification.Show(string.Format("The image {0} has been copied to the clipboard.", this.Entry.ExtractFilename()), 1000);
+            }
+            else
+            {
+                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
+                await dialog.ShowAsync();
+            }
+        }
+
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var entry = this.Entry;
+            var suggestedFileName = MediaManager.Provider.SuggestFileNameToSave(entry);
+
+            var picker = new FileSavePicker
+            {
+                SuggestedFileName = suggestedFileName,
+            };
+
+            picker.FileTypeChoices.Add("All", new List<string>() { "." });
+            var file = await picker.PickSaveFileAsync();
+            if (file == null)
+            {
+                return;
+            }
+
+            var error = await MediaManager.SaveFileAs(entry, file);
+
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot save image file: {0}.", file.Name), "Error");
+                await dialog.ShowAsync();
+            }
+        }
+
+        private async void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+            var error = await MediaManager.Print(this.PrintHelper, this.Entry);
+
+            if (error != null)
+            {
+                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
+                await dialog.ShowAsync();
+            }
         }
     }
 }
