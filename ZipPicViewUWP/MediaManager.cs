@@ -352,7 +352,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Save file as.
         /// </summary>
-        /// <param name="entry">Source entry</param>
+        /// <param name="entry">Source entry>.</param>
         /// <param name="file">Output file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task<Exception> SaveFileAs(string entry, StorageFile file)
@@ -382,7 +382,7 @@ namespace ZipPicViewUWP
         public static async Task<Exception> Print(PrintHelper printHelper, string entry)
         {
             {
-                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(MediaManager.CurrentEntry);
+                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
                 if (error != null)
                 {
                     return error;
@@ -393,7 +393,7 @@ namespace ZipPicViewUWP
 
                 printHelper.BitmapImage = output;
 
-                await printHelper.ShowPrintUIAsync("Printing - " + MediaManager.CurrentEntry.ExtractFilename());
+                await printHelper.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
             }
 
             return null;

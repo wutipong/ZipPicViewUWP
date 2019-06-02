@@ -33,8 +33,7 @@
                 x:Name="PrintButton"
                 Click="PrintButton_Click"
                 Icon="Print"
-                Label="Print"
-                Visibility="Collapsed" />
+                Label="Print" />
         </muxcontrols:CommandBarFlyout>
     </UserControl.Resources>
     <Border Margin="2" BorderThickness="2">

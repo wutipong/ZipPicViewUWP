@@ -38,6 +38,7 @@ namespace ZipPicViewUWP
         private FolderPicker folderPicker = null;
         private Dictionary<string, ThumbnailPage> thumbnailPages;
         private string currentFolder;
+        private PrintHelper printHelper;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -318,7 +319,9 @@ namespace ZipPicViewUWP
                 {
                     Title = folder.ExtractFilename(),
                     TitleStyle = Windows.UI.Text.FontStyle.Normal,
+                    PrintHelper = this.printHelper,
                 };
+
                 this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
                 await this.thumbnailPages[folder].SetFolderEntry(folder);
             }
@@ -406,6 +409,14 @@ namespace ZipPicViewUWP
             this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
             this.currentFolder = item.Value;
             await this.thumbnailPages[item.Value].ResumeLoadThumbnail();
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            this.printHelper = new PrintHelper(this);
+            this.printHelper.RegisterForPrinting();
+
+            this.ViewerControl.PrintHelper = this.printHelper;
         }
     }
 }

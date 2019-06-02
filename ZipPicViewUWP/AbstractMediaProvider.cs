@@ -166,7 +166,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Suggest the filename to be saved.
         /// </summary>
-        /// <param name="entry">Entry</param>
+        /// <param name="entry">Entry".</param>
         /// <returns>A file name.</returns>
         public virtual string SuggestFileNameToSave(string entry)
         {

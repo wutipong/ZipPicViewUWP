@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:wctcontrols="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="Page"
+    Loaded="Page_Loaded"
     SizeChanged="PageSizeChanged"
     mc:Ignorable="d">
     <Page.Resources>

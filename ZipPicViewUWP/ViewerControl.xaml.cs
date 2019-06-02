@@ -45,7 +45,6 @@ namespace ZipPicViewUWP
 
         private readonly DispatcherTimer timer;
         private int counter;
-        private PrintHelper printHelper;
         private DisplayRequest displayRequest;
         private MediaElement clickSound;
 
@@ -121,6 +120,11 @@ namespace ZipPicViewUWP
         /// Gets or sets the height of image to be display.
         /// </summary>
         public int ExpectedImageHeight { get; set; } = 200;
+
+        /// <summary>
+        /// Gets or sets the print helper.
+        /// </summary>
+        public PrintHelper PrintHelper { get; set; }
 
         /// <summary>
         /// Reset the timer counter.
@@ -277,7 +281,7 @@ namespace ZipPicViewUWP
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.Print(this.printHelper, MediaManager.CurrentEntry);
+            var error = await MediaManager.Print(this.PrintHelper, MediaManager.CurrentEntry);
             if (error != null)
             {
                 var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", MediaManager.CurrentEntry.ExtractFilename()), "Error");
@@ -395,9 +399,6 @@ namespace ZipPicViewUWP
 
         private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            this.printHelper = new PrintHelper(this);
-            this.printHelper.RegisterForPrinting();
-
             this.clickSound = await MediaManager.LoadSound("beep.wav");
 
             CoreWindow.GetForCurrentThread().KeyUp += this.Keyboard_KeyUp;

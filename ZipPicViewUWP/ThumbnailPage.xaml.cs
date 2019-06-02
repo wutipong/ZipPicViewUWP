@@ -19,8 +19,6 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class ThumbnailPage : Page
     {
-        private PrintHelper printHelper;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ThumbnailPage"/> class.
         /// </summary>
@@ -87,6 +85,11 @@ namespace ZipPicViewUWP
         public CancellationTokenSource CancellationToken { get; private set; }
 
         /// <summary>
+        /// Gets or sets the print helper.
+        /// </summary>
+        public PrintHelper PrintHelper { get; set; }
+
+        /// <summary>
         /// Set the current folder entry to display thumbnail.
         /// </summary>
         /// <param name="folder">Entries to display.</param>
@@ -112,7 +115,7 @@ namespace ZipPicViewUWP
                 thumbnail.Entry = entry;
                 thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
                 thumbnail.Notification = this.Notification;
-                thumbnail.PrintHelper = this.printHelper;
+                thumbnail.PrintHelper = this.PrintHelper;
 
                 this.Thumbnails[i] = thumbnail;
                 this.ThumbnailGrid.Items.Add(thumbnail);
@@ -192,12 +195,6 @@ namespace ZipPicViewUWP
             {
                 this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current + 1, count);
             }
-        }
-
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // this.printHelper = new PrintHelper(this);
-            // this.printHelper.RegisterForPrinting();
         }
     }
 }
