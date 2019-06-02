@@ -52,7 +52,7 @@
                             <Image
                                 Width="200"
                                 Height="200"
-                                Source="/Assets/applogo.png" />
+                                Source="/Assets/applogo_color.png" />
                             <TextBlock
                                 VerticalAlignment="Bottom"
                                 FontSize="48"
@@ -169,12 +169,6 @@
                     Text="&lt;None&gt;"
                     UseLayoutRounding="True" />
             </CommandBar.Content>
-            <AppBarToggleButton
-                x:Name="FullScreenButton"
-                Checked="FullscreenButton_Checked"
-                Icon="FullScreen"
-                Label="FullScreen"
-                Unchecked="FullscreenButtonUnchecked" />
             <AppBarSeparator />
             <AppBarButton
                 x:Name="openFileButton"
@@ -186,6 +180,18 @@
                 Click="OpenFolderButtonClick"
                 Icon="Folder"
                 Label="Open Folder" />
+            <AppBarSeparator />
+            <AppBarToggleButton
+                x:Name="FullScreenButton"
+                Checked="FullscreenButton_Checked"
+                Icon="FullScreen"
+                Label="FullScreen"
+                Unchecked="FullscreenButtonUnchecked" />
+            <AppBarButton
+                Name="ThemeChange"
+                Click="ThemeChange_Click"
+                Icon="FontColor"
+                Label="Change Theme" />
             <AppBarSeparator />
             <AppBarButton
                 x:Name="aboutButton"

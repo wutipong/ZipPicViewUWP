@@ -418,5 +418,15 @@ namespace ZipPicViewUWP
 
             this.ViewerControl.PrintHelper = this.printHelper;
         }
+
+        private void ThemeChange_Click(object sender, RoutedEventArgs e)
+        {
+            var frameworkElement = Window.Current.Content as FrameworkElement;
+            if (frameworkElement != null)
+            {
+                frameworkElement.RequestedTheme = frameworkElement.ActualTheme == ElementTheme.Light ?
+                    ElementTheme.Dark : ElementTheme.Light;
+            }
+        }
     }
 }

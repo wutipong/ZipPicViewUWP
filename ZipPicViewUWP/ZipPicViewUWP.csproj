@@ -161,6 +161,7 @@
   <ItemGroup>
     <Content Include="Assets\applogo.png" />
     <Content Include="Assets\applogo.svg" />
+    <Content Include="Assets\applogo_color.png" />
     <Content Include="Assets\beep.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
