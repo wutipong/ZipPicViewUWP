@@ -7,8 +7,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="400"
-   height="400"
+   width="auto"
+   height="auto"
    viewBox="0 0 400 400"
    id="svg3336"
    version="1.1"
@@ -16,7 +16,8 @@
    sodipodi:docname="applogo.svg"
    inkscape:export-filename="C:\Users\mr_ta\Documents\Visual Studio 2015\Projects\ZipPicViewCS\ZipPicViewUWP\Assets\applogo.png"
    inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-ydpi="90"
+   preserveAspectRatio="xMinYMin meet">
   <metadata
      id="metadata3344">
     <rdf:RDF>

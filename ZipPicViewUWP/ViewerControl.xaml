@@ -375,14 +375,12 @@
             <TextBlock
                 Name="LoadingText"
                 Margin="4"
-                Foreground="{StaticResource PrimaryColor1}"
                 RelativePanel.AlignHorizontalCenterWithPanel="True"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.Below="">
                 Reading Image File.
             </TextBlock>
             <ProgressBar
-                Foreground="{StaticResource PrimaryColor1}"
                 IsIndeterminate="True"
                 RelativePanel.AlignLeftWith="LoadingText"
                 RelativePanel.AlignRightWith="LoadingText"

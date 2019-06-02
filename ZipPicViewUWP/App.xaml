@@ -61,36 +61,36 @@
                             AltMediumHigh="#FFFFFFFF"
                             AltMediumLow="#FFFFFFFF"
                             BaseHigh="#FF000000"
-                            BaseLow="#FF4F628E"
-                            BaseMedium="#FF203969"
-                            BaseMediumHigh="#FF001E51"
-                            BaseMediumLow="#FF102C5D"
-                            ChromeAltLow="#FF001E51"
+                            BaseLow="#FF7887AB"
+                            BaseMedium="#FF305282"
+                            BaseMediumHigh="#FF002F66"
+                            BaseMediumLow="#FF184174"
+                            ChromeAltLow="#FF002F66"
                             ChromeBlackHigh="#FF000000"
-                            ChromeBlackLow="#FF4F628E"
-                            ChromeBlackMedium="#FF001E51"
-                            ChromeBlackMediumLow="#FF203969"
-                            ChromeDisabledHigh="#FF4F628E"
-                            ChromeDisabledLow="#FF203969"
-                            ChromeGray="#FF102C5D"
-                            ChromeHigh="#FF4F628E"
-                            ChromeLow="#FFB8C5E1"
-                            ChromeMedium="#FFA3B1D0"
-                            ChromeMediumLow="#FFB8C5E1"
+                            ChromeBlackLow="#FF7887AB"
+                            ChromeBlackMedium="#FF002F66"
+                            ChromeBlackMediumLow="#FF305282"
+                            ChromeDisabledHigh="#FF7887AB"
+                            ChromeDisabledLow="#FF305282"
+                            ChromeGray="#FF184174"
+                            ChromeHigh="#FF7887AB"
+                            ChromeLow="#FFC7D3EC"
+                            ChromeMedium="#FFB7C4DF"
+                            ChromeMediumLow="#FFC7D3EC"
                             ChromeWhite="#FFFFFFFF"
-                            ListLow="#FFA3B1D0"
-                            ListMedium="#FF4F628E" />
+                            ListLow="#FFB7C4DF"
+                            ListMedium="#FF7887AB" />
                         <ResourceDictionary>
-                            <Color x:Key="SystemChromeAltMediumHighColor">#CC7887AB</Color>
-                            <Color x:Key="SystemChromeAltHighColor">#FF7887AB</Color>
-                            <Color x:Key="SystemRevealListLowColor">#FFA3B1D0</Color>
-                            <Color x:Key="SystemRevealListMediumColor">#FF4F628E</Color>
+                            <Color x:Key="SystemChromeAltMediumHighColor">#CC4F628E</Color>
+                            <Color x:Key="SystemChromeAltHighColor">#FF4F628E</Color>
+                            <Color x:Key="SystemRevealListLowColor">#FFB7C4DF</Color>
+                            <Color x:Key="SystemRevealListMediumColor">#FF7887AB</Color>
                             <RevealBackgroundBrush
                                 x:Key="SystemControlHighlightListLowRevealBackgroundBrush"
                                 FallbackColor="{StaticResource SystemListMediumColor}"
                                 TargetTheme="Light"
                                 Color="{ThemeResource SystemRevealListMediumColor}" />
-                            <Color x:Key="RegionColor">#FF7887AB</Color>
+                            <Color x:Key="RegionColor">#FF4F628E</Color>
                             <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource RegionColor}" />
                         </ResourceDictionary>
                     </ResourceDictionary.MergedDictionaries>

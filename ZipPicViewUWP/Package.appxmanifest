@@ -23,13 +23,11 @@
             <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#550000" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" BackgroundColor="#2E4272" />
       </uap:VisualElements>
     </Application>
   </Applications>
   <Capabilities>
-    <Capability Name="internetClient" />
-    <Capability Name="internetClientServer" />
     <Capability Name="privateNetworkClientServer" />
     <uap:Capability Name="removableStorage" />
     <uap3:Capability Name="remoteSystem" />

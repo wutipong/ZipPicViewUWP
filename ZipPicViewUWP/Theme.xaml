@@ -4,11 +4,23 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media">
 
-    <Color x:Key="PrimaryColor1">#FFAAAA</Color>
-    <Color x:Key="PrimaryColor2">#D46A6A</Color>
-    <Color x:Key="PrimaryColor3">#AA3939</Color>
-    <Color x:Key="PrimaryColor4">#801515</Color>
-    <Color x:Key="PrimaryColor5">#550000</Color>
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <Color x:Key="PrimaryColor">#2E4272</Color>
+            <Color x:Key="BaseColor">#162955</Color>
+            <Color x:Key="RegionColor">#061539</Color>
+            <Color x:Key="AccentColor">#7887AB</Color>
+            <Color x:Key="LowAccentColor">#4F628E</Color>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="PrimaryColor">#2E4272</Color>
+            <Color x:Key="BaseColor">#4F628E</Color>
+            <Color x:Key="RegionColor">#7887AB</Color>
+            <Color x:Key="AccentColor">#061539</Color>
+            <Color x:Key="LowAccentColor">#162955</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 
     <!-- SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}" />
     <SolidColorBrush
@@ -20,23 +32,23 @@
     <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource PrimaryColor3}" />
     <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource PrimaryColor3}" />
     <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource PrimaryColor2}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource PrimaryColor1}" />
+    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource PrimaryColor1}" /-->
 
     <muxm:AcrylicBrush
         x:Key="NavigationViewDefaultPaneBackground"
         BackgroundSource="Backdrop"
-        TintColor="{StaticResource PrimaryColor5}"
+        TintColor="{StaticResource RegionColor}"
         TintOpacity=".6" />
 
     <muxm:AcrylicBrush
         x:Key="NavigationViewTopPaneBackground"
         BackgroundSource="Backdrop"
-        TintColor="{StaticResource PrimaryColor5}"
+        TintColor="{StaticResource RegionColor}"
         TintOpacity=".6" />
     <LinearGradientBrush x:Key="NavigationViewExpandedPaneBackground" StartPoint="0.5,0" EndPoint="0.5,1">
-        <GradientStop Offset="0.0" Color="{StaticResource PrimaryColor5}" />
-        <GradientStop Offset="1.0" Color="{StaticResource PrimaryColor4}" />
+        <GradientStop Offset="0.0" Color="{StaticResource RegionColor}" />
+        <GradientStop Offset="1.0" Color="{StaticResource BaseColor}" />
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor1}" /-->
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor}" />
 </ResourceDictionary>

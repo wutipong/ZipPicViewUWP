@@ -60,12 +60,11 @@
             RelativePanel.AlignTopWithPanel="True">
             <controls:AdaptiveGridView.Header>
                 <controls:ScrollHeader Mode="Fade">
-                    <RelativePanel>
+                    <RelativePanel Margin="20">
                         <Border
                             Name="CoverBorder"
                             Width="200"
                             Height="200"
-                            Margin="20"
                             RelativePanel.AlignLeftWithPanel="True"
                             RelativePanel.AlignTopWithPanel="True">
                             <Image Name="CoverImage" />
@@ -73,19 +72,26 @@
 
                         <TextBlock
                             Name="FolderName"
+                            MaxHeight="160"
                             Margin="20,0,8,0"
-                            FontSize="48"
-                            Foreground="{StaticResource PrimaryColor1}"
+                            VerticalAlignment="Bottom"
+                            Foreground="{StaticResource AccentColor}"
                             RelativePanel.Above="ImageCount"
-                            RelativePanel.RightOf="CoverBorder">
+                            RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.RightOf="CoverBorder"
+                            Style="{StaticResource HeaderTextBlockStyle}"
+                            TextTrimming="CharacterEllipsis"
+                            TextAlignment="Start"
+                            TextWrapping="Wrap">
                             Folder Name
                         </TextBlock>
                         <TextBlock
                             Name="ImageCount"
                             Margin="20,0"
-                            Foreground="{StaticResource PrimaryColor3}"
+                            Foreground="{StaticResource LowAccentColor}"
                             RelativePanel.AlignBottomWith="CoverBorder"
-                            RelativePanel.RightOf="CoverBorder">
+                            RelativePanel.RightOf="CoverBorder"
+                            Style="{StaticResource SubheaderTextBlockStyle}">
                             Image Count
                         </TextBlock>
                     </RelativePanel>

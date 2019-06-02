@@ -45,22 +45,47 @@
                         <CompositeTransform />
                     </Border.RenderTransform>
                     <wctcontrols:DockPanel Margin="64,64,64,64" LastChildFill="True">
-                        <StackPanel
-                            Margin="0,0,0,32"
-                            wctcontrols:DockPanel.Dock="Top"
-                            Orientation="Horizontal">
-                            <Image
+                        <RelativePanel Margin="20" wctcontrols:DockPanel.Dock="Top">
+                            <Border
+                                Name="CoverBorder"
                                 Width="200"
                                 Height="200"
-                                Source="/Assets/applogo_color.png" />
+                                Padding="8"
+                                Background="{StaticResource PrimaryColor}"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignTopWithPanel="True">
+                                <Image
+                                    Width="184"
+                                    Height="184"
+                                    Stretch="UniformToFill">
+                                    <Image.Source>
+                                        <SvgImageSource
+                                            RasterizePixelHeight="184"
+                                            RasterizePixelWidth="184"
+                                            UriSource="ms-appx:///Assets/applogo.svg" />
+                                    </Image.Source>
+                                </Image>
+                            </Border>
+
                             <TextBlock
-                                VerticalAlignment="Bottom"
-                                FontSize="48"
-                                FontWeight="Bold"
-                                Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">
+                                Name="TitleName"
+                                Margin="20,0,8,0"
+                                Foreground="{StaticResource AccentColor}"
+                                RelativePanel.Above="SubTitle"
+                                RelativePanel.RightOf="CoverBorder"
+                                Style="{StaticResource HeaderTextBlockStyle}">
                                 ZipPicView
                             </TextBlock>
-                        </StackPanel>
+                            <TextBlock
+                                Name="SubTitle"
+                                Margin="20,0"
+                                Foreground="{StaticResource LowAccentColor}"
+                                RelativePanel.AlignBottomWith="CoverBorder"
+                                RelativePanel.RightOf="CoverBorder"
+                                Style="{StaticResource SubheaderTextBlockStyle}">
+                                In-archive image viewer/browser.
+                            </TextBlock>
+                        </RelativePanel>
 
                         <StackPanel
                             Padding="0,64,0,0"
@@ -70,7 +95,7 @@
                             <TextBlock
                                 VerticalAlignment="Bottom"
                                 FontWeight="Bold"
-                                Foreground="{StaticResource SystemControlHighlightListAccentMediumBrush}">
+                                Foreground="{StaticResource AccentColor}">
                                 ZipPicView
                             </TextBlock>
                             <TextBlock x:Name="VersionText" Margin="8,0,0,0">($version)</TextBlock>
@@ -130,7 +155,6 @@
                                         <TextBlock
                                             Margin="8,0,0,0"
                                             VerticalAlignment="Center"
-                                            FontFamily="Segoe UI"
                                             TextWrapping="Wrap">
                                             To open a folder. All subfolder will be populated in the program, including folder that does not contains any supported image file.
                                         </TextBlock>
