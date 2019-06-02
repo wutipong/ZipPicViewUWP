@@ -190,7 +190,7 @@
             <AppBarButton
                 Name="ThemeChange"
                 Click="ThemeChange_Click"
-                Icon="FontColor"
+                Icon="Highlight"
                 Label="Change Theme" />
             <AppBarSeparator />
             <AppBarButton

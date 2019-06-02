@@ -424,8 +424,17 @@ namespace ZipPicViewUWP
             var frameworkElement = Window.Current.Content as FrameworkElement;
             if (frameworkElement != null)
             {
-                frameworkElement.RequestedTheme = frameworkElement.ActualTheme == ElementTheme.Light ?
-                    ElementTheme.Dark : ElementTheme.Light;
+                var applicationData = Windows.Storage.ApplicationData.Current;
+                applicationData.LocalSettings.Values.TryGetValue("theme", out var theme);
+                if (theme == null)
+                {
+                    theme = "Light";
+                }
+
+                theme = theme as string == "Light" ? "Dark" : "Light";
+                applicationData.LocalSettings.Values["theme"] = theme.ToString();
+
+                this.Notification.Show(string.Format("Application has been changed to {0}. Restart the application to apply.", theme.ToString()), 2000);
             }
         }
     }
