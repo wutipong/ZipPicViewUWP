@@ -4,12 +4,10 @@
 
 namespace ZipPicViewUWP
 {
-    using Microsoft.Toolkit.Uwp.UI.Controls;
     using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Windows.Graphics.Imaging;
-    using Windows.Storage.Streams;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
@@ -83,7 +81,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets or sets the notification control.
         /// </summary>
-        public InAppNotification Notification;
+        public InAppNotification Notification { get; set; }
 
         /// <summary>
         /// Gets the cancellation token of thumbnail loading.

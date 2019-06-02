@@ -4,15 +4,11 @@
 
 namespace ZipPicViewUWP
 {
-    using Microsoft.Toolkit.Uwp.UI.Controls;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Threading.Tasks;
-    using Windows.ApplicationModel.DataTransfer;
-    using Windows.Graphics.Imaging;
+    using Microsoft.Toolkit.Uwp.UI.Controls;
     using Windows.Storage.Pickers;
-    using Windows.Storage.Streams;
     using Windows.System;
     using Windows.System.Display;
     using Windows.UI.Core;
