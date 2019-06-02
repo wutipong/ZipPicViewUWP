@@ -328,7 +328,7 @@ namespace ZipPicViewUWP
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
-            var bitmap = await MediaManager.CreateThumbnail(entry, 40, 50);
+            var bitmap = await MediaManager.CreateThumbnail(entry, 16, 20);
             SoftwareBitmapSource source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
@@ -343,6 +343,8 @@ namespace ZipPicViewUWP
                 var item = (FolderListItem)selectedItem.Content;
 
                 this.thumbnailPages?[item.Value].CancellationToken.Cancel();
+
+                this.currentFolder = null;
             }
 
             FolderReadingDialog dialog = new FolderReadingDialog();
