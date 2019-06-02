@@ -57,5 +57,10 @@ namespace ZipPicViewUWP
         {
             this.Highlight.Opacity = 0;
         }
+
+        private void UserControl_ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+        {
+            this.CommandBarFlyout.ShowAt(this);
+        }
     }
 }

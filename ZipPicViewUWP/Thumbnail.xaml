@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    xmlns:muxcontrols="using:Microsoft.UI.Xaml.Controls"
+    ContextRequested="UserControl_ContextRequested"
     PointerEntered="UserControl_PointerEntered"
     PointerExited="UserControl_PointerExited"
     mc:Ignorable="d">
@@ -15,8 +17,23 @@
                 <EasingDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
+
+        <muxcontrols:CommandBarFlyout x:Name="CommandBarFlyout" Placement="Right">
+            <AppBarButton
+                x:Name="CopyButton"
+                Icon="Copy"
+                Label="Copy" />
+            <AppBarButton
+                x:Name="SaveButton"
+                Icon="Save"
+                Label="Save" />
+            <AppBarButton
+                x:Name="PrintButton"
+                Icon="Print"
+                Label="Print" />
+        </muxcontrols:CommandBarFlyout>
     </UserControl.Resources>
-    <Border BorderThickness="2" Margin="2">
+    <Border Margin="2" BorderThickness="2">
         <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <ProgressRing
                 x:Name="loading"
