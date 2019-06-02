@@ -52,7 +52,12 @@ namespace ZipPicViewUWP
         public bool IsIndeterminate
         {
             get => this.Progress.IsIndeterminate;
-            set => this.Progress.IsIndeterminate = value;
+            set
+            {
+                this.Progress.IsIndeterminate = value;
+                this.MaximumText.Text = value ? "-" : this.Maximum.ToString();
+                this.ValueText.Text = value ? "-" : value.ToString();
+            }
         }
     }
 }

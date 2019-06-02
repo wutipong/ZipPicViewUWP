@@ -382,7 +382,7 @@ namespace ZipPicViewUWP
         private void SetFileNameTextBox(string filename)
         {
             this.FilenameTextBlock.Text = filename.Ellipses(100);
-            this.thumbnailPages[MediaManager.Provider.Root].Title = filename + "\\<ROOT>";
+            this.thumbnailPages[MediaManager.Provider.Root].Title = filename;
             this.thumbnailPages[MediaManager.Provider.Root].TitleStyle = Windows.UI.Text.FontStyle.Italic;
         }
 
