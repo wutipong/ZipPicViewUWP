@@ -44,7 +44,7 @@
                     <Border.RenderTransform>
                         <CompositeTransform />
                     </Border.RenderTransform>
-                    <wctcontrols:DockPanel Margin="64,64,64,64">
+                    <wctcontrols:DockPanel Margin="64,64,64,64" LastChildFill="True">
                         <StackPanel
                             Margin="0,0,0,32"
                             wctcontrols:DockPanel.Dock="Top"
@@ -77,69 +77,67 @@
                             <TextBlock Margin="8,0,0,0">Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
                         </StackPanel>
 
-                        <Grid ColumnSpacing="8" RowSpacing="8">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="150" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="2">
+                        <StackPanel>
+                            <TextBlock>
                                 To get started, press Open File or Open Folder.
                             </TextBlock>
+                            <wctcontrols:AdaptiveGridView
+                                Margin="64,8,8,8"
+                                DesiredWidth="600"
+                                IsItemClickEnabled="False"
+                                SelectionMode="None">
+                                <wctcontrols:AdaptiveGridView.Items>
+                                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
+                                        <wctcontrols:HeaderedItemsControl.Header>
+                                            <Button
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="1"
+                                                Width="130"
+                                                Click="OpenFileButtonClick">
 
-                            <Button
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="1"
-                                Width="130"
-                                Click="OpenFileButtonClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="OpenFile" />
-                                    <TextBlock Margin="8,0,0,0">Open File</TextBlock>
-                                </StackPanel>
-                            </Button>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <SymbolIcon Symbol="OpenFile" />
+                                                    <TextBlock Margin="8,0,0,0">Open File</TextBlock>
+                                                </StackPanel>
+                                            </Button>
+                                        </wctcontrols:HeaderedItemsControl.Header>
 
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Margin="8,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe UI"
-                                TextWrapping="Wrap">
-                                Use this to open archive file (*.zip, *.7zip, *.rar) or PDF file (*.pdf). It is possible to open some other file types, eg. *.cbz or *.cbr.
-                                Also some version of the file format are not supported.
-                            </TextBlock>
+                                        <TextBlock
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe UI"
+                                            TextWrapping="Wrap">
+                                            To open an archive file (*.zip, *.7zip, *.rar) or PDF file (*.pdf). It is possible to open some other file types, eg. *.cbz or *.cbr.
+                                            Also some version of the file format are not supported.
+                                        </TextBlock>
+                                    </wctcontrols:HeaderedItemsControl>
 
-                            <Button
-                                Grid.Row="2"
-                                Grid.Column="0"
-                                Width="130"
-                                VerticalAlignment="Center"
-                                Click="OpenFolderButtonClick">
-                                <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="Folder" />
-                                    <TextBlock Margin="8,0,0,0">Open Folder</TextBlock>
-                                </StackPanel>
-                            </Button>
-                            <TextBlock
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Margin="8,0,0,0"
-                                VerticalAlignment="Center"
-                                FontFamily="Segoe UI"
-                                TextWrapping="Wrap">
-                                Use this to open a folder. All subfolder will be populated in the program, including folder that does not contains any supported image file.
-                            </TextBlock>
-                        </Grid>
+                                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
+                                        <wctcontrols:HeaderedItemsControl.Header>
+                                            <Button
+                                                Width="130"
+                                                VerticalAlignment="Center"
+                                                Click="OpenFolderButtonClick">
+                                                <StackPanel Orientation="Horizontal">
+                                                    <SymbolIcon Symbol="Folder" />
+                                                    <TextBlock Margin="8,0,0,0">Open Folder</TextBlock>
+                                                </StackPanel>
+                                            </Button>
+                                        </wctcontrols:HeaderedItemsControl.Header>
+                                        <TextBlock
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            FontFamily="Segoe UI"
+                                            TextWrapping="Wrap">
+                                            To open a folder. All subfolder will be populated in the program, including folder that does not contains any supported image file.
+                                        </TextBlock>
+                                    </wctcontrols:HeaderedItemsControl>
+                                </wctcontrols:AdaptiveGridView.Items>
+                            </wctcontrols:AdaptiveGridView>
+                        </StackPanel>
                     </wctcontrols:DockPanel>
                 </Border>
             </controls:NavigationView>
