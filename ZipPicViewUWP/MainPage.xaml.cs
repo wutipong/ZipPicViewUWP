@@ -320,6 +320,7 @@ namespace ZipPicViewUWP
                     Title = folder.ExtractFilename(),
                     TitleStyle = Windows.UI.Text.FontStyle.Normal,
                     PrintHelper = this.printHelper,
+                    Notification = this.Notification,
                 };
 
                 this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
