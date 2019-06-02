@@ -18,17 +18,17 @@ namespace ZipPicViewUWP
     /// </summary>
     public static class MediaManager
     {
+        private static readonly SemaphoreSlim Semaphore;
         private static string currentEntry;
         private static string currentFolder;
         private static string[] currentFolderEntries = null;
-        private static SemaphoreSlim semaphore;
 
         static MediaManager()
         {
             MediaProviderChange += MediaManager_MediaProviderChangeAsync;
             CurrentEntryChange += MediaManager_CurrentEntryChange;
             CurrentFolderChange += MediaManager_CurrentFolderChange;
-            semaphore = new SemaphoreSlim(1, 1);
+            Semaphore = new SemaphoreSlim(1, 1);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace ZipPicViewUWP
         {
             if (currentFolderEntries == null)
             {
-                await semaphore.WaitAsync();
+                await Semaphore.WaitAsync();
                 try
                 {
                     var (entries, error) = await Provider.GetChildEntries(CurrentFolder);
@@ -123,7 +123,7 @@ namespace ZipPicViewUWP
                 }
                 finally
                 {
-                    semaphore.Release();
+                    Semaphore.Release();
                 }
             }
 
@@ -153,7 +153,7 @@ namespace ZipPicViewUWP
         /// <returns>Exception when there're errors. Null otherwise.</returns>
         public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
         {
-            await semaphore.WaitAsync();
+            await Semaphore.WaitAsync();
             try
             {
                 if (newProvider != Provider)
@@ -175,7 +175,7 @@ namespace ZipPicViewUWP
             }
             finally
             {
-                semaphore.Release();
+                Semaphore.Release();
             }
         }
 
@@ -260,7 +260,7 @@ namespace ZipPicViewUWP
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task<SoftwareBitmap> CreateThumbnail(string entry, int width, int height)
         {
-            await semaphore.WaitAsync();
+            await Semaphore.WaitAsync();
             try
             {
                 var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
@@ -277,7 +277,7 @@ namespace ZipPicViewUWP
             }
             finally
             {
-                semaphore.Release();
+                Semaphore.Release();
             }
         }
 
@@ -290,7 +290,7 @@ namespace ZipPicViewUWP
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(string entry, int width, int height)
         {
-            await semaphore.WaitAsync();
+            await Semaphore.WaitAsync();
             try
             {
                 var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
@@ -307,7 +307,7 @@ namespace ZipPicViewUWP
             }
             finally
             {
-                semaphore.Release();
+                Semaphore.Release();
             }
         }
 

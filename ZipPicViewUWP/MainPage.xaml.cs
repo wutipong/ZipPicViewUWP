@@ -314,12 +314,13 @@ namespace ZipPicViewUWP
                     await this.UpdateFolderThumbnail(cover, item);
                 }
 
-                this.thumbnailPages[folder] = new ThumbnailPage();
-                this.thumbnailPages[folder].Title = folder.ExtractFilename();
-                this.thumbnailPages[folder].TitleStyle = Windows.UI.Text.FontStyle.Normal;
-
-                await this.thumbnailPages[folder].SetFolderEntry(folder);
+                this.thumbnailPages[folder] = new ThumbnailPage()
+                {
+                    Title = folder.ExtractFilename(),
+                    TitleStyle = Windows.UI.Text.FontStyle.Normal,
+                };
                 this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
+                await this.thumbnailPages[folder].SetFolderEntry(folder);
             }
 
             dialog.Value = count;
@@ -345,8 +346,7 @@ namespace ZipPicViewUWP
 
         private async Task<Exception> ChangeMediaProvider(AbstractMediaProvider provider)
         {
-            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
-            if (selectedItem != null)
+            if (this.NavigationPane.SelectedItem is NavigationViewItem selectedItem)
             {
                 var item = (FolderListItem)selectedItem.Content;
 
