@@ -7,6 +7,7 @@
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:media="using:Microsoft.Toolkit.Uwp.UI.Media"
+    xmlns:muix="using:Microsoft.UI.Xaml.Controls"
     x:Name="Control"
     Loaded="UserControl_Loaded"
     mc:Ignorable="d">
@@ -264,66 +265,50 @@
                 </Button>
             </Border>
 
-            <StackPanel
-                Grid.Row="1"
-                MinWidth="250"
-                MinHeight="50"
+            <CommandBar
                 Margin="60"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Background="{StaticResource FloatControlBackground}"
-                Orientation="Horizontal">
+                VerticalAlignment="Bottom">
+                <CommandBar.Content>
+                    <RelativePanel Margin="8,10,8,8">
+                        <TextBlock
+                            x:Name="FilenameTextBlock"
+                            MinWidth="00"
+                            Margin="8,0,8,0"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.LeftOf="OriginalDimension"
+                            Text="&lt;&lt;filename&gt;&gt;"
+                            TextAlignment="Right" />
 
-                <TextBlock
-                    x:Name="FilenameTextBlock"
-                    Width="400"
-                    Margin="10"
-                    VerticalAlignment="Center"
-                    Text="&lt;&lt;filename&gt;&gt;"
-                    TextAlignment="Right" />
-
-                <TextBlock
-                    x:Name="OriginalDimension"
-                    Width="100"
-                    Margin="10"
-                    VerticalAlignment="Center">
-                    (dimension)
-                </TextBlock>
-
-                <Button
-                    Name="CopyButton"
-                    VerticalAlignment="Stretch"
-                    Click="CopyButton_Click">
-                    <SymbolIcon Symbol="Paste" />
-                </Button>
-
-                <Button
-                    Name="SaveButton"
-                    VerticalAlignment="Stretch"
-                    Click="SaveButton_Click">
-                    <SymbolIcon Symbol="Save" />
-                </Button>
-
-                <Button
-                    Name="PrintButton"
-                    VerticalAlignment="Stretch"
-                    Click="PrintButton_Click">
-                    <SymbolIcon Symbol="Print" />
-                </Button>
-
-                <Rectangle Width="20" />
-                <ToggleButton
+                        <TextBlock
+                            x:Name="OriginalDimension"
+                            MinWidth="100"
+                            Margin="8,0,8,0"
+                            VerticalAlignment="Center"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True">
+                            (dimension)
+                        </TextBlock>
+                    </RelativePanel>
+                </CommandBar.Content>
+                <AppBarSeparator />
+                <AppBarToggleButton
                     Name="AutoButton"
                     VerticalAlignment="Stretch"
                     Checked="AutoButton_Checked"
+                    Label="Auto Advance"
                     Unchecked="AutoButton_Unchecked">
                     <SymbolIcon Symbol="Play" />
-                </ToggleButton>
+                </AppBarToggleButton>
 
-                <Button
+                <AppBarButton
                     Name="AutoDurationButton"
                     VerticalAlignment="Stretch"
-                    Content="&#8711;">
+                    Content="&#8711;"
+                    Icon="Bullets"
+                    Label="Auto Advance Options">
                     <Button.Flyout>
                         <Flyout>
                             <StackPanel VerticalAlignment="Top">
@@ -331,7 +316,7 @@
                                 <ToggleSwitch x:Name="RandomToggle" Header="Random" />
                                 <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" />
                                 <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
-                                    <ListBox x:Name="DurationList">
+                                    <ListBox x:Name="DurationList" Background="Transparent">
                                         <ListBoxItem Content="5 seconds" IsSelected="True" />
                                         <ListBoxItem Content="10 seconds" />
                                         <ListBoxItem Content="15 seconds" />
@@ -341,8 +326,29 @@
                             </StackPanel>
                         </Flyout>
                     </Button.Flyout>
-                </Button>
-            </StackPanel>
+                </AppBarButton>
+                <AppBarSeparator />
+                <AppBarButton
+                    Name="CopyButton"
+                    VerticalAlignment="Stretch"
+                    Click="CopyButton_Click"
+                    Icon="Copy"
+                    Label="Copy" />
+
+                <AppBarButton
+                    Name="SaveButton"
+                    VerticalAlignment="Stretch"
+                    Click="SaveButton_Click"
+                    Icon="Save"
+                    Label="Save" />
+
+                <AppBarButton
+                    Name="PrintButton"
+                    VerticalAlignment="Stretch"
+                    Click="PrintButton_Click"
+                    Icon="Print"
+                    Label="Print" />
+            </CommandBar>
 
             <Border
                 Width="50"
