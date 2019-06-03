@@ -40,6 +40,12 @@
                 IsSettingsVisible="True"
                 OpenPaneLength="300"
                 SelectionChanged="NavigationPane_SelectionChanged">
+                <controls:NavigationView.PaneFooter>
+                    <controls:NavigationViewList>
+                        <controls:NavigationViewItemSeparator />
+                        <controls:NavigationViewItem Content="About" Icon="Help" Tapped="NavigationViewItem_Tapped" />
+                    </controls:NavigationViewList>
+                </controls:NavigationView.PaneFooter>
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />
@@ -211,11 +217,6 @@
                 Icon="FullScreen"
                 Label="FullScreen"
                 Unchecked="FullscreenButtonUnchecked" />
-            <AppBarButton
-                x:Name="aboutButton"
-                Click="AboutButtonClick"
-                Icon="Help"
-                Label="About" />
         </CommandBar>
     </Page.TopAppBar>
 </Page>

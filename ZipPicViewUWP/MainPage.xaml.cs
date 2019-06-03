@@ -55,12 +55,6 @@ namespace ZipPicViewUWP
                 string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
-        private async void AboutButtonClick(object sender, RoutedEventArgs e)
-        {
-            AboutDialog dialog = new AboutDialog();
-            await dialog.ShowAsync();
-        }
-
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Link;
@@ -396,6 +390,7 @@ namespace ZipPicViewUWP
 
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
+            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
             if (e.IsSettingsSelected == true)
             {
                 this.ThumbnailBorder.Child = new SettingPage();
@@ -409,7 +404,6 @@ namespace ZipPicViewUWP
 
             this.ThumbnailBorderOpenStoryboard.Begin();
 
-            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
             var item = (FolderListItem)selectedItem.Content;
 
             this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
@@ -423,6 +417,14 @@ namespace ZipPicViewUWP
             this.printHelper.RegisterForPrinting();
 
             this.ViewerControl.PrintHelper = this.printHelper;
+        }
+
+        private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            AboutDialog dialog = new AboutDialog();
+            await dialog.ShowAsync();
+
+            return;
         }
     }
 }
