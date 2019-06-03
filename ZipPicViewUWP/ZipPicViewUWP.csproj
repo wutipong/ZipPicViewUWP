@@ -114,6 +114,9 @@
     <Compile Include="FolderReadingDialog.xaml.cs">
       <DependentUpon>FolderReadingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ImageHelper.cs" />
     <Compile Include="ImageSizeHelper.cs" />
     <Compile Include="MediaManager.cs" />
@@ -234,6 +237,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="FolderReadingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HomePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

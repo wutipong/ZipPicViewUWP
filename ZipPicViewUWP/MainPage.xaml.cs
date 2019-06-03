@@ -47,12 +47,6 @@ namespace ZipPicViewUWP
         {
             this.InitializeComponent();
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-            Package package = Package.Current;
-            PackageId packageId = package.Id;
-            PackageVersion version = packageId.Version;
-
-            this.VersionText.Text = (package.IsDevelopmentMode ? "(Debug)" : string.Empty) +
-                string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
         }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
@@ -391,6 +385,8 @@ namespace ZipPicViewUWP
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
             var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
+            this.ThumbnailBorderOpenStoryboard.Begin();
+
             if (e.IsSettingsSelected == true)
             {
                 this.ThumbnailBorder.Child = new SettingPage();
@@ -402,13 +398,17 @@ namespace ZipPicViewUWP
                 this.thumbnailPages[this.currentFolder]?.CancellationToken?.Cancel();
             }
 
-            this.ThumbnailBorderOpenStoryboard.Begin();
+            var item = selectedItem as NavigationViewItem;
+            if (item.Content as string == "Home")
+            {
+                return;
+            }
 
-            var item = (FolderListItem)selectedItem.Content;
+            var folderListItem = item.Content as FolderListItem;
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[item.Value];
-            this.currentFolder = item.Value;
-            await this.thumbnailPages[item.Value].ResumeLoadThumbnail();
+            this.ThumbnailBorder.Child = this.thumbnailPages[folderListItem.Value];
+            this.currentFolder = folderListItem.Value;
+            await this.thumbnailPages[folderListItem.Value].ResumeLoadThumbnail();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -421,8 +421,25 @@ namespace ZipPicViewUWP
 
         private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            AboutDialog dialog = new AboutDialog();
-            await dialog.ShowAsync();
+            if (sender is NavigationViewItem item)
+            {
+                if (item.Content as string == "About")
+                {
+                    AboutDialog dialog = new AboutDialog();
+                    await dialog.ShowAsync();
+                }
+
+                if (item.Content as string == "Home")
+                {
+                    this.NavigationPane.SelectedItem = item;
+                    var homepage = new HomePage();
+
+                    homepage.OpenFileClick += this.OpenFileButtonClick;
+                    homepage.OpenFolderClick += this.OpenFolderButtonClick;
+
+                    this.ThumbnailBorder.Child = homepage;
+                }
+            }
 
             return;
         }

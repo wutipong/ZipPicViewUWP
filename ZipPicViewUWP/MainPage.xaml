@@ -43,132 +43,21 @@
                 <controls:NavigationView.PaneFooter>
                     <controls:NavigationViewList>
                         <controls:NavigationViewItemSeparator />
-                        <controls:NavigationViewItem Content="About" Icon="Help" Tapped="NavigationViewItem_Tapped" />
+                        <controls:NavigationViewItem
+                            Content="Home"
+                            Icon="Home"
+                            Tapped="NavigationViewItem_Tapped" />
+                        <controls:NavigationViewItem
+                            Content="About"
+                            Icon="Help"
+                            Tapped="NavigationViewItem_Tapped" />
                     </controls:NavigationViewList>
                 </controls:NavigationView.PaneFooter>
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />
                     </Border.RenderTransform>
-                    <wctcontrols:DockPanel Margin="64,64,64,64" LastChildFill="True">
-                        <RelativePanel Margin="20" wctcontrols:DockPanel.Dock="Top">
-                            <Border
-                                Name="CoverBorder"
-                                Width="200"
-                                Height="200"
-                                Padding="8"
-                                Background="{StaticResource PrimaryColor}"
-                                RelativePanel.AlignLeftWithPanel="True"
-                                RelativePanel.AlignTopWithPanel="True">
-                                <Image
-                                    Width="184"
-                                    Height="184"
-                                    Stretch="UniformToFill">
-                                    <Image.Source>
-                                        <SvgImageSource
-                                            RasterizePixelHeight="184"
-                                            RasterizePixelWidth="184"
-                                            UriSource="ms-appx:///Assets/applogo.svg" />
-                                    </Image.Source>
-                                </Image>
-                            </Border>
-
-                            <TextBlock
-                                Name="TitleName"
-                                Margin="20,0,8,0"
-                                Foreground="{StaticResource AccentColor}"
-                                RelativePanel.Above="SubTitle"
-                                RelativePanel.RightOf="CoverBorder"
-                                Style="{StaticResource HeaderTextBlockStyle}">
-                                ZipPicView
-                            </TextBlock>
-                            <TextBlock
-                                Name="SubTitle"
-                                Margin="20,0"
-                                Foreground="{StaticResource LowAccentColor}"
-                                RelativePanel.AlignBottomWith="CoverBorder"
-                                RelativePanel.RightOf="CoverBorder"
-                                Style="{StaticResource SubheaderTextBlockStyle}">
-                                In-archive image viewer/browser.
-                            </TextBlock>
-                        </RelativePanel>
-
-                        <StackPanel
-                            Padding="0,64,0,0"
-                            VerticalAlignment="Bottom"
-                            wctcontrols:DockPanel.Dock="Bottom"
-                            Orientation="Horizontal">
-                            <TextBlock
-                                VerticalAlignment="Bottom"
-                                FontWeight="Bold"
-                                Foreground="{StaticResource AccentColor}">
-                                ZipPicView
-                            </TextBlock>
-                            <TextBlock x:Name="VersionText" Margin="8,0,0,0">($version)</TextBlock>
-                            <TextBlock Margin="8,0,0,0">Copyright ©2017-2019 Wutipong Wongsakuldej</TextBlock>
-                        </StackPanel>
-
-                        <StackPanel>
-                            <TextBlock>
-                                To get started, press Open File or Open Folder.
-                            </TextBlock>
-                            <wctcontrols:AdaptiveGridView
-                                Margin="64,8,8,8"
-                                DesiredWidth="600"
-                                IsItemClickEnabled="False"
-                                SelectionMode="None">
-                                <wctcontrols:AdaptiveGridView.Items>
-                                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
-                                        <wctcontrols:HeaderedItemsControl.Header>
-                                            <Button
-                                                Grid.Row="1"
-                                                Grid.Column="0"
-                                                Grid.ColumnSpan="1"
-                                                Width="130"
-                                                Click="OpenFileButtonClick">
-
-                                                <StackPanel Orientation="Horizontal">
-                                                    <SymbolIcon Symbol="OpenFile" />
-                                                    <TextBlock Margin="8,0,0,0">Open File</TextBlock>
-                                                </StackPanel>
-                                            </Button>
-                                        </wctcontrols:HeaderedItemsControl.Header>
-
-                                        <TextBlock
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            Margin="8,0,0,0"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Segoe UI"
-                                            TextWrapping="Wrap">
-                                            To open an archive file (*.zip, *.7zip, *.rar) or PDF file (*.pdf). It is possible to open some other file types, eg. *.cbz or *.cbr.
-                                            Also some version of the file format are not supported.
-                                        </TextBlock>
-                                    </wctcontrols:HeaderedItemsControl>
-
-                                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
-                                        <wctcontrols:HeaderedItemsControl.Header>
-                                            <Button
-                                                Width="130"
-                                                VerticalAlignment="Center"
-                                                Click="OpenFolderButtonClick">
-                                                <StackPanel Orientation="Horizontal">
-                                                    <SymbolIcon Symbol="Folder" />
-                                                    <TextBlock Margin="8,0,0,0">Open Folder</TextBlock>
-                                                </StackPanel>
-                                            </Button>
-                                        </wctcontrols:HeaderedItemsControl.Header>
-                                        <TextBlock
-                                            Margin="8,0,0,0"
-                                            VerticalAlignment="Center"
-                                            TextWrapping="Wrap">
-                                            To open a folder. All subfolder will be populated in the program, including folder that does not contains any supported image file.
-                                        </TextBlock>
-                                    </wctcontrols:HeaderedItemsControl>
-                                </wctcontrols:AdaptiveGridView.Items>
-                            </wctcontrols:AdaptiveGridView>
-                        </StackPanel>
-                    </wctcontrols:DockPanel>
+                    <local:HomePage OpenFileClick="OpenFileButtonClick" OpenFolderClick="OpenFolderButtonClick" />
                 </Border>
             </controls:NavigationView>
         </Grid>
