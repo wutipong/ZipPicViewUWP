@@ -265,90 +265,93 @@
                 </Button>
             </Border>
 
-            <CommandBar
+            <Border
+                Height="40"
                 Margin="60"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom">
-                <CommandBar.Content>
-                    <RelativePanel Margin="8,10,8,8">
-                        <TextBlock
-                            x:Name="FilenameTextBlock"
-                            MinWidth="00"
-                            Margin="8,0,8,0"
-                            RelativePanel.AlignBottomWithPanel="True"
-                            RelativePanel.AlignTopWithPanel="True"
-                            RelativePanel.LeftOf="OriginalDimension"
-                            Text="&lt;&lt;filename&gt;&gt;"
-                            TextAlignment="Right" />
+                VerticalAlignment="Bottom"
+                Background="{ThemeResource SystemChromeMediumColor}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                        x:Name="FilenameTextBlock"
+                        MinWidth="00"
+                        Margin="8,0,8,0"
+                        VerticalAlignment="Center"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.LeftOf="OriginalDimension"
+                        Text="&lt;&lt;filename&gt;&gt;"
+                        TextAlignment="Right" />
 
-                        <TextBlock
-                            x:Name="OriginalDimension"
-                            MinWidth="100"
-                            Margin="8,0,8,0"
-                            VerticalAlignment="Center"
-                            RelativePanel.AlignBottomWithPanel="True"
-                            RelativePanel.AlignRightWithPanel="True"
-                            RelativePanel.AlignTopWithPanel="True">
-                            (dimension)
-                        </TextBlock>
-                    </RelativePanel>
-                </CommandBar.Content>
-                <AppBarSeparator />
-                <AppBarToggleButton
-                    Name="AutoButton"
-                    VerticalAlignment="Stretch"
-                    Checked="AutoButton_Checked"
-                    Label="Auto Advance"
-                    Unchecked="AutoButton_Unchecked">
-                    <SymbolIcon Symbol="Play" />
-                </AppBarToggleButton>
+                    <TextBlock
+                        x:Name="OriginalDimension"
+                        MinWidth="100"
+                        Margin="8,0,8,0"
+                        VerticalAlignment="Center"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True">
+                        (dimension)
+                    </TextBlock>
+                    <Rectangle
+                        Width="2"
+                        Margin="6"
+                        Fill="{StaticResource AccentColor}" />
 
-                <AppBarButton
-                    Name="AutoDurationButton"
-                    VerticalAlignment="Stretch"
-                    Content="&#8711;"
-                    Icon="Bullets"
-                    Label="Auto Advance Options">
-                    <Button.Flyout>
-                        <Flyout>
-                            <StackPanel VerticalAlignment="Top">
-                                <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" />
-                                <ToggleSwitch x:Name="RandomToggle" Header="Random" />
-                                <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" />
-                                <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
-                                    <ListBox x:Name="DurationList" Background="Transparent">
-                                        <ListBoxItem Content="5 seconds" IsSelected="True" />
-                                        <ListBoxItem Content="10 seconds" />
-                                        <ListBoxItem Content="15 seconds" />
-                                        <ListBoxItem Content="30 seconds" />
-                                    </ListBox>
-                                </controls:HeaderedContentControl>
-                            </StackPanel>
-                        </Flyout>
-                    </Button.Flyout>
-                </AppBarButton>
-                <AppBarSeparator />
-                <AppBarButton
-                    Name="CopyButton"
-                    VerticalAlignment="Stretch"
-                    Click="CopyButton_Click"
-                    Icon="Copy"
-                    Label="Copy" />
+                    <ToggleButton
+                        Name="AutoButton"
+                        VerticalAlignment="Stretch"
+                        Checked="AutoButton_Checked"
+                        Unchecked="AutoButton_Unchecked">
+                        <SymbolIcon Symbol="Play" />
+                    </ToggleButton>
 
-                <AppBarButton
-                    Name="SaveButton"
-                    VerticalAlignment="Stretch"
-                    Click="SaveButton_Click"
-                    Icon="Save"
-                    Label="Save" />
+                    <Button Name="AutoDurationButton" VerticalAlignment="Stretch">
+                        <SymbolIcon Symbol="List" />
+                        <Button.Flyout>
+                            <Flyout>
+                                <StackPanel VerticalAlignment="Top">
+                                    <ToggleSwitch x:Name="PrecountToggle" Header="Pre-count" />
+                                    <ToggleSwitch x:Name="RandomToggle" Header="Random" />
+                                    <ToggleSwitch x:Name="GlobalToggle" Header="All Folder" />
+                                    <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Duration">
+                                        <ListBox x:Name="DurationList" Background="Transparent">
+                                            <ListBoxItem Content="5 seconds" IsSelected="True" />
+                                            <ListBoxItem Content="10 seconds" />
+                                            <ListBoxItem Content="15 seconds" />
+                                            <ListBoxItem Content="30 seconds" />
+                                        </ListBox>
+                                    </controls:HeaderedContentControl>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Rectangle
+                        Width="2"
+                        Margin="6"
+                        Fill="{StaticResource AccentColor}" />
+                    <Button
+                        Name="CopyButton"
+                        VerticalAlignment="Stretch"
+                        Click="CopyButton_Click">
+                        <SymbolIcon Symbol="Copy" />
+                    </Button>
 
-                <AppBarButton
-                    Name="PrintButton"
-                    VerticalAlignment="Stretch"
-                    Click="PrintButton_Click"
-                    Icon="Print"
-                    Label="Print" />
-            </CommandBar>
+                    <Button
+                        Name="SaveButton"
+                        VerticalAlignment="Stretch"
+                        Click="SaveButton_Click">
+                        <SymbolIcon Symbol="Save" />
+                    </Button>
+
+                    <Button
+                        Name="PrintButton"
+                        VerticalAlignment="Stretch"
+                        Click="PrintButton_Click">
+                        <SymbolIcon Symbol="Print" />
+                    </Button>
+                </StackPanel>
+            </Border>
 
             <Border
                 Width="50"
