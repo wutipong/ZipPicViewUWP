@@ -399,10 +399,6 @@ namespace ZipPicViewUWP
             }
 
             var item = selectedItem as NavigationViewItem;
-            if (item.Content as string == "Home")
-            {
-                return;
-            }
 
             var folderListItem = item.Content as FolderListItem;
 
@@ -427,17 +423,6 @@ namespace ZipPicViewUWP
                 {
                     AboutDialog dialog = new AboutDialog();
                     await dialog.ShowAsync();
-                }
-
-                if (item.Content as string == "Home")
-                {
-                    this.NavigationPane.SelectedItem = item;
-                    var homepage = new HomePage();
-
-                    homepage.OpenFileClick += this.OpenFileButtonClick;
-                    homepage.OpenFolderClick += this.OpenFolderButtonClick;
-
-                    this.ThumbnailBorder.Child = homepage;
                 }
             }
 

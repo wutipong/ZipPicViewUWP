@@ -38,15 +38,11 @@
                 IsBackButtonVisible="Collapsed"
                 IsBackEnabled="False"
                 IsSettingsVisible="True"
-                OpenPaneLength="300"
+                PaneTitle="Folder List"
                 SelectionChanged="NavigationPane_SelectionChanged">
                 <controls:NavigationView.PaneFooter>
                     <controls:NavigationViewList>
                         <controls:NavigationViewItemSeparator />
-                        <controls:NavigationViewItem
-                            Content="Home"
-                            Icon="Home"
-                            Tapped="NavigationViewItem_Tapped" />
                         <controls:NavigationViewItem
                             Content="About"
                             Icon="Help"
