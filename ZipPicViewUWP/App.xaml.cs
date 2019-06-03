@@ -24,14 +24,16 @@ namespace ZipPicViewUWP
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values.TryGetValue("theme", out var themeValue);
 
-            if (themeValue == null)
+            switch (themeValue)
             {
-                themeValue = "Light";
-            }
+                case "Light":
+                    this.RequestedTheme = ApplicationTheme.Light;
+                    break;
 
-            var theme = themeValue as string == "Light" ? ApplicationTheme.Light : ApplicationTheme.Dark;
-            this.RequestedTheme = theme;
-            applicationData.LocalSettings.Values["theme"] = theme.ToString();
+                case "Dark":
+                    this.RequestedTheme = ApplicationTheme.Dark;
+                    break;
+            }
 
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;

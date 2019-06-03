@@ -37,7 +37,7 @@
                 x:Name="NavigationPane"
                 IsBackButtonVisible="Collapsed"
                 IsBackEnabled="False"
-                IsSettingsVisible="False"
+                IsSettingsVisible="True"
                 OpenPaneLength="300"
                 SelectionChanged="NavigationPane_SelectionChanged">
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
@@ -211,12 +211,6 @@
                 Icon="FullScreen"
                 Label="FullScreen"
                 Unchecked="FullscreenButtonUnchecked" />
-            <AppBarButton
-                Name="ThemeChange"
-                Click="ThemeChange_Click"
-                Icon="Highlight"
-                Label="Change Theme" />
-            <AppBarSeparator />
             <AppBarButton
                 x:Name="aboutButton"
                 Click="AboutButtonClick"

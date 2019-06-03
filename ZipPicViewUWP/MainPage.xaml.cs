@@ -352,11 +352,10 @@ namespace ZipPicViewUWP
         {
             if (this.NavigationPane.SelectedItem is NavigationViewItem selectedItem)
             {
-                var item = (FolderListItem)selectedItem.Content;
-
-                this.thumbnailPages?[item.Value].CancellationToken.Cancel();
-
-                this.currentFolder = null;
+                if (selectedItem.Content is FolderListItem item)
+                {
+                    this.thumbnailPages?[item.Value].CancellationToken.Cancel();
+                }
             }
 
             FolderReadingDialog dialog = new FolderReadingDialog();
@@ -379,7 +378,7 @@ namespace ZipPicViewUWP
             await waitTask;
 
             dialog.Hide();
-
+            this.currentFolder = null;
             return null;
         }
 
@@ -397,6 +396,12 @@ namespace ZipPicViewUWP
 
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
+            if (e.IsSettingsSelected == true)
+            {
+                this.ThumbnailBorder.Child = new SettingPage();
+                return;
+            }
+
             if (this.currentFolder != null)
             {
                 this.thumbnailPages[this.currentFolder]?.CancellationToken?.Cancel();
@@ -418,25 +423,6 @@ namespace ZipPicViewUWP
             this.printHelper.RegisterForPrinting();
 
             this.ViewerControl.PrintHelper = this.printHelper;
-        }
-
-        private void ThemeChange_Click(object sender, RoutedEventArgs e)
-        {
-            var frameworkElement = Window.Current.Content as FrameworkElement;
-            if (frameworkElement != null)
-            {
-                var applicationData = Windows.Storage.ApplicationData.Current;
-                applicationData.LocalSettings.Values.TryGetValue("theme", out var theme);
-                if (theme == null)
-                {
-                    theme = "Light";
-                }
-
-                theme = theme as string == "Light" ? "Dark" : "Light";
-                applicationData.LocalSettings.Values["theme"] = theme.ToString();
-
-                this.Notification.Show(string.Format("Application has been changed to {0}. Restart the application to apply.", theme.ToString()), 2000);
-            }
         }
     }
 }

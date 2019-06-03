@@ -125,6 +125,9 @@
       <DependentUpon>PrintPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="PrintPanel.cs" />
+    <Compile Include="SettingPage.xaml.cs">
+      <DependentUpon>SettingPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SevenZipMediaProvider.cs" />
     <Compile Include="AbstractMediaProvider.cs" />
     <Compile Include="App.xaml.cs">
@@ -243,6 +246,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="PrintPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
