@@ -137,7 +137,7 @@ namespace ZipPicViewUWP
                 var selectedItem = obj as NavigationViewItem;
                 var item = (FolderListItem)selectedItem.Content;
 
-                return item.Value == parent;
+                return item.FolderEntry == parent;
             });
         }
 
@@ -276,22 +276,7 @@ namespace ZipPicViewUWP
 
                 dialog.Value = i;
 
-                if (name != MediaManager.Provider.Root)
-                {
-                    int prefixCount = name.Count(c => c == MediaManager.Provider.Separator);
-
-                    name = name.Substring(name.LastIndexOf(MediaManager.Provider.Separator) + 1);
-
-                    var prefix = string.Empty;
-                    for (int s = 0; s < prefixCount; s++)
-                    {
-                        prefix += "  ";
-                    }
-
-                    name = prefix + name;
-                }
-
-                var item = new FolderListItem { Text = name, Value = folder };
+                var item = new FolderListItem { FolderEntry = folder };
                 var navigationitem = new NavigationViewItem() { Content = item };
 
                 this.NavigationPane.MenuItems.Add(navigationitem);
@@ -329,7 +314,7 @@ namespace ZipPicViewUWP
 
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
-            var bitmap = await MediaManager.CreateThumbnail(entry, 16, 20);
+            var bitmap = await MediaManager.CreateThumbnail(entry, 20, 32);
             SoftwareBitmapSource source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
@@ -342,7 +327,7 @@ namespace ZipPicViewUWP
             {
                 if (selectedItem.Content is FolderListItem item)
                 {
-                    this.thumbnailPages?[item.Value].CancellationToken.Cancel();
+                    this.thumbnailPages?[item.FolderEntry].CancellationToken.Cancel();
                 }
             }
 
@@ -393,7 +378,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            if (this.currentFolder != null)
+            if (this.currentFolder != null && this.thumbnailPages.ContainsKey(this.currentFolder))
             {
                 this.thumbnailPages[this.currentFolder]?.CancellationToken?.Cancel();
             }
@@ -402,9 +387,9 @@ namespace ZipPicViewUWP
 
             var folderListItem = item.Content as FolderListItem;
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[folderListItem.Value];
-            this.currentFolder = folderListItem.Value;
-            await this.thumbnailPages[folderListItem.Value].ResumeLoadThumbnail();
+            this.ThumbnailBorder.Child = this.thumbnailPages[folderListItem.FolderEntry];
+            this.currentFolder = folderListItem.FolderEntry;
+            await this.thumbnailPages[folderListItem.FolderEntry].ResumeLoadThumbnail();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

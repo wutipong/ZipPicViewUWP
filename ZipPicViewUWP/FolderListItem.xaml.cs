@@ -5,15 +5,19 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Linq;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media;
+    using ZipPicViewUWP.Utility;
 
     /// <summary>
     /// Folder list item control.
     /// </summary>
     public sealed partial class FolderListItem : UserControl
     {
+        private string entry;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FolderListItem"/> class.
         /// </summary>
@@ -23,18 +27,28 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
-        /// Gets or sets the displaying folder name.
-        /// </summary>
-        public string Text
-        {
-            get { return this.name.Text; }
-            set { this.name.Text = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the actual folder value.
         /// </summary>
-        public string Value { get; set; }
+        public string FolderEntry
+        {
+            get => this.entry;
+            set
+            {
+                this.entry = value;
+
+                if (this.entry == MediaManager.Provider.Root)
+                {
+                    this.name.Text = "<ROOT>";
+                    this.name.FontStyle = Windows.UI.Text.FontStyle.Oblique;
+                }
+                else
+                {
+                    int prefixCount = this.entry.Count(c => c == MediaManager.Provider.Separator);
+                    this.name.Padding = new Thickness() { Left = 10 * (prefixCount + 1) };
+                    this.name.Text = "├  " + value.ExtractFilename();
+                }
+            }
+        }
 
         /// <summary>
         /// Sets the thumbnail image source.

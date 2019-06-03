@@ -12,30 +12,34 @@
     <RelativePanel>
         <Canvas
             Name="thumb"
-            Width="16"
-            Height="20"
+            Width="20"
+            Height="32"
+            Margin="-5,0,10,0"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True">
             <Image
                 Name="image"
-                Width="16"
-                Height="20"
+                Width="20"
+                Height="32"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Stretch="UniformToFill"
                 Visibility="Collapsed" />
             <SymbolIcon
                 Name="folderIcon"
-                Width="16"
-                Height="20"
+                Width="20"
+                Height="32"
                 HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 Symbol="Folder" />
         </Canvas>
         <TextBlock
             Name="name"
-            Margin="10,0,0,0"
+            Margin="0,0,0,0"
+            RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True"
-            RelativePanel.RightOf="thumb">
+            RelativePanel.RightOf="thumb"
+            TextTrimming="CharacterEllipsis">
             Folder
         </TextBlock>
     </RelativePanel>
