@@ -11,6 +11,7 @@ namespace ZipPicViewUWP
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
+    using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
 
     /// <summary>
@@ -18,6 +19,8 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class Thumbnail : UserControl
     {
+        private SoftwareBitmapSource source;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Thumbnail"/> class.
         /// </summary>
@@ -25,11 +28,6 @@ namespace ZipPicViewUWP
         {
             this.InitializeComponent();
         }
-
-        /// <summary>
-        /// Gets the thumbnail image.
-        /// </summary>
-        public Image Image => this.image;
 
         /// <summary>
         /// Gets the thumbnail label.
@@ -57,11 +55,32 @@ namespace ZipPicViewUWP
         public InAppNotification Notification { get; set; }
 
         /// <summary>
+        /// Gets or sets the image source for the thumbnail.
+        /// </summary>
+        public SoftwareBitmapSource ImageSource
+        {
+            get => this.source;
+            set
+            {
+                this.source = value;
+                this.image.Source = value;
+            }
+        }
+
+        /// <summary>
         /// Show the thumbnail Image.
         /// </summary>
         public void ShowImage()
         {
             this.ThumbnailShowStoryBoard.Begin();
+        }
+
+        /// <summary>
+        /// Release the resources used by this control.
+        /// </summary>
+        public void Release()
+        {
+            this.source?.Dispose();
         }
 
         private void UserControl_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)

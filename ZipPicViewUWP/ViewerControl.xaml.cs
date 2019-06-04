@@ -44,6 +44,7 @@ namespace ZipPicViewUWP
         private int counter;
         private DisplayRequest displayRequest;
         private MediaElement clickSound;
+        private SoftwareBitmapSource source;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
@@ -214,13 +215,18 @@ namespace ZipPicViewUWP
 
             this.FilenameTextBlock.Text = file.ExtractFilename();
 
-            var source = new SoftwareBitmapSource();
+            if (this.source != null)
+            {
+                this.source.Dispose();
+            }
+
+            this.source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
             showLoading = false;
 
-            await source.SetBitmapAsync(bitmap);
+            await this.source.SetBitmapAsync(bitmap);
             this.OriginalDimension.Text = string.Format("{0}x{1}", origWidth, origHeight);
-            this.Image.Source = source;
+            this.Image.Source = this.source;
             this.LoadingControl.Visibility = Visibility.Collapsed;
             this.ResetCounter();
         }

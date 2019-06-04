@@ -18,6 +18,8 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class ThumbnailPage : Page
     {
+        private SoftwareBitmapSource coverBitmapSource;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ThumbnailPage"/> class.
         /// </summary>
@@ -130,10 +132,10 @@ namespace ZipPicViewUWP
             {
                 var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200);
 
-                var source = new SoftwareBitmapSource();
-                await source.SetBitmapAsync(bitmap);
+                this.coverBitmapSource = new SoftwareBitmapSource();
+                await this.coverBitmapSource.SetBitmapAsync(bitmap);
 
-                this.CoverImage.Source = source;
+                this.CoverImage.Source = this.coverBitmapSource;
             }
         }
 
@@ -151,7 +153,7 @@ namespace ZipPicViewUWP
                 for (int i = 0; i < this.Thumbnails.Length; i++)
                 {
                     var thumbnail = this.Thumbnails[i];
-                    if (thumbnail.Image.Source != null)
+                    if (thumbnail.ImageSource != null)
                     {
                         continue;
                     }
@@ -163,7 +165,7 @@ namespace ZipPicViewUWP
                     var source = new SoftwareBitmapSource();
                     await source.SetBitmapAsync(bitmap);
 
-                    thumbnail.Image.Source = source;
+                    thumbnail.ImageSource = source;
                     thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
                     thumbnail.ShowImage();
                 }
@@ -172,6 +174,18 @@ namespace ZipPicViewUWP
             }
             catch (Exception)
             {
+            }
+        }
+
+        /// <summary>
+        /// Release resources used by this control.
+        /// </summary>
+        public void Release()
+        {
+            this.coverBitmapSource?.Dispose();
+            foreach (var thumbnail in this.Thumbnails)
+            {
+                thumbnail.Release();
             }
         }
 

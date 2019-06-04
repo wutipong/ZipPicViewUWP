@@ -262,12 +262,34 @@ namespace ZipPicViewUWP
 
         private async Task RebuildSubFolderList(FolderReadingDialog dialog)
         {
+            foreach (var item in this.NavigationPane.MenuItems)
+            {
+                if (item is NavigationViewItem nv)
+                {
+                    if (nv.Content is FolderListItem fd)
+                    {
+                        fd.Release();
+                    }
+                }
+            }
+
             this.NavigationPane.MenuItems.Clear();
+
+            if (this.thumbnailPages != null)
+            {
+                foreach (var page in this.thumbnailPages?.Values)
+                {
+                    page.Release();
+                }
+            }
+
             this.thumbnailPages = new Dictionary<string, ThumbnailPage>();
 
             var count = MediaManager.FolderEntries.Length;
             dialog.IsIndeterminate = false;
             dialog.Maximum = count;
+
+            var trees = FolderListItem.BuildTreeString(MediaManager.FolderEntries);
 
             for (int i = 0; i < count; i++)
             {
@@ -276,7 +298,7 @@ namespace ZipPicViewUWP
 
                 dialog.Value = i;
 
-                var item = new FolderListItem { FolderEntry = folder };
+                var item = new FolderListItem { FolderEntry = folder, TreeText = trees[i] };
                 var navigationitem = new NavigationViewItem() { Content = item };
 
                 this.NavigationPane.MenuItems.Add(navigationitem);
@@ -333,7 +355,6 @@ namespace ZipPicViewUWP
 
             FolderReadingDialog dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
-            var waitTask = Task.Delay(1000);
 
             Exception error;
             error = await MediaManager.ChangeProvider(provider);
@@ -348,10 +369,11 @@ namespace ZipPicViewUWP
             this.HideImageControl();
             this.IsEnabled = true;
 
-            await waitTask;
-
             dialog.Hide();
             this.currentFolder = null;
+
+            GC.Collect();
+
             return null;
         }
 

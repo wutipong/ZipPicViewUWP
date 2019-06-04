@@ -34,11 +34,19 @@
                 Symbol="Folder" />
         </Canvas>
         <TextBlock
+            Name="TreeTextBlock"
+            MaxWidth="50"
+            Margin="10,0,5,0"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            RelativePanel.RightOf="thumb"
+            Text="├"
+            FontFamily="Consolas" />
+        <TextBlock
             Name="name"
             Margin="0,0,0,0"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True"
-            RelativePanel.RightOf="thumb"
+            RelativePanel.RightOf="TreeTextBlock"
             TextTrimming="CharacterEllipsis">
             Folder
         </TextBlock>
