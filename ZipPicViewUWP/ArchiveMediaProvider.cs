@@ -20,7 +20,6 @@ namespace ZipPicViewUWP
     internal class ArchiveMediaProvider : AbstractMediaProvider
     {
         private string[] fileList;
-        private string[] folderList;
         private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
 
         private Stream stream;
@@ -57,22 +56,6 @@ namespace ZipPicViewUWP
                 }
 
                 return this.fileList;
-            }
-        }
-
-        /// <summary>
-        /// Gets the list of folder inside this archive.
-        /// </summary>
-        protected string[] FolderList
-        {
-            get
-            {
-                if (this.folderList == null)
-                {
-                    this.folderList = this.CreateFolderList();
-                }
-
-                return this.folderList;
             }
         }
 
@@ -242,7 +225,7 @@ namespace ZipPicViewUWP
             {
                 try
                 {
-                    return (this.FolderList, null);
+                    return (this.CreateFolderList(), null);
                 }
                 catch (Exception e)
                 {
