@@ -309,17 +309,6 @@ namespace ZipPicViewUWP
                 {
                     await this.UpdateFolderThumbnail(cover, item);
                 }
-
-                this.thumbnailPages[folder] = new ThumbnailPage()
-                {
-                    Title = folder.ExtractFilename(),
-                    TitleStyle = Windows.UI.Text.FontStyle.Normal,
-                    PrintHelper = this.printHelper,
-                    Notification = this.Notification,
-                };
-
-                this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
-                await this.thumbnailPages[folder].SetFolderEntry(folder);
             }
 
             dialog.Value = count;
@@ -392,7 +381,6 @@ namespace ZipPicViewUWP
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
             var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
-            this.ThumbnailBorderOpenStoryboard.Begin();
 
             if (e.IsSettingsSelected == true)
             {
@@ -409,9 +397,25 @@ namespace ZipPicViewUWP
 
             var folderListItem = item.Content as FolderListItem;
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[folderListItem.FolderEntry];
+            var folder = folderListItem.FolderEntry;
+            if (!this.thumbnailPages.ContainsKey(folder))
+            {
+                this.thumbnailPages[folder] = new ThumbnailPage()
+                {
+                    Title = folder.ExtractFilename(),
+                    TitleStyle = Windows.UI.Text.FontStyle.Normal,
+                    PrintHelper = this.printHelper,
+                    Notification = this.Notification,
+                };
+                this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
+                await this.thumbnailPages[folder].SetFolderEntry(folder);
+            }
+
+            this.ThumbnailBorder.Child = this.thumbnailPages[folder];
+            this.ThumbnailBorderOpenStoryboard.Begin();
+
             this.currentFolder = folderListItem.FolderEntry;
-            await this.thumbnailPages[folderListItem.FolderEntry].ResumeLoadThumbnail();
+            await this.thumbnailPages[folder].ResumeLoadThumbnail();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

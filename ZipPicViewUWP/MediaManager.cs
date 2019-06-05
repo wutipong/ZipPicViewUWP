@@ -30,7 +30,6 @@ namespace ZipPicViewUWP
 
         static MediaManager()
         {
-            MediaProviderChange += MediaManager_MediaProviderChangeAsync;
             CurrentEntryChange += MediaManager_CurrentEntryChange;
             CurrentFolderChange += MediaManager_CurrentFolderChange;
             Semaphore = new SemaphoreSlim(1, 1);
@@ -43,11 +42,6 @@ namespace ZipPicViewUWP
         /// <param name="newvalue">New value to be set to the property.</param>
         /// <returns>Exception when the operation fails.</returns>
         public delegate Task<Exception> PropertyChangeHandler<T>(T newvalue);
-
-        /// <summary>
-        /// Media provider change event.
-        /// </summary>
-        public static event PropertyChangeHandler<AbstractMediaProvider> MediaProviderChange;
 
         /// <summary>
         /// Current entry change event.
@@ -161,14 +155,28 @@ namespace ZipPicViewUWP
             await Semaphore.WaitAsync();
             try
             {
-                if (newProvider != Provider)
+                if (newProvider == Provider)
                 {
-                    var error = await MediaProviderChange(newProvider);
-                    if (error != null)
-                    {
-                        return error;
-                    }
+                    return null;
                 }
+
+                var (fileEntries, errorFile) = await newProvider.GetAllFileEntries();
+                if (errorFile != null)
+                {
+                    return errorFile;
+                }
+
+                FileEntries = fileEntries;
+
+                var (folderEntries, errorFolder) = await newProvider.GetFolderEntries();
+                if (errorFolder != null)
+                {
+                    return errorFolder;
+                }
+
+                FolderEntries = folderEntries;
+                CurrentFolder = newProvider.Root;
+                currentFolderEntries = null;
 
                 if (Provider != null)
                 {
@@ -409,29 +417,6 @@ namespace ZipPicViewUWP
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)
         {
             CurrentFolder = Provider.GetParentEntry(newvalue);
-            return null;
-        }
-
-        private static async Task<Exception> MediaManager_MediaProviderChangeAsync(AbstractMediaProvider provider)
-        {
-            var (fileEntries, errorFile) = await provider.GetAllFileEntries();
-            if (errorFile != null)
-            {
-                return errorFile;
-            }
-
-            FileEntries = fileEntries;
-
-            var (folderEntries, errorFolder) = await provider.GetFolderEntries();
-            if (errorFolder != null)
-            {
-                return errorFolder;
-            }
-
-            FolderEntries = folderEntries;
-            CurrentFolder = provider.Root;
-            currentFolderEntries = null;
-
             return null;
         }
 
