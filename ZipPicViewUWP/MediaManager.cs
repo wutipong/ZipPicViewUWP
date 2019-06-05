@@ -14,7 +14,6 @@ namespace ZipPicViewUWP
     using Windows.Graphics.Imaging;
     using Windows.Storage;
     using Windows.Storage.Streams;
-    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
@@ -192,13 +191,19 @@ namespace ZipPicViewUWP
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task Advance(bool current, bool random, int step = 1)
+        public static async Task<Exception> Advance(bool current, bool random, int step = 1)
         {
             string[] entries;
 
             if (current)
             {
-                (entries, _) = await GetCurrentFolderFileEntries();
+                Exception error;
+                (entries, error) = await GetCurrentFolderFileEntries();
+
+                if (error != null)
+                {
+                    return error;
+                }
             }
             else
             {
@@ -227,6 +232,8 @@ namespace ZipPicViewUWP
             }
 
             CurrentEntry = entries[index];
+
+            return null;
         }
 
         /// <summary>
