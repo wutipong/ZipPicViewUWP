@@ -96,6 +96,11 @@ namespace ZipPicViewUWP
         public PrintHelper PrintHelper { get; set; }
 
         /// <summary>
+        /// Gets the entry value.
+        /// </summary>
+        public string Entry { get; private set; }
+
+        /// <summary>
         /// Set the current folder entry to display thumbnail.
         /// </summary>
         /// <param name="folder">Entries to display.</param>
@@ -107,6 +112,8 @@ namespace ZipPicViewUWP
             {
                 throw error;
             }
+
+            this.Entry = folder;
 
             this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
 

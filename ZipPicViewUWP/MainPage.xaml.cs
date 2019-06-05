@@ -36,7 +36,7 @@ namespace ZipPicViewUWP
     {
         private FileOpenPicker fileOpenPicker = null;
         private FolderPicker folderPicker = null;
-        private Dictionary<string, ThumbnailPage> thumbnailPages;
+        private List<ThumbnailPage> thumbnailPages;
         private string currentFolder;
         private PrintHelper printHelper;
 
@@ -48,6 +48,11 @@ namespace ZipPicViewUWP
             this.InitializeComponent();
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
         }
+
+        /// <summary>
+        /// Gets the current file name.
+        /// </summary>
+        public string FileName { get; private set; } = string.Empty;
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
@@ -155,7 +160,7 @@ namespace ZipPicViewUWP
                 await provider.Load();
 
                 await this.ChangeMediaProvider(provider);
-                this.SetFileNameTextBox(selected.Name);
+                this.SetFileName(selected.Name);
             }
             else
             {
@@ -186,7 +191,7 @@ namespace ZipPicViewUWP
                         throw error;
                     }
 
-                    this.SetFileNameTextBox(selected.Name);
+                    this.SetFileName(selected.Name);
                 }
                 catch (Exception err)
                 {
@@ -231,7 +236,7 @@ namespace ZipPicViewUWP
             }
 
             await this.ChangeMediaProvider(new FileSystemMediaProvider(selected));
-            this.SetFileNameTextBox(selected.Name);
+            this.SetFileName(selected.Name);
 
             this.Page.TopAppBar.Visibility = Visibility.Visible;
         }
@@ -277,13 +282,13 @@ namespace ZipPicViewUWP
 
             if (this.thumbnailPages != null)
             {
-                foreach (var page in this.thumbnailPages?.Values)
+                foreach (var page in this.thumbnailPages)
                 {
                     page.Release();
                 }
             }
 
-            this.thumbnailPages = new Dictionary<string, ThumbnailPage>();
+            this.thumbnailPages = new List<ThumbnailPage>();
 
             var count = MediaManager.FolderEntries.Length;
             dialog.IsIndeterminate = false;
@@ -338,7 +343,11 @@ namespace ZipPicViewUWP
             {
                 if (selectedItem.Content is FolderListItem item)
                 {
-                    this.thumbnailPages?[item.FolderEntry].CancellationToken.Cancel();
+                    var page = this.thumbnailPages.Find((p) => p.Entry == item.FolderEntry);
+                    if (page != null)
+                    {
+                        page.CancellationToken.Cancel();
+                    }
                 }
             }
 
@@ -366,11 +375,17 @@ namespace ZipPicViewUWP
             return null;
         }
 
-        private void SetFileNameTextBox(string filename)
+        private void SetFileName(string filename)
         {
+            this.FileName = filename;
             this.FilenameTextBlock.Text = filename.Ellipses(100);
-            this.thumbnailPages[MediaManager.Provider.Root].Title = filename;
-            this.thumbnailPages[MediaManager.Provider.Root].TitleStyle = Windows.UI.Text.FontStyle.Italic;
+
+            var page = this.thumbnailPages.Find((p) => p.Entry == MediaManager.Provider.Root);
+            if (page != null)
+            {
+                page.Title = filename;
+                page.TitleStyle = Windows.UI.Text.FontStyle.Italic;
+            }
         }
 
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
@@ -388,9 +403,13 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            if (this.currentFolder != null && this.thumbnailPages.ContainsKey(this.currentFolder))
+            if (this.currentFolder != null && this.thumbnailPages != null)
             {
-                this.thumbnailPages[this.currentFolder]?.CancellationToken?.Cancel();
+                var currentPage = this.thumbnailPages.Find((p) => p.Entry == this.currentFolder);
+                if (currentPage != null)
+                {
+                    currentPage.CancellationToken.Cancel();
+                }
             }
 
             var item = selectedItem as NavigationViewItem;
@@ -398,24 +417,37 @@ namespace ZipPicViewUWP
             var folderListItem = item.Content as FolderListItem;
 
             var folder = folderListItem.FolderEntry;
-            if (!this.thumbnailPages.ContainsKey(folder))
+            var page = this.thumbnailPages.Find((p) => p.Entry == folder);
+
+            if (page == null)
             {
-                this.thumbnailPages[folder] = new ThumbnailPage()
+                page = new ThumbnailPage()
                 {
-                    Title = folder.ExtractFilename(),
-                    TitleStyle = Windows.UI.Text.FontStyle.Normal,
+                    Title = folder == MediaManager.Provider.Root ?
+                        this.FileName : folder.ExtractFilename(),
+                    TitleStyle = folder == MediaManager.Provider.Root ?
+                        Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal,
                     PrintHelper = this.printHelper,
                     Notification = this.Notification,
                 };
-                this.thumbnailPages[folder].ItemClicked += this.ThumbnailPage_ItemClicked;
-                await this.thumbnailPages[folder].SetFolderEntry(folder);
+                page.ItemClicked += this.ThumbnailPage_ItemClicked;
+                await page.SetFolderEntry(folder);
+
+                this.thumbnailPages.Add(page);
+                if (this.thumbnailPages.Count > 10)
+                {
+                    var removePage = this.thumbnailPages[0];
+                    this.thumbnailPages.Remove(removePage);
+
+                    removePage.Release();
+                }
             }
 
-            this.ThumbnailBorder.Child = this.thumbnailPages[folder];
+            this.ThumbnailBorder.Child = page;
             this.ThumbnailBorderOpenStoryboard.Begin();
 
             this.currentFolder = folderListItem.FolderEntry;
-            await this.thumbnailPages[folder].ResumeLoadThumbnail();
+            await page.ResumeLoadThumbnail();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
