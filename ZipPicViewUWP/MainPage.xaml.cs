@@ -299,7 +299,6 @@ namespace ZipPicViewUWP
             for (int i = 0; i < count; i++)
             {
                 var folder = MediaManager.FolderEntries[i];
-                var name = folder;
 
                 dialog.Value = i;
 
