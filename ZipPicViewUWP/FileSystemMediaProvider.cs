@@ -20,7 +20,7 @@ namespace ZipPicViewUWP
     internal class FileSystemMediaProvider : AbstractMediaProvider
     {
         private readonly StorageFolder folder;
-        private string[] folderEntries = null;
+
         private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
 
         /// <summary>
@@ -50,7 +50,6 @@ namespace ZipPicViewUWP
         /// <inheritdoc/>
         public override async Task<(string[], Exception error)> GetChildEntries(string entry)
         {
-            var folderIndex = Array.IndexOf(this.folderEntries, entry);
             if (this.folderFileEntries.ContainsKey(entry))
             {
                 return (this.folderFileEntries[entry], null);
@@ -100,11 +99,6 @@ namespace ZipPicViewUWP
         /// <inheritdoc/>
         protected override async Task<(string[], Exception error)> DoGetFolderEntries()
         {
-            if (this.folderEntries != null)
-            {
-                return (this.folderEntries, null);
-            }
-
             try
             {
                 var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
@@ -125,13 +119,56 @@ namespace ZipPicViewUWP
                     output.Add(folder.Path.Substring(startIndex));
                 }
 
-                this.folderEntries = output.ToArray();
+                var folderEntries = output.ToArray();
 
-                return (this.folderEntries, null);
+                await this.CreateFileList(folderEntries);
+
+                return (folderEntries, null);
             }
             catch (Exception e)
             {
                 return (null, e);
+            }
+        }
+
+        private async Task CreateFileList(string[] folderEntries)
+        {
+            var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
+            {
+                FolderDepth = FolderDepth.Deep,
+            };
+
+            var files = await this.folder.CreateFileQueryWithOptions(options).GetFilesAsync();
+
+            foreach (var folder in folderEntries)
+            {
+                var l = new List<string>();
+                var parentPath = this.folder.Path +
+                        (folder == this.Root ? string.Empty : this.Separator.ToString()) + folder + (folder == this.Root ? string.Empty : this.Separator.ToString());
+
+                foreach (var file in files)
+                {
+                    var path = file.Path;
+
+                    if (!path.StartsWith(parentPath))
+                    {
+                        continue;
+                    }
+
+                    var relativepath = path.Substring(parentPath.Length);
+
+                    if (relativepath.Contains(this.Separator))
+                    {
+                        continue;
+                    }
+
+                    if (this.FileFilter.IsImageFile(relativepath))
+                    {
+                        l.Add(folder == this.Root ? relativepath : folder + this.Separator + relativepath);
+                    }
+                }
+
+                this.folderFileEntries[folder] = l.ToArray();
             }
         }
     }

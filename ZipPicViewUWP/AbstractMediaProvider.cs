@@ -18,6 +18,8 @@ namespace ZipPicViewUWP
     /// </summary>
     public abstract class AbstractMediaProvider : IDisposable
     {
+        private string[] folderEntries = null;
+
         /// <summary>
         /// Gets or sets the associated file filter to be used with this provider.
         /// </summary>
@@ -121,16 +123,23 @@ namespace ZipPicViewUWP
         /// <returns>Folder entries.</returns>
         public async Task<(string[], Exception error)> GetFolderEntries()
         {
-            var output = await this.DoGetFolderEntries();
-
-            if (output.error != null)
+            if (this.folderEntries != null)
             {
-                return output;
+                return (this.folderEntries, null);
+            }
+
+            Exception error;
+            (this.folderEntries, error) = await this.DoGetFolderEntries();
+
+            if (error != null)
+            {
+                this.folderEntries = null;
+                return (null, error);
             }
 
             var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
 
-            Array.Sort(output.Item1, (s1, s2) =>
+            Array.Sort(this.folderEntries, (s1, s2) =>
             {
                 if (s1 == this.Root)
                 {
@@ -146,7 +155,7 @@ namespace ZipPicViewUWP
                 }
             });
 
-            return output;
+            return (this.folderEntries, null);
         }
 
         /// <summary>
