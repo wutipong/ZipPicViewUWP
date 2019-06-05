@@ -138,7 +138,7 @@ namespace ZipPicViewUWP
                 StringBuilder sb = new StringBuilder();
                 for (int j = 0; j < tree[i].Count; j++)
                 {
-                    sb.Append(" ");
+                    // sb.Append(" ");
                     sb.Append(tree[i][j]);
                 }
 
@@ -165,7 +165,11 @@ namespace ZipPicViewUWP
         /// </summary>
         public void Release()
         {
-            this.ImageSource.Dispose();
+            if (this.ImageSource != null)
+            {
+                this.ImageSource.Dispose();
+                this.ImageSource = null;
+            }
         }
     }
 }

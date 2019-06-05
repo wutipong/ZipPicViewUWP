@@ -35,15 +35,15 @@
         </Canvas>
         <TextBlock
             Name="TreeTextBlock"
-            MaxWidth="50"
             Margin="10,0,5,0"
             RelativePanel.AlignVerticalCenterWithPanel="True"
             RelativePanel.RightOf="thumb"
             Text="├"
-            FontFamily="Consolas" />
+            FontFamily="Consolas"
+            FontSize="30" />
         <TextBlock
             Name="name"
-            Margin="0,0,0,0"
+            Margin="0,0,20,0"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True"
             RelativePanel.RightOf="TreeTextBlock"
