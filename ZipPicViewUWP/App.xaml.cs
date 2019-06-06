@@ -7,6 +7,9 @@ namespace ZipPicViewUWP
     using System;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Activation;
+    using Windows.ApplicationModel.Core;
+    using Windows.UI;
+    using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Navigation;
@@ -85,6 +88,11 @@ namespace ZipPicViewUWP
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
         /// <summary>

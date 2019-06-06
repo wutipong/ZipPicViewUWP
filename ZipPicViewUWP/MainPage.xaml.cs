@@ -46,7 +46,6 @@ namespace ZipPicViewUWP
         public MainPage()
         {
             this.InitializeComponent();
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
         }
 
         /// <summary>
@@ -102,27 +101,6 @@ namespace ZipPicViewUWP
                     await this.OpenFolder(storageFolder);
                 }
             }
-        }
-
-        private async void FullscreenButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.FullScreenButton.Icon = new SymbolIcon(Symbol.BackToWindow);
-            this.FullScreenButton.Label = "Exit Fullscreen";
-            var view = ApplicationView.GetForCurrentView();
-            if (view.TryEnterFullScreenMode())
-            {
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
-            }
-
-            await this.ViewerControl?.UpdateImage();
-        }
-
-        private void FullscreenButtonUnchecked(object sender, RoutedEventArgs e)
-        {
-            this.FullScreenButton.Icon = new SymbolIcon(Symbol.FullScreen);
-            this.FullScreenButton.Label = "Fullscreen";
-            ApplicationView.GetForCurrentView().ExitFullScreenMode();
-            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
         }
 
         private void HideImageControl()
@@ -260,7 +238,6 @@ namespace ZipPicViewUWP
 
         private void PageSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.FullScreenButton.IsChecked = ApplicationView.GetForCurrentView().IsFullScreenMode;
             this.ViewerControl.ExpectedImageWidth = (int)e.NewSize.Width;
             this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
