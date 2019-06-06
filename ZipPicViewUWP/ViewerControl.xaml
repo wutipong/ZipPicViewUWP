@@ -356,7 +356,7 @@
             <Border
                 Width="50"
                 Height="50"
-                Margin="20"
+                Margin="20,70"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
                 Background="{ThemeResource SystemChromeMediumColor}">
