@@ -414,13 +414,11 @@ namespace ZipPicViewUWP
             }
 
             this.ThumbnailBorder.Child = page;
-            if (page.Entry == MediaManager.Provider.Root)
-            {
-                page.Title = folder == MediaManager.Provider.Root ?
-                        this.FileName : folder.ExtractFilename();
-                page.TitleStyle = folder == MediaManager.Provider.Root ?
-                    Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
-            }
+
+            page.Title = folder == MediaManager.Provider.Root ?
+                    this.FileName : folder.ExtractFilename();
+            page.TitleStyle = folder == MediaManager.Provider.Root ?
+                Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
 
             this.ThumbnailBorderOpenStoryboard.Begin();
 
