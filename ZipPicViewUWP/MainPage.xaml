@@ -32,7 +32,7 @@
             IsBackButtonVisible="Collapsed"
             IsBackEnabled="False"
             IsSettingsVisible="True"
-            PaneTitle="Folder List"
+            PaneTitle="Folders"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
@@ -42,33 +42,21 @@
                 <controls:NavigationViewList>
                     <controls:NavigationViewItemSeparator />
                     <controls:NavigationViewItem
+                        Content="Open File"
+                        Icon="OpenFile"
+                        Tapped="OpenFileButtonClick" />
+                    <controls:NavigationViewItem
+                        Content="Open Folder"
+                        Icon="Folder"
+                        Tapped="OpenFolderButtonClick" />
+                    <controls:NavigationViewItemSeparator />
+                    <controls:NavigationViewItem
                         Content="About"
                         Icon="Help"
                         Tapped="NavigationViewItem_Tapped" />
                 </controls:NavigationViewList>
             </controls:NavigationView.PaneFooter>
             <mtuuc:DockPanel LastChildFill="True">
-                <CommandBar mtuuc:DockPanel.Dock="Top">
-                    <CommandBar.Content>
-                        <TextBlock
-                            x:Name="FilenameTextBlock"
-                            Margin="10,0,0,0"
-                            Text="&lt;None&gt;"
-                            UseLayoutRounding="True" />
-                    </CommandBar.Content>
-                    <AppBarSeparator />
-                    <AppBarButton
-                        x:Name="openFileButton"
-                        Click="OpenFileButtonClick"
-                        Icon="OpenFile"
-                        Label="Open File" />
-                    <AppBarButton
-                        x:Name="openFolderButton"
-                        Click="OpenFolderButtonClick"
-                        Icon="Folder"
-                        Label="Open Folder" />
-                    <AppBarSeparator />
-                </CommandBar>
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />

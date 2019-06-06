@@ -352,7 +352,6 @@ namespace ZipPicViewUWP
         private void SetFileName(string filename)
         {
             this.FileName = filename;
-            this.FilenameTextBlock.Text = filename.Ellipses(100);
 
             var page = this.thumbnailPages.Find((p) => p.Entry == MediaManager.Provider.Root);
             if (page != null)
@@ -443,6 +442,10 @@ namespace ZipPicViewUWP
             }
 
             return;
+        }
+
+        private void FolderList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
         }
     }
 }

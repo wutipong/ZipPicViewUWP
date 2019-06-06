@@ -89,11 +89,10 @@ namespace ZipPicViewUWP
                 Window.Current.Activate();
             }
 
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            /* titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            */
         }
 
         /// <summary>
