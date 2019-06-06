@@ -137,8 +137,8 @@ namespace ZipPicViewUWP
                 var provider = new PdfMediaProvider(selected);
                 await provider.Load();
 
-                await this.ChangeMediaProvider(provider);
                 this.SetFileName(selected.Name);
+                await this.ChangeMediaProvider(provider);
             }
             else
             {
@@ -163,13 +163,12 @@ namespace ZipPicViewUWP
 
                     var provider = ArchiveMediaProvider.Create(stream, archive);
 
+                    this.SetFileName(selected.Name);
                     var error = await this.ChangeMediaProvider(provider);
                     if (error != null)
                     {
                         throw error;
                     }
-
-                    this.SetFileName(selected.Name);
                 }
                 catch (Exception err)
                 {
@@ -180,8 +179,6 @@ namespace ZipPicViewUWP
                     return;
                 }
             }
-
-            this.Page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private async void OpenFileButtonClick(object sender, RoutedEventArgs e)
@@ -213,8 +210,8 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            await this.ChangeMediaProvider(new FileSystemMediaProvider(selected));
             this.SetFileName(selected.Name);
+            await this.ChangeMediaProvider(new FileSystemMediaProvider(selected));
         }
 
         private async void OpenFolderButtonClick(object sender, RoutedEventArgs e)
@@ -352,13 +349,6 @@ namespace ZipPicViewUWP
         private void SetFileName(string filename)
         {
             this.FileName = filename;
-
-            var page = this.thumbnailPages.Find((p) => p.Entry == MediaManager.Provider.Root);
-            if (page != null)
-            {
-                page.Title = filename;
-                page.TitleStyle = Windows.UI.Text.FontStyle.Italic;
-            }
         }
 
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
@@ -395,10 +385,6 @@ namespace ZipPicViewUWP
             {
                 page = new ThumbnailPage()
                 {
-                    Title = folder == MediaManager.Provider.Root ?
-                        this.FileName : folder.ExtractFilename(),
-                    TitleStyle = folder == MediaManager.Provider.Root ?
-                        Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal,
                     PrintHelper = this.printHelper,
                     Notification = this.Notification,
                 };
@@ -416,6 +402,14 @@ namespace ZipPicViewUWP
             }
 
             this.ThumbnailBorder.Child = page;
+            if (page.Entry == MediaManager.Provider.Root)
+            {
+                page.Title = folder == MediaManager.Provider.Root ?
+                        this.FileName : folder.ExtractFilename();
+                page.TitleStyle = folder == MediaManager.Provider.Root ?
+                    Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
+            }
+
             this.ThumbnailBorderOpenStoryboard.Begin();
 
             this.currentFolder = folderListItem.FolderEntry;
