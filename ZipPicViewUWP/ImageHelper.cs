@@ -36,18 +36,31 @@ namespace ZipPicViewUWP
         /// <param name="decoder">Bitmap decoder.</param>
         /// <param name="expectedWidth"> Expected width.</param>
         /// <param name="expectedHeight">Expected height.</param>
+        /// <param name="mode">Interpolation mode.</param>
         /// <returns>a new image with smallest size that is larger than the input dimension.</returns>
-        public static async Task<SoftwareBitmap> CreateResizedBitmap(BitmapDecoder decoder, uint expectedWidth, uint expectedHeight)
+        public static async Task<SoftwareBitmap> CreateResizedBitmap(BitmapDecoder decoder, uint expectedWidth, uint expectedHeight, BitmapInterpolationMode mode = BitmapInterpolationMode.Fant, bool shrinkingOnly = false)
         {
             var expectedSize = new Size(expectedWidth, expectedHeight);
 
             var size = new Size(decoder.PixelWidth, decoder.PixelHeight);
 
-            size = size.ResizeToFill(expectedSize);
+            expectedSize = size.ResizeToFill(expectedSize);
+
+            if (shrinkingOnly)
+            {
+                if (expectedSize.Width > decoder.OrientedPixelWidth && expectedSize.Height > decoder.OrientedPixelHeight)
+                {
+                    size = expectedSize;
+                }
+            }
+            else
+            {
+                size = expectedSize;
+            }
 
             var transform = new BitmapTransform
             {
-                InterpolationMode = BitmapInterpolationMode.Fant,
+                InterpolationMode = mode,
                 ScaledWidth = (uint)size.Width,
                 ScaledHeight = (uint)size.Height,
             };
@@ -99,7 +112,7 @@ namespace ZipPicViewUWP
                 decoder2 = decoder;
             }
 
-            return await CreateResizedBitmap(decoder2, expectedWidth, expectedHeight);
+            return await CreateResizedBitmap(decoder2, expectedWidth, expectedHeight, BitmapInterpolationMode.Linear);
         }
     }
 }
