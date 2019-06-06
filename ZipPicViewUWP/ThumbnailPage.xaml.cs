@@ -165,6 +165,11 @@ namespace ZipPicViewUWP
                         continue;
                     }
 
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     this.ThumbnailItemLoading?.Invoke(this, i, this.Thumbnails.Length);
                     thumbnail.ProgressRing.Visibility = Visibility.Visible;
                     var bitmap = await MediaManager.CreateThumbnail(thumbnail.Entry, 250, 200);
