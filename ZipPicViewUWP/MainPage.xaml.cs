@@ -347,14 +347,12 @@ namespace ZipPicViewUWP
 
             await this.RebuildSubFolderList(dialog);
 
+            GC.Collect();
+            this.ThumbnailBorder.Opacity = 0;
+
             this.HideImageControl();
             this.IsEnabled = true;
-
             dialog.Hide();
-            this.currentFolder = null;
-
-            GC.Collect();
-
             return null;
         }
 
@@ -413,14 +411,14 @@ namespace ZipPicViewUWP
                 }
             }
 
+            this.ThumbnailBorderOpenStoryboard.Begin();
+
             this.ThumbnailBorder.Child = page;
 
             page.Title = folder == MediaManager.Provider.Root ?
                     this.FileName : folder.ExtractFilename();
             page.TitleStyle = folder == MediaManager.Provider.Root ?
                 Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
-
-            this.ThumbnailBorderOpenStoryboard.Begin();
 
             this.currentFolder = folderListItem.FolderEntry;
             await page.ResumeLoadThumbnail();
@@ -446,10 +444,6 @@ namespace ZipPicViewUWP
             }
 
             return;
-        }
-
-        private void FolderList_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
         }
     }
 }
