@@ -215,8 +215,6 @@ namespace ZipPicViewUWP
 
             await this.ChangeMediaProvider(new FileSystemMediaProvider(selected));
             this.SetFileName(selected.Name);
-
-            this.Page.TopAppBar.Visibility = Visibility.Visible;
         }
 
         private async void OpenFolderButtonClick(object sender, RoutedEventArgs e)
@@ -288,7 +286,7 @@ namespace ZipPicViewUWP
 
                 if (cover != null)
                 {
-                    await this.UpdateFolderThumbnail(cover, item);
+                    _ = this.UpdateFolderThumbnail(cover, item);
                 }
             }
 
@@ -366,7 +364,6 @@ namespace ZipPicViewUWP
 
         private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
         {
-            this.Page.TopAppBar.Visibility = e;
         }
 
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
