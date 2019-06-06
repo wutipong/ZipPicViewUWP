@@ -75,12 +75,20 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
             Visibility="Collapsed" />
-
         <mtuuc:InAppNotification
             Name="Notification"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True" />
+        <Border
+            x:Name="TitleBar"
+            Height="30"
+            Background="Transparent"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.AlignTopWithPanel="true">
+            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">ZipPicView</TextBlock>
+        </Border>
     </RelativePanel>
 </Page>
