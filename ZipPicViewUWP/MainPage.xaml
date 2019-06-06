@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:wctcontrols="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:mtuuc="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="Page"
     Loaded="Page_Loaded"
     SizeChanged="PageSizeChanged"
@@ -36,7 +36,7 @@
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignTopWithPanel="true"
             SelectionChanged="NavigationPane_SelectionChanged">
             <controls:NavigationView.PaneFooter>
                 <controls:NavigationViewList>
@@ -47,8 +47,8 @@
                         Tapped="NavigationViewItem_Tapped" />
                 </controls:NavigationViewList>
             </controls:NavigationView.PaneFooter>
-            <wctcontrols:DockPanel LastChildFill="True">
-                <CommandBar Padding="0,0,100,0" wctcontrols:DockPanel.Dock="Top">
+            <mtuuc:DockPanel LastChildFill="True">
+                <CommandBar mtuuc:DockPanel.Dock="Top">
                     <CommandBar.Content>
                         <TextBlock
                             x:Name="FilenameTextBlock"
@@ -75,7 +75,7 @@
                     </Border.RenderTransform>
                     <local:HomePage OpenFileClick="OpenFileButtonClick" OpenFolderClick="OpenFolderButtonClick" />
                 </Border>
-            </wctcontrols:DockPanel>
+            </mtuuc:DockPanel>
         </controls:NavigationView>
         <local:ViewerControl
             x:Name="ViewerControl"
@@ -88,7 +88,7 @@
             RelativePanel.AlignTopWithPanel="True"
             Visibility="Collapsed" />
 
-        <wctcontrols:InAppNotification
+        <mtuuc:InAppNotification
             Name="Notification"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
