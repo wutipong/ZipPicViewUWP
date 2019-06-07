@@ -1,5 +1,12 @@
 # Release Note
 
+## Version 2019.06
+* Major UI design overhaul.
+* Main color is now blue instead of red.
+* Add an option to change between Light, Dark, and System Theme.
+* Add advance through all folder option in Auto Advance.
+* Major project structure change.
+
 ## Version 2019.05
 * Add Drag-Drop support. The input file/folder can now be dragged into the window to open the file. 
 * Image file is now properly closed after finish reading.
