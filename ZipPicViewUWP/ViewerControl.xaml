@@ -277,14 +277,17 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         x:Name="FilenameTextBlock"
-                        MinWidth="00"
+                        MinWidth="100"
+                        MaxWidth="300"
                         Margin="8,0,8,0"
                         VerticalAlignment="Center"
                         RelativePanel.AlignBottomWithPanel="True"
                         RelativePanel.AlignTopWithPanel="True"
                         RelativePanel.LeftOf="OriginalDimension"
                         Text="&lt;&lt;filename&gt;&gt;"
-                        TextAlignment="Right" />
+                        TextAlignment="Right"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="NoWrap" />
 
                     <TextBlock
                         x:Name="OriginalDimension"
