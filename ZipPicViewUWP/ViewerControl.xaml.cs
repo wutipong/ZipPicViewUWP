@@ -11,11 +11,13 @@ namespace ZipPicViewUWP
     using Windows.Storage.Pickers;
     using Windows.System;
     using Windows.System.Display;
+    using Windows.UI;
     using Windows.UI.Core;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
+    using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
     using ZipPicViewUWP.Utility;
 
@@ -88,6 +90,15 @@ namespace ZipPicViewUWP
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
             this.PrecountToggle.IsOn = precount == null ? false : (bool)precount;
             this.PrecountToggle.Toggled += this.PrecountToggle_Toggled;
+
+            applicationData.LocalSettings.Values.TryGetValue("background", out var background);
+            if (background as string == "solid")
+            {
+                this.ImageBorder.Background = new SolidColorBrush()
+                {
+                    Color = (Color)Application.Current.Resources["SystemAltHighColor"],
+                };
+            }
 
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {

@@ -35,6 +35,19 @@ namespace ZipPicViewUWP
                     this.DefaultRadioButton.IsChecked = true;
                     break;
             }
+
+            this.ApplicationData.LocalSettings.Values.TryGetValue("background", out var background);
+
+            switch (background as string)
+            {
+                case "solid":
+                    this.SolidRadioButton.IsChecked = true;
+                    break;
+
+                default:
+                    this.TransparentRadioButton.IsChecked = true;
+                    break;
+            }
         }
 
         private ApplicationData ApplicationData => Windows.Storage.ApplicationData.Current;
@@ -52,6 +65,16 @@ namespace ZipPicViewUWP
         private void DefaultRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             this.ApplicationData.LocalSettings.Values["theme"] = "Default";
+        }
+
+        private void TransparentRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.ApplicationData.LocalSettings.Values["background"] = "transparent";
+        }
+
+        private void SolidRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            this.ApplicationData.LocalSettings.Values["background"] = "solid";
         }
     }
 }
