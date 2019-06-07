@@ -22,35 +22,25 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <!-- SolidColorBrush x:Key="SidebarBackground" Color="{StaticResource PrimaryColor5}" />
-    <SolidColorBrush
-        x:Key="ThumbnailNameBackground"
-        Opacity="0.5"
-        Color="{StaticResource PrimaryColor5}" />
-    <SolidColorBrush x:Key="FloatControlBackground" Color="#A0000000" />
-
-    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource PrimaryColor3}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource PrimaryColor3}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource PrimaryColor2}" />
-    <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource PrimaryColor1}" /-->
-
     <muxm:AcrylicBrush
         x:Key="NavigationViewDefaultPaneBackground"
         BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
         TintColor="{StaticResource RegionColor}"
-        TintOpacity=".6" />
+        TintOpacity="0.6" />
 
     <muxm:AcrylicBrush
         x:Key="NavigationViewTopPaneBackground"
         BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
         TintColor="{StaticResource RegionColor}"
-        TintOpacity=".6" />
+        TintOpacity="0.6" />
 
-    <muxm:AcrylicBrush
-        x:Key="NavigationViewExpandedPaneBackground"
-        BackgroundSource="Backdrop"
-        TintColor="{StaticResource RegionColor}"
-        TintOpacity=".6" />
+    <LinearGradientBrush
+        x:Key="NavigationViewExpandedPaneBackground" StartPoint="1,0">
+        <GradientStop Color="{StaticResource RegionColor}" />
+        <GradientStop Color="{StaticResource BaseColor}" Offset="1" />
+    </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource AccentColor}" />
 </ResourceDictionary>
