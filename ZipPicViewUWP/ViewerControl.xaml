@@ -239,11 +239,12 @@
                 Margin="0,100,20,100"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Background="{ThemeResource SystemChromeMediumColor}">
+                Background="{StaticResource FloatingControl}">
                 <Button
                     x:Name="NextButton"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    Background="Transparent"
                     Click="NextButton_Click">
                     <SymbolIcon Symbol="Next" />
                 </Button>
@@ -255,22 +256,24 @@
                 Margin="20,100,0,100"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Background="{ThemeResource SystemChromeMediumColor}">
+                Background="{StaticResource FloatingControl}">
                 <Button
                     x:Name="PreviousButton"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    Background="Transparent"
                     Click="PreviousButton_Click">
                     <SymbolIcon Symbol="Previous" />
                 </Button>
             </Border>
 
             <Border
-                Height="40"
+                MaxWidth="600"
                 Margin="60"
+                Padding="5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
-                Background="{ThemeResource SystemChromeMediumColor}">
+                Background="{StaticResource FloatingControl}">
                 <StackPanel Orientation="Horizontal">
                     <TextBlock
                         x:Name="FilenameTextBlock"
@@ -301,12 +304,16 @@
                     <ToggleButton
                         Name="AutoButton"
                         VerticalAlignment="Stretch"
+                        Background="Transparent"
                         Checked="AutoButton_Checked"
                         Unchecked="AutoButton_Unchecked">
                         <SymbolIcon Symbol="Play" />
                     </ToggleButton>
 
-                    <Button Name="AutoDurationButton" VerticalAlignment="Stretch">
+                    <Button
+                        Name="AutoDurationButton"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent">
                         <SymbolIcon Symbol="List" />
                         <Button.Flyout>
                             <Flyout>
@@ -333,6 +340,7 @@
                     <Button
                         Name="CopyButton"
                         VerticalAlignment="Stretch"
+                        Background="Transparent"
                         Click="CopyButton_Click">
                         <SymbolIcon Symbol="Copy" />
                     </Button>
@@ -340,6 +348,7 @@
                     <Button
                         Name="SaveButton"
                         VerticalAlignment="Stretch"
+                        Background="Transparent"
                         Click="SaveButton_Click">
                         <SymbolIcon Symbol="Save" />
                     </Button>
@@ -347,6 +356,7 @@
                     <Button
                         Name="PrintButton"
                         VerticalAlignment="Stretch"
+                        Background="Transparent"
                         Click="PrintButton_Click">
                         <SymbolIcon Symbol="Print" />
                     </Button>
@@ -359,11 +369,12 @@
                 Margin="20,70"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Background="{ThemeResource SystemChromeMediumColor}">
+                Background="{StaticResource FloatingControl}">
                 <Button
                     x:Name="CloseButton"
                     HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch">
+                    VerticalAlignment="Stretch"
+                    Background="Transparent">
                     <SymbolIcon Symbol="Cancel" />
                 </Button>
             </Border>

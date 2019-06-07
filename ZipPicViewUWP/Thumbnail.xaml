@@ -62,11 +62,14 @@
                 RelativePanel.AlignTopWithPanel="True"
                 Stretch="UniformToFill" />
             <Grid
-                Background="{ThemeResource SystemChromeMediumColor}"
+                Background="{StaticResource BaseColor}"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True">
-                <TextBlock x:Name="label" Padding="8,4,4,8" />
+                <TextBlock
+                    x:Name="label"
+                    Padding="8,4,4,8"
+                    VerticalAlignment="Center" />
             </Grid>
             <Canvas
                 Name="Highlight"

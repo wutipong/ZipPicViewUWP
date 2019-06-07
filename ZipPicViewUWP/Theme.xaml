@@ -36,11 +36,17 @@
         TintColor="{StaticResource RegionColor}"
         TintOpacity="0.6" />
 
-    <LinearGradientBrush
-        x:Key="NavigationViewExpandedPaneBackground" StartPoint="1,0">
+    <LinearGradientBrush x:Key="NavigationViewExpandedPaneBackground" StartPoint="1,0">
         <GradientStop Color="{StaticResource RegionColor}" />
-        <GradientStop Color="{StaticResource BaseColor}" Offset="1" />
+        <GradientStop Offset="1" Color="{StaticResource BaseColor}" />
     </LinearGradientBrush>
+
+    <muxm:AcrylicBrush
+        x:Key="FloatingControl"
+        BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
+        TintColor="{StaticResource RegionColor}"
+        TintOpacity="0.6" />
 
     <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource AccentColor}" />
 </ResourceDictionary>
