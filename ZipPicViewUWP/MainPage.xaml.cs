@@ -16,6 +16,7 @@ namespace ZipPicViewUWP
     using Windows.Storage;
     using Windows.Storage.Pickers;
     using Windows.System;
+    using Windows.UI;
     using Windows.UI.Popups;
     using Windows.UI.ViewManagement;
     using Windows.UI.Xaml;
@@ -58,6 +59,9 @@ namespace ZipPicViewUWP
                     this.TitleBar.Visibility = Visibility.Collapsed;
                 }
             };
+
+            var titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["LowAccentColor"];
         }
 
         /// <summary>
