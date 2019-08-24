@@ -23,5 +23,11 @@ namespace MangaReader
         {
             this.InitializeComponent();
         }
+
+        public string TitleText
+        {
+            get => Title.Text;
+            set => Title.Text = value;
+        }
     }
 }
