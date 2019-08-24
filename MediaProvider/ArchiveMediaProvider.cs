@@ -2,7 +2,8 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP
+namespace ZipPicViewUWP.MediaProvider
+
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace ZipPicViewUWP
     /// <summary>
     /// Media provider class for archive file source.
     /// </summary>
-    internal class ArchiveMediaProvider : AbstractMediaProvider
+    public class ArchiveMediaProvider : AbstractMediaProvider
     {
         private string[] fileList;
         private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();

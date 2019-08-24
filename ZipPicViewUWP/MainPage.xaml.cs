@@ -9,6 +9,7 @@ namespace ZipPicViewUWP
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
+    using ZipPicViewUWP.MediaProvider;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;

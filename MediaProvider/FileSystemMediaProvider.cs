@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP
+namespace ZipPicViewUWP.MediaProvider
 {
     using System;
     using System.Collections.Generic;
@@ -17,7 +17,7 @@ namespace ZipPicViewUWP
     /// <summary>
     /// Media provider class for reading media from directory.
     /// </summary>
-    internal class FileSystemMediaProvider : AbstractMediaProvider
+    public class FileSystemMediaProvider : AbstractMediaProvider
     {
         private readonly StorageFolder folder;
 

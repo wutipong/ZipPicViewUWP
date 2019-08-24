@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP
+namespace ZipPicViewUWP.MediaProvider
 {
     /// <summary>
     /// File filter class. The filter is used to filter out unsupported file format. It can also find a cover image file from the list of file names.

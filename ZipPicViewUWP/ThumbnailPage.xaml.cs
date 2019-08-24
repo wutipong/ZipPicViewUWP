@@ -2,17 +2,18 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
+using ZipPicViewUWP.Utility;
+using ZipPicViewUWP.MediaProvider;
+
 namespace ZipPicViewUWP
 {
-    using System;
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Microsoft.Toolkit.Uwp.UI.Controls;
-    using Windows.UI.Xaml;
-    using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media.Imaging;
-    using ZipPicViewUWP.Utility;
-
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>

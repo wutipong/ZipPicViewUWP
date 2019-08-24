@@ -2,13 +2,13 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP
+namespace ZipPicViewUWP.MediaProvider
 {
     /// <summary>
     /// File filter to be used with <c>PdfMediaProvider</c>.
     /// <seealso cref="PdfMediaProvider"/>
     /// </summary>
-    internal class PdfFileFIlter : FileFilter
+    public class PdfFileFIlter : FileFilter
     {
         /// <inheritdoc/>
         public override string FindCoverPage(string[] filenames)

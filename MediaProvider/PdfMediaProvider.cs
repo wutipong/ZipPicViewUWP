@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP
+namespace ZipPicViewUWP.MediaProvider
 {
     using System;
     using System.IO;
@@ -15,7 +15,7 @@ namespace ZipPicViewUWP
     /// <summary>
     /// A media provider based on PDF file.
     /// </summary>
-    internal class PdfMediaProvider : AbstractMediaProvider
+    public class PdfMediaProvider : AbstractMediaProvider
     {
         private readonly StorageFile file;
         private PdfDocument pdfDocument;

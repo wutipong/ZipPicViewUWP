@@ -4,6 +4,7 @@
 
 namespace ZipPicViewUWP
 {
+    using ZipPicViewUWP.MediaProvider;
     using System;
     using System.Collections.Generic;
     using Microsoft.Toolkit.Uwp.UI.Controls;
