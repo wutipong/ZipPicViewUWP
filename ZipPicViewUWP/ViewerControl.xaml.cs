@@ -7,7 +7,6 @@ namespace ZipPicViewUWP
     using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
-    using ZipPicViewUWP.MediaProvider;
     using Microsoft.Toolkit.Uwp.UI.Controls;
     using Windows.Storage.Pickers;
     using Windows.System;
@@ -20,6 +19,7 @@ namespace ZipPicViewUWP
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
+    using ZipPicViewUWP.MediaProvider;
     using ZipPicViewUWP.Utility;
 
     /// <summary>

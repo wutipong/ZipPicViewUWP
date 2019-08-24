@@ -9,14 +9,10 @@ namespace ZipPicViewUWP
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
-    using ZipPicViewUWP.MediaProvider;
-    using Windows.ApplicationModel;
     using Windows.ApplicationModel.Core;
     using Windows.ApplicationModel.DataTransfer;
-    using Windows.Graphics.Imaging;
     using Windows.Storage;
     using Windows.Storage.Pickers;
-    using Windows.System;
     using Windows.UI;
     using Windows.UI.Popups;
     using Windows.UI.ViewManagement;
@@ -24,11 +20,10 @@ namespace ZipPicViewUWP
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media.Imaging;
+    using ZipPicViewUWP.MediaProvider;
     using ZipPicViewUWP.Utility;
-
     using NavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
     using NavigationViewItem = Microsoft.UI.Xaml.Controls.NavigationViewItem;
-    using NavigationViewItemInvokedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs;
     using NavigationViewSelectionChangedEventArgs = Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs;
 
     /// <summary>
