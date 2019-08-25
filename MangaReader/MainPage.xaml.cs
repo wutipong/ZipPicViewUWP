@@ -31,6 +31,7 @@ namespace MangaReader
         public int Id { get; set; }
         public string Name { get; set; }
         public int Rating { get; set; } = -1;
+        public string ThumbID { get; set; }
     }
 
     internal class DBAccess : IDisposable
@@ -141,14 +142,13 @@ namespace MangaReader
                 foreach (var f in fileList)
                 {
                     var row = col.FindOne(r => r.Name == f.Name);
-                    if (row == null)
+                    if (row != null)
+                        continue;
+
+                    row = new MangaData()
                     {
-                        row = new MangaData()
-                        {
-                            Name = f.Name,
-                        };
-                        col.Insert(row);
-                    }
+                        Name = f.Name,
+                    };
 
                     var provider = await OpenFile(f);
 
@@ -160,17 +160,25 @@ namespace MangaReader
                     IRandomAccessStream stream;
                     (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(coverName);
 
-                    if (error != null)
-                        continue;
-
                     var decoder = await BitmapDecoder.CreateAsync(stream);
                     var bitmap = ImageHelper.CreateResizedBitmap(decoder, 127, 188);
                     var outputIrs = new InMemoryRandomAccessStream();
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputIrs);
+
+                    var propertySet = new BitmapPropertySet();
+                    var qualityValue = new BitmapTypedValue(0.5, Windows.Foundation.PropertyType.Single);
+                    propertySet.Add("ImageQuality", qualityValue);
+
+                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputIrs, propertySet);
                     encoder.SetSoftwareBitmap(await bitmap);
                     await encoder.FlushAsync();
 
-                    access.DB.FileStorage.Upload(f.Name.GetHashCode().ToString(), f.Name + ".jpg", outputIrs.AsStream());
+                    var id = f.Name.GetHashCode().ToString();
+                    var outputStream = outputIrs.AsStream();
+                    outputStream.Flush();
+
+                    access.DB.FileStorage.Upload(id, f.Name + ".jpg", outputStream);
+                    row.ThumbID = id;
+                    col.Insert(row);
                 }
 
                 foreach (var data in col.FindAll())
@@ -184,7 +192,14 @@ namespace MangaReader
                     SoftwareBitmapSource source = new SoftwareBitmapSource();
                     using (var irs = new InMemoryRandomAccessStream())
                     {
-                        access.DB.FileStorage.Download(data.Name.GetHashCode().ToString(), irs.AsStream());
+                        var stream = irs.AsStream();
+
+                        var id = data.ThumbID;
+                        access.DB.FileStorage.Download(id, stream);
+                        stream.Flush();
+
+                        irs.Seek(0);
+
                         if (irs.Size > 0)
                         {
                             var decoder = await BitmapDecoder.CreateAsync(irs);
