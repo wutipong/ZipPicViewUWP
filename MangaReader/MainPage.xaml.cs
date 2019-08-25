@@ -58,10 +58,9 @@ namespace MangaReader
             this.InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-            if (token == null)
+            if (await GetLibraryFolder() == null)
             {
                 Frame rootFrame = Window.Current.Content as Frame;
                 rootFrame.Navigate(typeof(SettingPage));
@@ -164,15 +163,24 @@ namespace MangaReader
                     };
 
                     var provider = await OpenFile(f);
+                    if (provider == null)
+                    {
+                        continue;
+                    }
 
                     var (files, error) = await provider.GetAllFileEntries();
                     if (error != null)
+                    {
                         continue;
+                    }
 
                     var coverName = provider.FileFilter.FindCoverPage(files);
                     IRandomAccessStream stream;
                     (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(coverName);
-
+                    if (error != null)
+                    {
+                        continue;
+                    }
                     var decoder = await BitmapDecoder.CreateAsync(stream);
                     var bitmap = ImageHelper.CreateResizedBitmap(decoder, 127, 188);
                     var outputIrs = new InMemoryRandomAccessStream();
@@ -256,9 +264,17 @@ namespace MangaReader
 
         private async Task<StorageFolder> GetLibraryFolder()
         {
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-            var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
-            return folder;
+            try
+            {
+                this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
+                var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
+
+                return folder;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         private async Task<DBAccess> GetDBAccess(StorageFolder folder)
