@@ -35,5 +35,12 @@ namespace MangaReader
             get => (int)RatingControl.Value;
             set => RatingControl.Value = value;
         }
+
+        public event TypedEventHandler<Thumbnail, object> RatingChanged;
+
+        private void RatingControl_ValueChanged(RatingControl sender, object args)
+        {
+            RatingChanged?.Invoke(this, (int)sender.Value);
+        }
     }
 }

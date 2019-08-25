@@ -98,7 +98,7 @@ namespace MangaReader
 
             using (var access = await GetDBAccess(folder))
             {
-                var col = access.DB.GetCollection<MangaData>("files");
+                var col = access.DB.GetCollection<MangaData>();
                 foreach (var f in fileList)
                 {
                     var row = col.FindOne(r => r.Name == f.Name);
@@ -120,12 +120,33 @@ namespace MangaReader
                         continue;
                     }
 
-                    ItemGrid.Items.Add(new Thumbnail()
+                    var thumbnail = new Thumbnail()
                     {
                         TitleText = data.Name,
                         Rating = data.Rating,
-                    });
+                    };
+
+                    thumbnail.RatingChanged += Thumbnail_RatingChanged;
+                    ItemGrid.Items.Add(thumbnail);
                 }
+            }
+        }
+
+        private async void Thumbnail_RatingChanged(Thumbnail sender, object args)
+        {
+            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
+            var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
+
+            using (var access = await GetDBAccess(folder))
+            {
+                var col = access.DB.GetCollection<MangaData>();
+                var row = col.FindOne(r => r.Name == sender.TitleText);
+                if (row != null)
+                {
+                    row.Rating = sender.Rating;
+                }
+
+                col.Update(row);
             }
         }
 
