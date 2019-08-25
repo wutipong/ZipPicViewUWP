@@ -5,8 +5,33 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:MangaReader"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:my="using:Microsoft.Toolkit.Uwp.UI.Controls"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded"
     mc:Ignorable="d">
 
-    <Grid />
+    <RelativePanel>
+        <CommandBar
+            Name="CommandBar"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
+            <CommandBar.Content>
+                <Grid />
+            </CommandBar.Content>
+            <AppBarButton
+                Name="SettingButton"
+                Icon="Setting"
+                Label="Settings" />
+        </CommandBar>
+        <my:AdaptiveGridView
+            x:Name="ItemGrid"
+            DesiredWidth="400"
+            IsItemClickEnabled="True"
+            ItemHeight="200"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            RelativePanel.Below="CommandBar"
+            SelectionMode="None" />
+    </RelativePanel>
 </Page>
