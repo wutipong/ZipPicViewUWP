@@ -50,7 +50,10 @@ namespace MangaReader
             fileTypeFilter.Add(".rar");
             fileTypeFilter.Add(".pdf");
             fileTypeFilter.Add(".7z");
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter);
+            var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter)
+            {
+                FolderDepth = FolderDepth.Shallow,
+            };
 
             var results = folder.CreateFileQueryWithOptions(queryOptions);
             var fileList = await results.GetFilesAsync();
@@ -63,6 +66,12 @@ namespace MangaReader
                 }
                 );
             }
+        }
+
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(SettingPage));
         }
     }
 }

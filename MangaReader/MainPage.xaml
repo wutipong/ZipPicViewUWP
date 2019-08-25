@@ -21,7 +21,7 @@
             <AppBarButton
                 Name="SettingButton"
                 Icon="Setting"
-                Label="Settings" />
+                Label="Settings" Click="SettingButton_Click" />
         </CommandBar>
         <my:AdaptiveGridView
             x:Name="ItemGrid"
