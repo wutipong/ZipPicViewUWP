@@ -53,6 +53,8 @@ namespace MangaReader
 
             imageFiles = files;
             ChangeImage(0);
+
+            NameText.Text = file;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)

@@ -17,11 +17,20 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
             <CommandBar.Content>
-                <Grid />
+                <TextBlock x:Name="NameText" />
             </CommandBar.Content>
-            <AppBarButton Icon="Previous" Label="Previous" Click="PreviousButton_Click" />
-            <AppBarButton Icon="Next" Label="Next" Click="NextButton_Click" />
-            <AppBarButton Icon="Clear" Label="Close" Click="CloseButton_Click" />
+            <AppBarButton
+                Click="PreviousButton_Click"
+                Icon="Previous"
+                Label="Previous" />
+            <AppBarButton
+                Click="NextButton_Click"
+                Icon="Next"
+                Label="Next" />
+            <AppBarButton
+                Click="CloseButton_Click"
+                Icon="Clear"
+                Label="Close" />
         </CommandBar>
         <Image
             Name="Image"
