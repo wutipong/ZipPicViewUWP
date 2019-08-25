@@ -76,8 +76,7 @@ namespace MangaReader
 
         private async void RefreshMangaData()
         {
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-            var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
+            StorageFolder folder = await GetLibraryFolder();
 
             List<string> fileTypeFilter = new List<string>
             {
@@ -134,8 +133,7 @@ namespace MangaReader
 
         private async void Thumbnail_RatingChanged(Thumbnail sender, object args)
         {
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-            var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
+            StorageFolder folder = await GetLibraryFolder();
 
             using (var access = await GetDBAccess(folder))
             {
@@ -148,6 +146,13 @@ namespace MangaReader
 
                 col.Update(row);
             }
+        }
+
+        private async Task<StorageFolder> GetLibraryFolder()
+        {
+            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
+            var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
+            return folder;
         }
 
         private async Task<DBAccess> GetDBAccess(StorageFolder folder)
