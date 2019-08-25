@@ -16,22 +16,30 @@ using Windows.Storage.AccessCache;
 using Windows.Storage;
 using Windows.Storage.Search;
 using LiteDB;
+using Windows.Storage.Streams;
+using System.Threading.Tasks;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace MangaReader
 {
-    internal struct MangaData
+    internal class MangaData
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public int Rating { get; set; } = -1;
     }
 
-    internal class FolderInfo
+    internal class DBAccess : IDisposable
     {
-        public int Id { get; set; }
-        public string Path { get; set; }
-        public DateTime ModifiedDate { get; set; }
+        public LiteDatabase DB { get; internal set; }
+        internal IRandomAccessStream Stream { get; set; }
+
+        public void Dispose()
+        {
+            DB.Dispose();
+            Stream.Dispose();
+        }
     }
 
     /// <summary>
@@ -46,7 +54,7 @@ namespace MangaReader
             this.InitializeComponent();
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
             if (token == null)
@@ -57,13 +65,29 @@ namespace MangaReader
                 return;
             }
 
+            RefreshMangaData();
+        }
+
+        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(SettingPage));
+        }
+
+        private async void RefreshMangaData()
+        {
+            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
             var folder = await StorageApplicationPermissions.FutureAccessList.GetFolderAsync(token as string);
 
-            List<string> fileTypeFilter = new List<string>();
-            fileTypeFilter.Add(".zip");
-            fileTypeFilter.Add(".rar");
-            fileTypeFilter.Add(".pdf");
-            fileTypeFilter.Add(".7z");
+            List<string> fileTypeFilter = new List<string>
+            {
+                ".cbz",
+                ".cbr",
+                ".zip",
+                ".rar",
+                ".pdf",
+                ".7z"
+            };
             var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter)
             {
                 FolderDepth = FolderDepth.Shallow,
@@ -72,53 +96,48 @@ namespace MangaReader
             var results = folder.CreateFileQueryWithOptions(queryOptions);
             var fileList = await results.GetFilesAsync();
 
-            foreach (var f in fileList)
+            using (var access = await GetDBAccess(folder))
             {
-                ItemGrid.Items.Add(new Thumbnail()
+                var col = access.DB.GetCollection<MangaData>("files");
+                foreach (var f in fileList)
                 {
-                    TitleText = f.Name
-                }
-                );
-            }
-
-            var dbFile = await folder.CreateFileAsync(@"manga.db", CreationCollisionOption.OpenIfExists);
-            using (var stream = await dbFile.OpenAsync(FileAccessMode.ReadWrite))
-            {
-                using (var db = new LiteDatabase(stream.AsStream()))
-                {
-                    var infoCol = db.GetCollection<FolderInfo>();
-                    var info = infoCol.FindOne(Query.All());
-
-                    var properties = await folder.GetBasicPropertiesAsync();
-                    if (info == null || info.ModifiedDate != properties.DateModified.DateTime)
+                    var row = col.FindOne(r => r.Name == f.Name);
+                    if (row == null)
                     {
-                        info = new FolderInfo
-                        {
-                            Path = folder.Path,
-                            ModifiedDate = properties.DateModified.DateTime,
-                        };
-
-                        infoCol.Delete(Query.All());
-                        infoCol.Insert(info);
-                    }
-
-                    var col = db.GetCollection<MangaData>("files");
-                    foreach (var f in fileList)
-                    {
-                        var data = new MangaData()
+                        row = new MangaData()
                         {
                             Name = f.Name,
                         };
-                        col.Insert(data);
+                        col.Insert(row);
                     }
+                }
+
+                foreach (var data in col.FindAll())
+                {
+                    if (fileList.FirstOrDefault(f => f.Name == data.Name) == null)
+                    {
+                        col.Delete(data.Id);
+                        continue;
+                    }
+
+                    ItemGrid.Items.Add(new Thumbnail()
+                    {
+                        TitleText = data.Name,
+                        Rating = data.Rating,
+                    });
                 }
             }
         }
 
-        private void SettingButton_Click(object sender, RoutedEventArgs e)
+        private async Task<DBAccess> GetDBAccess(StorageFolder folder)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(SettingPage));
+            DBAccess access = new DBAccess();
+
+            var dbFile = await folder.CreateFileAsync(@"manga.db", CreationCollisionOption.OpenIfExists);
+            access.Stream = await dbFile.OpenAsync(FileAccessMode.ReadWrite);
+            access.DB = new LiteDatabase(access.Stream.AsStream());
+
+            return access;
         }
     }
 }

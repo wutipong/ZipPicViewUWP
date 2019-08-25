@@ -29,5 +29,11 @@ namespace MangaReader
             get => Title.Text;
             set => Title.Text = value;
         }
+
+        public int Rating
+        {
+            get => (int)RatingControl.Value;
+            set => RatingControl.Value = value;
+        }
     }
 }

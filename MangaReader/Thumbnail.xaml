@@ -22,7 +22,7 @@
                 Name="Title"
                 Margin="8,8,8,5"
                 FontSize="16"
-                RelativePanel.Above="Rating"
+                RelativePanel.Above="RatingControl"
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.RightOf="CoverImage"
@@ -30,7 +30,7 @@
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="Wrap" />
             <RatingControl
-                Name="Rating"
+                Name="RatingControl"
                 Margin="0,0,8,8"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
