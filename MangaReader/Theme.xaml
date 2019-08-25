@@ -1,0 +1,52 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ZipPicViewUWP"
+    xmlns:muxm="using:Microsoft.UI.Xaml.Media">
+
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <Color x:Key="PrimaryColor">#2E4272</Color>
+            <Color x:Key="BaseColor">#162955</Color>
+            <Color x:Key="RegionColor">#061539</Color>
+            <Color x:Key="AccentColor">#7887AB</Color>
+            <Color x:Key="LowAccentColor">#4F628E</Color>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+            <Color x:Key="PrimaryColor">#2E4272</Color>
+            <Color x:Key="BaseColor">#4F628E</Color>
+            <Color x:Key="RegionColor">#7887AB</Color>
+            <Color x:Key="AccentColor">#061539</Color>
+            <Color x:Key="LowAccentColor">#162955</Color>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <muxm:AcrylicBrush
+        x:Key="NavigationViewDefaultPaneBackground"
+        BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
+        TintColor="{StaticResource RegionColor}"
+        TintOpacity="0.6" />
+
+    <muxm:AcrylicBrush
+        x:Key="NavigationViewTopPaneBackground"
+        BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
+        TintColor="{StaticResource RegionColor}"
+        TintOpacity="0.6" />
+
+    <LinearGradientBrush x:Key="NavigationViewExpandedPaneBackground" StartPoint="1,0">
+        <GradientStop Color="{StaticResource RegionColor}" />
+        <GradientStop Offset="1" Color="{StaticResource BaseColor}" />
+    </LinearGradientBrush>
+
+    <muxm:AcrylicBrush
+        x:Key="FloatingControl"
+        BackgroundSource="Backdrop"
+        FallbackColor="{StaticResource RegionColor}"
+        TintColor="{StaticResource RegionColor}"
+        TintOpacity="0.6" />
+
+    <SolidColorBrush x:Key="NavigationViewSelectionIndicatorForeground" Color="{StaticResource AccentColor}" />
+</ResourceDictionary>

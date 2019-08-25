@@ -35,7 +35,8 @@
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignTopWith=""
-                RelativePanel.RightOf="" ValueChanged="RatingControl_ValueChanged" />
+                RelativePanel.RightOf=""
+                ValueChanged="RatingControl_ValueChanged" />
         </RelativePanel>
     </Grid>
 </UserControl>

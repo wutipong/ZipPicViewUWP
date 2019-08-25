@@ -28,6 +28,20 @@ namespace MangaReader
         /// </summary>
         public App()
         {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            applicationData.LocalSettings.Values.TryGetValue("theme", out var themeValue);
+
+            switch (themeValue)
+            {
+                case "Light":
+                    this.RequestedTheme = ApplicationTheme.Light;
+                    break;
+
+                case "Dark":
+                    this.RequestedTheme = ApplicationTheme.Dark;
+                    break;
+            }
+
             this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
@@ -78,7 +92,7 @@ namespace MangaReader
         /// </summary>
         /// <param name="sender">The Frame which failed navigation</param>
         /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        private void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
         {
             throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
         }
