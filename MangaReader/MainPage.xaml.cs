@@ -18,6 +18,9 @@ using Windows.Storage.Search;
 using LiteDB;
 using Windows.Storage.Streams;
 using System.Threading.Tasks;
+using ZipPicViewUWP.MediaProvider;
+using Windows.Graphics.Imaging;
+using Windows.UI.Xaml.Media.Imaging;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -74,6 +77,43 @@ namespace MangaReader
             rootFrame.Navigate(typeof(SettingPage));
         }
 
+        private async Task<AbstractMediaProvider> OpenFile(StorageFile selected)
+        {
+            if (selected == null)
+            {
+                this.IsEnabled = true;
+                return null;
+            }
+
+            if (selected.FileType == ".pdf")
+            {
+                var provider = new PdfMediaProvider(selected);
+                await provider.Load();
+
+                return provider;
+            }
+            else
+            {
+                Stream stream = null;
+                try
+                {
+                    stream = await selected.OpenStreamForReadAsync();
+
+                    var archive = ArchiveMediaProvider.TryOpenArchive(stream, null, out bool isEncrypted);
+                    if (isEncrypted)
+                    {
+                        return null;
+                    }
+
+                    return ArchiveMediaProvider.Create(stream, archive);
+                }
+                catch (Exception err)
+                {
+                    return null;
+                }
+            }
+        }
+
         private async void RefreshMangaData()
         {
             StorageFolder folder = await GetLibraryFolder();
@@ -109,6 +149,28 @@ namespace MangaReader
                         };
                         col.Insert(row);
                     }
+
+                    var provider = await OpenFile(f);
+
+                    var (files, error) = await provider.GetAllFileEntries();
+                    if (error != null)
+                        continue;
+
+                    var coverName = provider.FileFilter.FindCoverPage(files);
+                    IRandomAccessStream stream;
+                    (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(coverName);
+
+                    if (error != null)
+                        continue;
+
+                    var decoder = await BitmapDecoder.CreateAsync(stream);
+                    var bitmap = ImageHelper.CreateResizedBitmap(decoder, 127, 188);
+                    var outputIrs = new InMemoryRandomAccessStream();
+                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputIrs);
+                    encoder.SetSoftwareBitmap(await bitmap);
+                    await encoder.FlushAsync();
+
+                    access.DB.FileStorage.Upload(f.Name.GetHashCode().ToString(), f.Name + ".jpg", outputIrs.AsStream());
                 }
 
                 foreach (var data in col.FindAll())
@@ -119,10 +181,25 @@ namespace MangaReader
                         continue;
                     }
 
+                    SoftwareBitmapSource source = new SoftwareBitmapSource();
+                    using (var irs = new InMemoryRandomAccessStream())
+                    {
+                        access.DB.FileStorage.Download(data.Name.GetHashCode().ToString(), irs.AsStream());
+                        if (irs.Size > 0)
+                        {
+                            var decoder = await BitmapDecoder.CreateAsync(irs);
+
+                            var bitmap = await decoder.GetSoftwareBitmapAsync();
+                            bitmap = SoftwareBitmap.Convert(bitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                            await source.SetBitmapAsync(bitmap);
+                        }
+                    }
+
                     var thumbnail = new Thumbnail()
                     {
                         TitleText = data.Name,
                         Rating = data.Rating,
+                        Source = source,
                     };
 
                     thumbnail.RatingChanged += Thumbnail_RatingChanged;
