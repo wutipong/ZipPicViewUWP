@@ -70,6 +70,19 @@ namespace MangaReader
             }
 
             RefreshMangaData();
+
+            ItemGrid.ItemClick += ItemGrid_ItemClick;
+        }
+
+        private void ItemGrid_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var item = e.ClickedItem as Thumbnail;
+
+            this.ApplicationData.LocalSettings.Values["selected file"] = item.TitleText;
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(ViewerPage));
+
+            return;
         }
 
         private void SettingButton_Click(object sender, RoutedEventArgs e)
@@ -218,6 +231,7 @@ namespace MangaReader
                     };
 
                     thumbnail.RatingChanged += Thumbnail_RatingChanged;
+
                     ItemGrid.Items.Add(thumbnail);
                 }
             }
