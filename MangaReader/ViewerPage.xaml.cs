@@ -167,5 +167,35 @@ namespace MangaReader
 
             CurrentIndex = index;
         }
+
+        private void HideStoryBoard_Completed(object sender, object e)
+        {
+
+        }
+
+        private void AdvanceAutoBeginStoryboard_Completed(object sender, object e)
+        {
+
+        }
+
+        private void AdvanceBackwardBeginStoryboard_Completed(object sender, object e)
+        {
+
+        }
+
+        private void ControlLayerHideStoryBoard_Completed(object sender, object e)
+        {
+
+        }
+
+        private void ControlLayerShowStoryBoard_Completed(object sender, object e)
+        {
+
+        }
+
+        private void AdvanceBeginStoryboard_Completed(object sender, object e)
+        {
+
+        }
     }
 }
