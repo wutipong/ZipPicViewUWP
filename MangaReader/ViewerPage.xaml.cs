@@ -206,5 +206,19 @@ namespace MangaReader
                 }
             }
         }
+
+        private void ImageBorder_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            var deltaX = e.Cumulative.Translation.X;
+
+            if (deltaX > 5)
+            {
+                AdvanceBackwardBeginStoryboard.Begin();
+            }
+            else if (deltaX < -5)
+            {
+                AdvanceBeginStoryboard.Begin();
+            }
+        }
     }
 }

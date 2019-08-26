@@ -127,7 +127,9 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.Below="CommandBar"
-            Tapped="ImageBorder_Tapped">
+            Tapped="ImageBorder_Tapped"
+            ManipulationCompleted="ImageBorder_ManipulationCompleted"
+            ManipulationMode="TranslateX">
             <Border.Background>
                 <SolidColorBrush Color="{ThemeResource SystemAltHighColor}">
                 </SolidColorBrush>
