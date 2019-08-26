@@ -50,22 +50,5 @@
                 Windows Default
             </RadioButton>
         </my:HeaderedItemsControl>
-        <my:HeaderedItemsControl>
-            <my:HeaderedItemsControl.Header>
-                <TextBlock>Image background style.</TextBlock>
-            </my:HeaderedItemsControl.Header>
-            <RadioButton
-                Name="TransparentRadioButton"
-                Checked="TransparentRadioButton_Checked"
-                GroupName="BackgroundGroup">
-                Transparent
-            </RadioButton>
-            <RadioButton
-                Name="SolidRadioButton"
-                Checked="SolidRadioButton_Checked"
-                GroupName="BackgroundGroup">
-                Solid
-            </RadioButton>
-        </my:HeaderedItemsControl>
     </StackPanel>
 </Page>
