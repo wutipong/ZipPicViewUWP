@@ -181,5 +181,30 @@ namespace MangaReader
 
             AdvanceEndStoryBoard.Begin();
         }
+
+        private void ImageBorder_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var pos = e.GetPosition(this.ImageBorder);
+
+            if (pos.X < 200)
+            {
+                AdvanceBackwardBeginStoryboard.Begin();
+            }
+            else if (pos.X > this.ImageBorder.ActualWidth - 200)
+            {
+                AdvanceBeginStoryboard.Begin();
+            }
+            else
+            {
+                if (this.CommandBar.Visibility == Visibility.Visible)
+                {
+                    this.CommandBar.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    this.CommandBar.Visibility = Visibility.Visible;
+                }
+            }
+        }
     }
 }

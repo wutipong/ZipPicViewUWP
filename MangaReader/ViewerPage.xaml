@@ -121,19 +121,25 @@
                 Icon="Clear"
                 Label="Close" />
         </CommandBar>
-        <Image
-            Name="Image"
+        <Border
+            x:Name="ImageBorder"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.Below="CommandBar"
-            RenderTransformOrigin="0.5,0.5">
-            <Image.RenderTransform>
-                <CompositeTransform />
-            </Image.RenderTransform>
-            <Image.Projection>
-                <PlaneProjection />
-            </Image.Projection>
-        </Image>
+            Tapped="ImageBorder_Tapped">
+            <Border.Background>
+                <SolidColorBrush Color="{ThemeResource SystemAltHighColor}">
+                </SolidColorBrush>
+            </Border.Background>
+            <Image Name="Image" RenderTransformOrigin="0.5,0.5">
+                <Image.RenderTransform>
+                    <CompositeTransform />
+                </Image.RenderTransform>
+                <Image.Projection>
+                    <PlaneProjection />
+                </Image.Projection>
+            </Image>
+        </Border>
     </RelativePanel>
 </Page>
