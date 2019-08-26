@@ -88,6 +88,7 @@
     <RelativePanel>
         <CommandBar
             Name="CommandBar"
+            IsDynamicOverflowEnabled="False"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
@@ -123,16 +124,15 @@
         </CommandBar>
         <Border
             x:Name="ImageBorder"
+            ManipulationCompleted="ImageBorder_ManipulationCompleted"
+            ManipulationMode="TranslateX"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.Below="CommandBar"
-            Tapped="ImageBorder_Tapped"
-            ManipulationCompleted="ImageBorder_ManipulationCompleted"
-            ManipulationMode="TranslateX">
+            Tapped="ImageBorder_Tapped">
             <Border.Background>
-                <SolidColorBrush Color="{ThemeResource SystemAltHighColor}">
-                </SolidColorBrush>
+                <SolidColorBrush Color="{ThemeResource SystemAltHighColor}" />
             </Border.Background>
             <Image Name="Image" RenderTransformOrigin="0.5,0.5">
                 <Image.RenderTransform>
