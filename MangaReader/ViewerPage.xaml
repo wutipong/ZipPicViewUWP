@@ -17,7 +17,21 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
             <CommandBar.Content>
-                <TextBlock x:Name="NameText" />
+                <RelativePanel>
+                    <RatingControl 
+                        x:Name="RatingControl"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"/>
+                    <TextBlock
+                        Padding="8"
+                        x:Name="NameText" 
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.LeftOf="RatingControl"
+                        Text="FileName"/>
+                </RelativePanel>
             </CommandBar.Content>
             <AppBarButton
                 Click="PreviousButton_Click"
