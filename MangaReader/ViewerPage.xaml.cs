@@ -122,31 +122,15 @@ namespace MangaReader
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            int index = CurrentIndex;
-            index--;
-
-            if (index < 0)
-            {
-                index = imageFiles.Length - 1;
-            }
-
-            ChangeImage(index);
+            AdvanceBackwardBeginStoryboard.Begin();
         }
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-            int index = CurrentIndex;
-            index++;
-
-            if (index == imageFiles.Length)
-            {
-                index = 0;
-            }
-
-            ChangeImage(index);
+            AdvanceBeginStoryboard.Begin();
         }
 
-        private async void ChangeImage(int index)
+        private async Task ChangeImage(int index)
         {
             var file = imageFiles[index];
 
@@ -168,34 +152,34 @@ namespace MangaReader
             CurrentIndex = index;
         }
 
-        private void HideStoryBoard_Completed(object sender, object e)
+        private async void AdvanceBackwardBeginStoryboard_Completed(object sender, object e)
         {
+            int index = CurrentIndex;
+            index--;
 
+            if (index < 0)
+            {
+                index = imageFiles.Length - 1;
+            }
+
+            await ChangeImage(index);
+
+            AdvanceBackwardEndStoryBoard.Begin();
         }
 
-        private void AdvanceAutoBeginStoryboard_Completed(object sender, object e)
+        private async void AdvanceBeginStoryboard_Completed(object sender, object e)
         {
+            int index = CurrentIndex;
+            index++;
 
-        }
+            if (index == imageFiles.Length)
+            {
+                index = 0;
+            }
 
-        private void AdvanceBackwardBeginStoryboard_Completed(object sender, object e)
-        {
+            await ChangeImage(index);
 
-        }
-
-        private void ControlLayerHideStoryBoard_Completed(object sender, object e)
-        {
-
-        }
-
-        private void ControlLayerShowStoryBoard_Completed(object sender, object e)
-        {
-
-        }
-
-        private void AdvanceBeginStoryboard_Completed(object sender, object e)
-        {
-
+            AdvanceEndStoryBoard.Begin();
         }
     }
 }
