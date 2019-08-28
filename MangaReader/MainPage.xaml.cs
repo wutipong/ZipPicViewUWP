@@ -32,6 +32,8 @@ namespace MangaReader
         public string Name { get; set; }
         public int Rating { get; set; } = -1;
         public string ThumbID { get; set; }
+
+        public DateTime DateCreated { get; set; }
     }
 
     internal class DBAccess : IDisposable
@@ -68,7 +70,10 @@ namespace MangaReader
                 return;
             }
 
-            RefreshMangaData();
+            DBManager.Folder = await GetLibraryFolder();
+
+            await DBManager.RefreshMangaData();
+            await RefreshMangaData();
 
             ItemGrid.ItemClick += ItemGrid_ItemClick;
         }
@@ -90,126 +95,22 @@ namespace MangaReader
             rootFrame.Navigate(typeof(SettingPage));
         }
 
-        private async Task<AbstractMediaProvider> OpenFile(StorageFile selected)
+        private async Task RefreshMangaData()
         {
-            if (selected == null)
-            {
-                this.IsEnabled = true;
-                return null;
-            }
+            if (ItemGrid == null)
+                return;
 
-            if (selected.FileType == ".pdf")
-            {
-                var provider = new PdfMediaProvider(selected);
-                await provider.Load();
+            ItemGrid.Items.Clear();
 
-                return provider;
-            }
-            else
-            {
-                Stream stream = null;
-                try
-                {
-                    stream = await selected.OpenStreamForReadAsync();
-
-                    var archive = ArchiveMediaProvider.TryOpenArchive(stream, null, out bool isEncrypted);
-                    if (isEncrypted)
-                    {
-                        return null;
-                    }
-
-                    return ArchiveMediaProvider.Create(stream, archive);
-                }
-                catch (Exception err)
-                {
-                    return null;
-                }
-            }
-        }
-
-        private async void RefreshMangaData()
-        {
-            StorageFolder folder = await GetLibraryFolder();
-
-            List<string> fileTypeFilter = new List<string>
-            {
-                ".cbz",
-                ".cbr",
-                ".zip",
-                ".rar",
-                ".pdf",
-                ".7z"
-            };
-            var queryOptions = new QueryOptions(CommonFileQuery.OrderByName, fileTypeFilter)
-            {
-                FolderDepth = FolderDepth.Shallow,
-            };
-
-            var results = folder.CreateFileQueryWithOptions(queryOptions);
-            var fileList = await results.GetFilesAsync();
-
-            using (var access = await GetDBAccess(folder))
+            using (var access = await DBManager.GetDBAccess())
             {
                 var col = access.DB.GetCollection<MangaData>();
-                foreach (var f in fileList)
+                var list = SortByDropDown.SelectedItem.ToString() == "Name" ?
+                    col.FindAll().OrderBy((m) => m.Name) :
+                    col.FindAll().OrderBy((m) => m.DateCreated);
+
+                foreach (var data in list)
                 {
-                    var row = col.FindOne(r => r.Name == f.Name);
-                    if (row != null)
-                        continue;
-
-                    row = new MangaData()
-                    {
-                        Name = f.Name,
-                    };
-
-                    var provider = await OpenFile(f);
-                    if (provider == null)
-                    {
-                        continue;
-                    }
-
-                    var (files, error) = await provider.GetAllFileEntries();
-                    if (error != null)
-                    {
-                        continue;
-                    }
-
-                    var coverName = provider.FileFilter.FindCoverPage(files);
-                    IRandomAccessStream stream;
-                    (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(coverName);
-                    if (error != null)
-                    {
-                        continue;
-                    }
-                    var decoder = await BitmapDecoder.CreateAsync(stream);
-                    var bitmap = ImageHelper.CreateResizedBitmap(decoder, 127, 188);
-                    var outputIrs = new InMemoryRandomAccessStream();
-
-                    var propertySet = new BitmapPropertySet();
-                    var qualityValue = new BitmapTypedValue(0.5, Windows.Foundation.PropertyType.Single);
-                    propertySet.Add("ImageQuality", qualityValue);
-
-                    var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, outputIrs, propertySet);
-                    encoder.SetSoftwareBitmap(await bitmap);
-                    await encoder.FlushAsync();
-
-                    var id = f.Name.GetHashCode().ToString();
-                    var outputStream = outputIrs.AsStream();
-                    outputStream.Flush();
-
-                    access.DB.FileStorage.Upload(id, f.Name + ".jpg", outputStream);
-                    row.ThumbID = id;
-                    col.Insert(row);
-                }
-
-                foreach (var data in col.FindAll())
-                {
-                    if (fileList.FirstOrDefault(f => f.Name == data.Name) == null)
-                    {
-                        col.Delete(data.Id);
-                        continue;
-                    }
-
                     SoftwareBitmapSource source = new SoftwareBitmapSource();
                     using (var irs = new InMemoryRandomAccessStream())
                     {
@@ -247,19 +148,7 @@ namespace MangaReader
 
         private async void Thumbnail_RatingChanged(Thumbnail sender, object args)
         {
-            StorageFolder folder = await GetLibraryFolder();
-
-            using (var access = await GetDBAccess(folder))
-            {
-                var col = access.DB.GetCollection<MangaData>();
-                var row = col.FindOne(r => r.Name == sender.TitleText);
-                if (row != null)
-                {
-                    row.Rating = sender.Rating;
-                }
-
-                col.Update(row);
-            }
+            await DBManager.SetRating(sender.TitleText, sender.Rating);
         }
 
         private async Task<StorageFolder> GetLibraryFolder()
@@ -277,15 +166,9 @@ namespace MangaReader
             }
         }
 
-        private async Task<DBAccess> GetDBAccess(StorageFolder folder)
+        private async void SortByDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            DBAccess access = new DBAccess();
-
-            var dbFile = await folder.CreateFileAsync(@"manga.db", CreationCollisionOption.OpenIfExists);
-            access.Stream = await dbFile.OpenAsync(FileAccessMode.ReadWrite);
-            access.DB = new LiteDatabase(access.Stream.AsStream());
-
-            return access;
+            await RefreshMangaData();
         }
     }
 }

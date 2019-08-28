@@ -13,10 +13,29 @@
     <RelativePanel>
         <CommandBar
             Name="CommandBar"
+            IsDynamicOverflowEnabled="False"
+            HorizontalContentAlignment="Stretch"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True">
             <CommandBar.Content>
-                <Grid />
+                <RelativePanel>
+                    <TextBlock RelativePanel.LeftOf="SortByDropDown" Margin="8">Sort By</TextBlock>
+                    <ComboBox
+                        x:Name="SortByDropDown"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True" SelectionChanged="SortByDropDown_SelectionChanged">
+                        <ComboBoxItem IsSelected="True">Name</ComboBoxItem>
+                        <ComboBoxItem>Create Date</ComboBoxItem>
+                    </ComboBox>
+                    <TextBlock
+                        x:Name="NameText"
+                        Padding="8"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True"
+                        Text="FileName" />
+                </RelativePanel>
             </CommandBar.Content>
             <AppBarButton
                 Name="SettingButton"
