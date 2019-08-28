@@ -33,6 +33,8 @@ namespace MangaReader
         private int CurrentIndex { get; set; }
         private string[] imageFiles;
 
+        private MangaData Data;
+
         public ViewerPage()
         {
             this.InitializeComponent();
@@ -41,6 +43,7 @@ namespace MangaReader
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var file = this.ApplicationData.LocalSettings.Values["selected file"] as string;
+            Data = await DBManager.GetData(file);
             var folder = await this.GetLibraryFolder();
 
             Provider = await OpenFile(await folder.GetFileAsync(file));
@@ -52,9 +55,10 @@ namespace MangaReader
             }
 
             imageFiles = files;
-            ChangeImage(0);
+            await ChangeImage(0);
 
             NameText.Text = file;
+            RatingControl.Value = Data.Rating;
         }
 
         private void Page_Unloaded(object sender, RoutedEventArgs e)
@@ -219,6 +223,17 @@ namespace MangaReader
             {
                 AdvanceBeginStoryboard.Begin();
             }
+        }
+
+        private async void RatingControl_ValueChanged(RatingControl sender, object args)
+        {
+            if (Data.Rating == (int)sender.Value)
+            {
+                return;
+            }
+            Data.Rating = (int)sender.Value;
+
+            await DBManager.SetRating(Data.Name, Data.Rating);
         }
     }
 }

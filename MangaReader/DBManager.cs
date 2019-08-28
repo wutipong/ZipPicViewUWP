@@ -54,6 +54,28 @@ namespace MangaReader
             }
         }
 
+        public static async Task<MangaData> GetData(string name)
+        {
+            Semaphore.Wait();
+            try
+            {
+                using (var access = await GetDBAccess())
+                {
+                    var col = access.DB.GetCollection<MangaData>();
+                    var row = col.FindOne(r => r.Name == name);
+                    if (row != null)
+                    {
+                        return row;
+                    }
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+            return null;
+        }
+
         private static async Task<AbstractMediaProvider> OpenFile(StorageFile selected)
         {
             if (selected.FileType == ".pdf")

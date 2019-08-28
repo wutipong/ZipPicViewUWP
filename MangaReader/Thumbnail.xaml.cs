@@ -41,12 +41,5 @@ namespace MangaReader
             get => CoverImage.Source;
             set => CoverImage.Source = value;
         }
-
-        public event TypedEventHandler<Thumbnail, object> RatingChanged;
-
-        private void RatingControl_ValueChanged(RatingControl sender, object args)
-        {
-            RatingChanged?.Invoke(this, (int)sender.Value);
-        }
     }
 }

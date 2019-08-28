@@ -139,8 +139,6 @@ namespace MangaReader
                         Source = source,
                     };
 
-                    thumbnail.RatingChanged += Thumbnail_RatingChanged;
-
                     ItemGrid.Items.Add(thumbnail);
                 }
             }

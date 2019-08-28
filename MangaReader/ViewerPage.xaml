@@ -88,6 +88,7 @@
     <RelativePanel>
         <CommandBar
             Name="CommandBar"
+            HorizontalContentAlignment="Stretch"
             IsDynamicOverflowEnabled="False"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
@@ -98,7 +99,8 @@
                         x:Name="RatingControl"
                         RelativePanel.AlignBottomWithPanel="True"
                         RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignTopWithPanel="True" />
+                        RelativePanel.AlignTopWithPanel="True"
+                        ValueChanged="RatingControl_ValueChanged" />
                     <TextBlock
                         x:Name="NameText"
                         Padding="8"
