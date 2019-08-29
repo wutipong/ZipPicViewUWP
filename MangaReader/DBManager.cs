@@ -31,6 +31,7 @@ namespace MangaReader
             return access;
         }
 
+        /*
         public static async Task SetRating(string name, int rating)
         {
             Semaphore.Wait();
@@ -52,7 +53,7 @@ namespace MangaReader
             {
                 Semaphore.Release();
             }
-        }
+        } */
 
         public static async Task<MangaData> GetData(string name)
         {
@@ -74,6 +75,23 @@ namespace MangaReader
                 Semaphore.Release();
             }
             return null;
+        }
+
+        public static async Task UpdateData(MangaData data)
+        {
+            Semaphore.Wait();
+            try
+            {
+                using (var access = await GetDBAccess())
+                {
+                    var col = access.DB.GetCollection<MangaData>();
+                    col.Update(data);
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
 
         private static async Task<AbstractMediaProvider> OpenFile(StorageFile selected)

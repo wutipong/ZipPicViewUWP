@@ -233,7 +233,7 @@ namespace MangaReader
             }
             Data.Rating = (int)sender.Value;
 
-            await DBManager.SetRating(Data.Name, Data.Rating);
+            await DBManager.UpdateData(Data);
         }
     }
 }

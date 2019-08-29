@@ -146,11 +146,6 @@ namespace MangaReader
             }
         }
 
-        private async void Thumbnail_RatingChanged(Thumbnail sender, object args)
-        {
-            await DBManager.SetRating(sender.TitleText, sender.Rating);
-        }
-
         private async Task<StorageFolder> GetLibraryFolder()
         {
             try
