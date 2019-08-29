@@ -36,18 +36,6 @@ namespace MangaReader
         public DateTime DateCreated { get; set; }
     }
 
-    internal class DBAccess : IDisposable
-    {
-        public LiteDatabase DB { get; internal set; }
-        internal IRandomAccessStream Stream { get; set; }
-
-        public void Dispose()
-        {
-            DB.Dispose();
-            Stream.Dispose();
-        }
-    }
-
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
@@ -70,9 +58,16 @@ namespace MangaReader
                 return;
             }
 
-            DBManager.Folder = await GetLibraryFolder();
+            await DBManager.Open(await GetLibraryFolder());
+            try
+            {
+                await DBManager.RefreshMangaData();
+            }
+            finally
+            {
+                DBManager.Release();
+            }
 
-            await DBManager.RefreshMangaData();
             await RefreshMangaData();
 
             ItemGrid.ItemClick += ItemGrid_ItemClick;
@@ -121,36 +116,44 @@ namespace MangaReader
                     break;
             }
 
-            foreach (var data in await DBManager.GetAllData(sortBy))
+            await DBManager.Open();
+            try
             {
-                SoftwareBitmapSource source = new SoftwareBitmapSource();
-                using (var irs = new InMemoryRandomAccessStream())
+                foreach (var data in DBManager.GetAllData(sortBy))
                 {
-                    var stream = irs.AsStream();
-
-                    await DBManager.DownloadFile(data.ThumbID, stream);
-                    stream.Flush();
-
-                    irs.Seek(0);
-
-                    if (irs.Size > 0)
+                    SoftwareBitmapSource source = new SoftwareBitmapSource();
+                    using (var irs = new InMemoryRandomAccessStream())
                     {
-                        var decoder = await BitmapDecoder.CreateAsync(irs);
+                        var stream = irs.AsStream();
 
-                        var bitmap = await decoder.GetSoftwareBitmapAsync();
-                        bitmap = SoftwareBitmap.Convert(bitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                        await source.SetBitmapAsync(bitmap);
+                        DBManager.DownloadFile(data.ThumbID, stream);
+                        stream.Flush();
+
+                        irs.Seek(0);
+
+                        if (irs.Size > 0)
+                        {
+                            var decoder = await BitmapDecoder.CreateAsync(irs);
+
+                            var bitmap = await decoder.GetSoftwareBitmapAsync();
+                            bitmap = SoftwareBitmap.Convert(bitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                            await source.SetBitmapAsync(bitmap);
+                        }
                     }
+
+                    var thumbnail = new Thumbnail()
+                    {
+                        TitleText = data.Name,
+                        Rating = data.Rating,
+                        Source = source,
+                    };
+
+                    ItemGrid.Items.Add(thumbnail);
                 }
-
-                var thumbnail = new Thumbnail()
-                {
-                    TitleText = data.Name,
-                    Rating = data.Rating,
-                    Source = source,
-                };
-
-                ItemGrid.Items.Add(thumbnail);
+            }
+            finally
+            {
+                DBManager.Release();
             }
         }
 

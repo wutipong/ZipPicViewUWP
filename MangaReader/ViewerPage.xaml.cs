@@ -43,7 +43,16 @@ namespace MangaReader
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             var file = this.ApplicationData.LocalSettings.Values["selected file"] as string;
-            Data = await DBManager.GetData(file);
+            await DBManager.Open();
+            try
+            {
+                Data = DBManager.GetData(file);
+            }
+            finally
+            {
+                DBManager.Release();
+            }
+
             var folder = await this.GetLibraryFolder();
 
             Provider = await OpenFile(await folder.GetFileAsync(file));
@@ -233,7 +242,15 @@ namespace MangaReader
             }
             Data.Rating = (int)sender.Value;
 
-            await DBManager.UpdateData(Data);
+            await DBManager.Open();
+            try
+            {
+                DBManager.UpdateData(Data);
+            }
+            finally
+            {
+                DBManager.Release();
+            }
         }
     }
 }

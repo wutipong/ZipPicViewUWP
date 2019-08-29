@@ -14,11 +14,40 @@ using ZipPicViewUWP.MediaProvider;
 
 namespace MangaReader
 {
+    internal class DBAccess : IDisposable
+    {
+        public LiteDatabase DB { get; internal set; }
+        internal IRandomAccessStream Stream { get; set; }
+
+        public void Dispose()
+        {
+            DB.Dispose();
+            Stream.Dispose();
+        }
+    }
+
     internal static class DBManager
     {
         private static SemaphoreSlim Semaphore { get; set; } = new SemaphoreSlim(1, 1);
+        private static DBAccess access;
 
-        public static StorageFolder Folder { get; set; }
+        private static StorageFolder Folder { get; set; }
+
+        public static async Task Open(StorageFolder folder = null)
+        {
+            Semaphore.Wait();
+            if (folder != null)
+            {
+                Folder = folder;
+            }
+            access = await GetDBAccess();
+        }
+
+        public static void Release()
+        {
+            access.Dispose();
+            Semaphore.Release();
+        }
 
         public static async Task<DBAccess> GetDBAccess()
         {
@@ -31,26 +60,11 @@ namespace MangaReader
             return access;
         }
 
-        public static async Task<MangaData> GetData(string name)
+        public static MangaData GetData(string name)
         {
-            Semaphore.Wait();
-            try
-            {
-                using (var access = await GetDBAccess())
-                {
-                    var col = access.DB.GetCollection<MangaData>();
-                    var row = col.FindOne(r => r.Name == name);
-                    if (row != null)
-                    {
-                        return row;
-                    }
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-            return null;
+            var col = access.DB.GetCollection<MangaData>();
+            var row = col.FindOne(r => r.Name == name);
+            return row;
         }
 
         public enum SortBy
@@ -61,54 +75,32 @@ namespace MangaReader
             Rating
         }
 
-        public static async Task<IEnumerable<MangaData>> GetAllData(SortBy sortBy)
+        public static IEnumerable<MangaData> GetAllData(SortBy sortBy)
         {
-            Semaphore.Wait();
-            try
+            var col = access.DB.GetCollection<MangaData>();
+            switch (sortBy)
             {
-                using (var access = await GetDBAccess())
-                {
-                    var col = access.DB.GetCollection<MangaData>();
-                    switch (sortBy)
-                    {
-                        case SortBy.Name:
-                            return col.FindAll().OrderBy((m) => m.Name).ToArray();
+                case SortBy.Name:
+                    return col.FindAll().OrderBy((m) => m.Name).ToArray();
 
-                        case SortBy.CreateDate:
-                            return col.FindAll().OrderBy((m) => m.DateCreated).ToArray();
+                case SortBy.CreateDate:
+                    return col.FindAll().OrderBy((m) => m.DateCreated).ToArray();
 
-                        case SortBy.CreateDateDesc:
-                            return col.FindAll().OrderByDescending((m) => m.DateCreated).ToArray();
+                case SortBy.CreateDateDesc:
+                    return col.FindAll().OrderByDescending((m) => m.DateCreated).ToArray();
 
-                        case SortBy.Rating:
-                            return col.FindAll().OrderByDescending(m => m.Rating).ToArray();
+                case SortBy.Rating:
+                    return col.FindAll().OrderByDescending(m => m.Rating).ToArray();
 
-                        default:
-                            return null;
-                    }
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
+                default:
+                    return null;
             }
         }
 
-        public static async Task UpdateData(MangaData data)
+        public static void UpdateData(MangaData data)
         {
-            Semaphore.Wait();
-            try
-            {
-                using (var access = await GetDBAccess())
-                {
-                    var col = access.DB.GetCollection<MangaData>();
-                    col.Update(data);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            var col = access.DB.GetCollection<MangaData>();
+            col.Update(data);
         }
 
         private static async Task<AbstractMediaProvider> OpenFile(StorageFile selected)
@@ -161,82 +153,60 @@ namespace MangaReader
             var results = Folder.CreateFileQueryWithOptions(queryOptions);
             var fileList = await results.GetFilesAsync();
 
-            Semaphore.Wait();
-            try
+            var col = access.DB.GetCollection<MangaData>();
+            foreach (var f in fileList)
             {
-                using (var access = await GetDBAccess())
+                var row = col.FindOne(r => r.Name == f.Name);
+                if (row != null)
+                    continue;
+
+                row = new MangaData()
                 {
-                    var col = access.DB.GetCollection<MangaData>();
-                    foreach (var f in fileList)
-                    {
-                        var row = col.FindOne(r => r.Name == f.Name);
-                        if (row != null)
-                            continue;
+                    Name = f.Name,
+                    DateCreated = f.DateCreated.DateTime
+                };
 
-                        row = new MangaData()
-                        {
-                            Name = f.Name,
-                            DateCreated = f.DateCreated.DateTime
-                        };
-
-                        var provider = await OpenFile(f);
-                        if (provider == null)
-                        {
-                            continue;
-                        }
-
-                        var (files, error) = await provider.GetAllFileEntries();
-                        if (error != null)
-                        {
-                            continue;
-                        }
-
-                        string id;
-
-                        var outputStream = new InMemoryRandomAccessStream();
-                        error = await CreateThumbnail(f, provider, files, outputStream);
-                        if (error != null)
-                        {
-                            continue;
-                        }
-
-                        id = f.Name.GetHashCode().ToString();
-
-                        access.DB.FileStorage.Upload(id, f.Name + ".jpg", outputStream.AsStream());
-                        row.ThumbID = id;
-                        col.Insert(row);
-                    }
-
-                    foreach (var data in col.FindAll())
-                    {
-                        if (fileList.FirstOrDefault(f => f.Name == data.Name) == null)
-                        {
-                            access.DB.FileStorage.Delete(data.ThumbID);
-                            col.Delete(data.Id);
-                        }
-                    }
+                var provider = await OpenFile(f);
+                if (provider == null)
+                {
+                    continue;
                 }
+
+                var (files, error) = await provider.GetAllFileEntries();
+                if (error != null)
+                {
+                    continue;
+                }
+
+                string id;
+
+                var outputStream = new InMemoryRandomAccessStream();
+                error = await CreateThumbnail(f, provider, files, outputStream);
+                if (error != null)
+                {
+                    continue;
+                }
+
+                id = f.Name.GetHashCode().ToString();
+
+                access.DB.FileStorage.Upload(id, f.Name + ".jpg", outputStream.AsStream());
+                row.ThumbID = id;
+                col.Insert(row);
             }
-            finally
+
+            foreach (var data in col.FindAll())
             {
-                Semaphore.Release();
+                if (fileList.FirstOrDefault(f => f.Name == data.Name) == null)
+                {
+                    access.DB.FileStorage.Delete(data.ThumbID);
+                    col.Delete(data.Id);
+                }
             }
         }
 
-        public static async Task DownloadFile(string id, Stream stream)
+        public static void DownloadFile(string id, Stream stream)
         {
-            Semaphore.Wait();
-            try
-            {
-                using (var access = await GetDBAccess())
-                {
-                    access.DB.FileStorage.Download(id, stream);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
+            access.DB.FileStorage.Download(id, stream);
         }
 
         private static async Task<Exception> CreateThumbnail(StorageFile f, AbstractMediaProvider provider, string[] files, IRandomAccessStream outputStream)
