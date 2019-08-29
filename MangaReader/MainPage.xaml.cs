@@ -105,9 +105,11 @@ namespace MangaReader
             using (var access = await DBManager.GetDBAccess())
             {
                 var col = access.DB.GetCollection<MangaData>();
-                var list = SortByDropDown.SelectedItem.ToString() == "Name" ?
-                    col.FindAll().OrderBy((m) => m.Name) :
-                    col.FindAll().OrderBy((m) => m.DateCreated);
+                var list =
+                    SortByDropDown.SelectedIndex == 0 ? col.FindAll().OrderBy((m) => m.Name) :
+                    SortByDropDown.SelectedIndex == 1 ? col.FindAll().OrderBy((m) => m.DateCreated) :
+                    SortByDropDown.SelectedIndex == 2 ? col.FindAll().OrderByDescending((m) => m.DateCreated) :
+                    col.FindAll().OrderByDescending(m => m.Rating);
 
                 foreach (var data in list)
                 {

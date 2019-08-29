@@ -13,20 +13,30 @@
     <RelativePanel>
         <CommandBar
             Name="CommandBar"
-            IsDynamicOverflowEnabled="False"
             HorizontalContentAlignment="Stretch"
+            IsDynamicOverflowEnabled="False"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True">
             <CommandBar.Content>
                 <RelativePanel>
-                    <TextBlock RelativePanel.LeftOf="SortByDropDown" Margin="8">Sort By</TextBlock>
+                    <TextBlock
+                        Margin="8"
+                        VerticalAlignment="Center"
+                        RelativePanel.LeftOf="SortByDropDown">
+                        Sort By
+                    </TextBlock>
                     <ComboBox
                         x:Name="SortByDropDown"
+                        Width="100"
+                        VerticalAlignment="Center"
                         RelativePanel.AlignBottomWithPanel="True"
                         RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignTopWithPanel="True" SelectionChanged="SortByDropDown_SelectionChanged">
+                        RelativePanel.AlignTopWithPanel="True"
+                        SelectionChanged="SortByDropDown_SelectionChanged">
                         <ComboBoxItem IsSelected="True">Name</ComboBoxItem>
-                        <ComboBoxItem>Create Date</ComboBoxItem>
+                        <ComboBoxItem>Create Date (Asc)</ComboBoxItem>
+                        <ComboBoxItem>Create Date (Dsc)</ComboBoxItem>
+                        <ComboBoxItem>Rating</ComboBoxItem>
                     </ComboBox>
                     <TextBlock
                         x:Name="NameText"
