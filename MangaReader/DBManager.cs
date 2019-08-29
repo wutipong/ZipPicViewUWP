@@ -31,30 +31,6 @@ namespace MangaReader
             return access;
         }
 
-        /*
-        public static async Task SetRating(string name, int rating)
-        {
-            Semaphore.Wait();
-            try
-            {
-                using (var access = await GetDBAccess())
-                {
-                    var col = access.DB.GetCollection<MangaData>();
-                    var row = col.FindOne(r => r.Name == name);
-                    if (row != null)
-                    {
-                        row.Rating = rating;
-                    }
-
-                    col.Update(row);
-                }
-            }
-            finally
-            {
-                Semaphore.Release();
-            }
-        } */
-
         public static async Task<MangaData> GetData(string name)
         {
             Semaphore.Wait();
@@ -75,6 +51,47 @@ namespace MangaReader
                 Semaphore.Release();
             }
             return null;
+        }
+
+        public enum SortBy
+        {
+            Name,
+            CreateDate,
+            CreateDateDesc,
+            Rating
+        }
+
+        public static async Task<IEnumerable<MangaData>> GetAllData(SortBy sortBy)
+        {
+            Semaphore.Wait();
+            try
+            {
+                using (var access = await GetDBAccess())
+                {
+                    var col = access.DB.GetCollection<MangaData>();
+                    switch (sortBy)
+                    {
+                        case SortBy.Name:
+                            return col.FindAll().OrderBy((m) => m.Name).ToArray();
+
+                        case SortBy.CreateDate:
+                            return col.FindAll().OrderBy((m) => m.DateCreated).ToArray();
+
+                        case SortBy.CreateDateDesc:
+                            return col.FindAll().OrderByDescending((m) => m.DateCreated).ToArray();
+
+                        case SortBy.Rating:
+                            return col.FindAll().OrderByDescending(m => m.Rating).ToArray();
+
+                        default:
+                            return null;
+                    }
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
         }
 
         public static async Task UpdateData(MangaData data)
@@ -198,6 +215,22 @@ namespace MangaReader
                             col.Delete(data.Id);
                         }
                     }
+                }
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+        }
+
+        public static async Task DownloadFile(string id, Stream stream)
+        {
+            Semaphore.Wait();
+            try
+            {
+                using (var access = await GetDBAccess())
+                {
+                    access.DB.FileStorage.Download(id, stream);
                 }
             }
             finally

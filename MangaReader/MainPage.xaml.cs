@@ -101,48 +101,56 @@ namespace MangaReader
                 return;
 
             ItemGrid.Items.Clear();
-
-            using (var access = await DBManager.GetDBAccess())
+            DBManager.SortBy sortBy = DBManager.SortBy.Name;
+            switch (SortByDropDown.SelectedIndex)
             {
-                var col = access.DB.GetCollection<MangaData>();
-                var list =
-                    SortByDropDown.SelectedIndex == 0 ? col.FindAll().OrderBy((m) => m.Name) :
-                    SortByDropDown.SelectedIndex == 1 ? col.FindAll().OrderBy((m) => m.DateCreated) :
-                    SortByDropDown.SelectedIndex == 2 ? col.FindAll().OrderByDescending((m) => m.DateCreated) :
-                    col.FindAll().OrderByDescending(m => m.Rating);
+                case 0:
+                    sortBy = DBManager.SortBy.Name;
+                    break;
 
-                foreach (var data in list)
+                case 1:
+                    sortBy = DBManager.SortBy.CreateDate;
+                    break;
+
+                case 2:
+                    sortBy = DBManager.SortBy.CreateDateDesc;
+                    break;
+
+                case 3:
+                    sortBy = DBManager.SortBy.Rating;
+                    break;
+            }
+
+            foreach (var data in await DBManager.GetAllData(sortBy))
+            {
+                SoftwareBitmapSource source = new SoftwareBitmapSource();
+                using (var irs = new InMemoryRandomAccessStream())
                 {
-                    SoftwareBitmapSource source = new SoftwareBitmapSource();
-                    using (var irs = new InMemoryRandomAccessStream())
+                    var stream = irs.AsStream();
+
+                    await DBManager.DownloadFile(data.ThumbID, stream);
+                    stream.Flush();
+
+                    irs.Seek(0);
+
+                    if (irs.Size > 0)
                     {
-                        var stream = irs.AsStream();
+                        var decoder = await BitmapDecoder.CreateAsync(irs);
 
-                        var id = data.ThumbID;
-                        access.DB.FileStorage.Download(id, stream);
-                        stream.Flush();
-
-                        irs.Seek(0);
-
-                        if (irs.Size > 0)
-                        {
-                            var decoder = await BitmapDecoder.CreateAsync(irs);
-
-                            var bitmap = await decoder.GetSoftwareBitmapAsync();
-                            bitmap = SoftwareBitmap.Convert(bitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
-                            await source.SetBitmapAsync(bitmap);
-                        }
+                        var bitmap = await decoder.GetSoftwareBitmapAsync();
+                        bitmap = SoftwareBitmap.Convert(bitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                        await source.SetBitmapAsync(bitmap);
                     }
-
-                    var thumbnail = new Thumbnail()
-                    {
-                        TitleText = data.Name,
-                        Rating = data.Rating,
-                        Source = source,
-                    };
-
-                    ItemGrid.Items.Add(thumbnail);
                 }
+
+                var thumbnail = new Thumbnail()
+                {
+                    TitleText = data.Name,
+                    Rating = data.Rating,
+                    Source = source,
+                };
+
+                ItemGrid.Items.Add(thumbnail);
             }
         }
 
