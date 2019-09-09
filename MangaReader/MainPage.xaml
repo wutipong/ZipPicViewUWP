@@ -34,5 +34,18 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.Below="CommandBar"
             SelectionMode="None" />
+        <my:Loading Name="LoadingControl" 
+                    RelativePanel.AlignTopWithPanel="True" 
+                    RelativePanel.AlignBottomWithPanel="True" 
+                    RelativePanel.AlignLeftWithPanel="True" 
+                    RelativePanel.AlignRightWithPanel="True">
+            <my:Loading.Background>
+                <SolidColorBrush Color="Black" Opacity="0.7"/>
+            </my:Loading.Background>
+            <ContentControl>
+                <TextBlock>Loading ... </TextBlock>
+            </ContentControl>
+            
+        </my:Loading>
     </RelativePanel>
 </Page>

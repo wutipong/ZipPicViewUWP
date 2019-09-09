@@ -129,6 +129,8 @@ namespace MangaReader
 
         private async void RefreshMangaData()
         {
+            LoadingControl.IsLoading = true;
+
             StorageFolder folder = await GetLibraryFolder();
 
             List<string> fileTypeFilter = new List<string>
@@ -243,6 +245,8 @@ namespace MangaReader
                     ItemGrid.Items.Add(thumbnail);
                 }
             }
+
+            LoadingControl.IsLoading = false;
         }
 
         private async void Thumbnail_RatingChanged(Thumbnail sender, object args)
