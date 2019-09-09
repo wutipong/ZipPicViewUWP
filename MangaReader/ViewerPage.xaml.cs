@@ -52,7 +52,7 @@ namespace MangaReader
             }
 
             imageFiles = files;
-            ChangeImage(0);
+            await ChangeImage(0);
 
             NameText.Text = file;
         }
