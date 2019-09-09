@@ -51,25 +51,24 @@ namespace MangaReader
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            if (await GetLibraryFolder() == null)
+            var folder = await GetLibraryFolder();
+            if (folder == null)
             {
-                Frame rootFrame = Window.Current.Content as Frame;
-                rootFrame.Navigate(typeof(SettingPage));
-
                 return;
             }
 
-            var folder = await GetLibraryFolder();
             NameText.Text = folder.Name;
 
             await DBManager.Open(folder);
             try
             {
+                LoadingControl.IsLoading = true;
                 await DBManager.RefreshMangaData();
             }
             finally
             {
                 DBManager.Release();
+                LoadingControl.IsLoading = false;
             }
 
             await RefreshMangaData();
@@ -99,6 +98,7 @@ namespace MangaReader
             if (ItemGrid == null)
                 return;
 
+            LoadingControl.IsLoading = true;
             ItemGrid.Items.Clear();
             DBManager.SortBy sortBy = DBManager.SortBy.Name;
             switch (SortByDropDown.SelectedIndex)
@@ -158,6 +158,7 @@ namespace MangaReader
             finally
             {
                 DBManager.Release();
+                LoadingControl.IsLoading = false;
             }
         }
 
