@@ -48,6 +48,12 @@
                 </RelativePanel>
             </CommandBar.Content>
             <AppBarButton
+                Name="OpenFolderButton"
+                Click="OpenFolderButton_Click"
+                Icon="Folder"
+                Label="Open" />
+
+            <AppBarButton
                 Name="SettingButton"
                 Click="SettingButton_Click"
                 Icon="Setting"

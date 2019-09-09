@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using ZipPicViewUWP.MediaProvider;
 using Windows.Graphics.Imaging;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Storage.Pickers;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -58,7 +59,10 @@ namespace MangaReader
                 return;
             }
 
-            await DBManager.Open(await GetLibraryFolder());
+            var folder = await GetLibraryFolder();
+            NameText.Text = folder.Name;
+
+            await DBManager.Open(folder);
             try
             {
                 await DBManager.RefreshMangaData();
@@ -175,6 +179,34 @@ namespace MangaReader
         private async void SortByDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await RefreshMangaData();
+        }
+
+        private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new FolderPicker();
+            picker.FileTypeFilter.Add("*");
+            var folder = await picker.PickSingleFolderAsync();
+
+            if (folder == null)
+                return;
+
+            NameText.Text = folder.Path;
+            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
+
+            if (token == null)
+            {
+                token = StorageApplicationPermissions.FutureAccessList.Add(folder);
+                this.ApplicationData.LocalSettings.Values["path token"] = token;
+            }
+            else
+            {
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token as string, folder);
+            }
+
+            this.ApplicationData.LocalSettings.Values["path"] = folder.Path;
+
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(MainPage));
         }
     }
 }

@@ -16,16 +16,7 @@
         <TextBlock Foreground="Red">
             * The setting changes will be applied after the next time the application runs.
         </TextBlock>
-        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Path" />
-        <StackPanel>
-            <TextBlock
-                Name="PathText"
-                Height="32"
-                VerticalAlignment="Center" />
-            <Button Name="PathBrowse" Click="PathBrowse_Click">
-                <TextBlock>Browse</TextBlock>
-            </Button>
-        </StackPanel>
+
         <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Appearance" />
         <my:HeaderedItemsControl>
             <my:HeaderedItemsControl.Header>

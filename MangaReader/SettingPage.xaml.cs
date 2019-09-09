@@ -23,13 +23,6 @@ namespace MangaReader
         {
             this.InitializeComponent();
 
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-            if (token != null)
-            {
-                var folder = this.ApplicationData.LocalSettings.Values["path"];
-                PathText.Text = folder as string;
-            }
-
             this.ApplicationData.LocalSettings.Values.TryGetValue("theme", out var theme);
 
             switch (theme as string)
@@ -63,31 +56,6 @@ namespace MangaReader
         private void DefaultRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             this.ApplicationData.LocalSettings.Values["theme"] = "Default";
-        }
-
-        private async void PathBrowse_Click(object sender, RoutedEventArgs e)
-        {
-            var picker = new FolderPicker();
-            picker.FileTypeFilter.Add("*");
-            var folder = await picker.PickSingleFolderAsync();
-
-            if (folder == null)
-                return;
-
-            PathText.Text = folder.Path;
-            this.ApplicationData.LocalSettings.Values.TryGetValue("path token", out var token);
-
-            if (token == null)
-            {
-                token = StorageApplicationPermissions.FutureAccessList.Add(folder);
-                this.ApplicationData.LocalSettings.Values["path token"] = token;
-            }
-            else
-            {
-                StorageApplicationPermissions.FutureAccessList.AddOrReplace(token as string, folder);
-            }
-
-            this.ApplicationData.LocalSettings.Values["path"] = folder.Path;
         }
     }
 }
