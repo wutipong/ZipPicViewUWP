@@ -41,5 +41,10 @@ namespace MangaReader
             get => CoverImage.Source;
             set => CoverImage.Source = value;
         }
+
+        public DateTime CreateDate
+        {
+            get; set;
+        }
     }
 }

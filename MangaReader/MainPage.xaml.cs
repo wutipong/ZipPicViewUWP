@@ -37,13 +37,21 @@ namespace MangaReader
         public DateTime DateCreated { get; set; }
     }
 
+    public enum SortBy
+    {
+        Name,
+        CreateDate,
+        CreateDateDesc,
+        Rating
+    }
+
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
     public sealed partial class MainPage : Page
     {
         private ApplicationData ApplicationData => Windows.Storage.ApplicationData.Current;
-
+        private IEnumerable<Thumbnail> thumbnails;
         public MainPage()
         {
             this.InitializeComponent();
@@ -99,31 +107,13 @@ namespace MangaReader
                 return;
 
             LoadingControl.IsLoading = true;
-            ItemGrid.Items.Clear();
-            DBManager.SortBy sortBy = DBManager.SortBy.Name;
-            switch (SortByDropDown.SelectedIndex)
-            {
-                case 0:
-                    sortBy = DBManager.SortBy.Name;
-                    break;
-
-                case 1:
-                    sortBy = DBManager.SortBy.CreateDate;
-                    break;
-
-                case 2:
-                    sortBy = DBManager.SortBy.CreateDateDesc;
-                    break;
-
-                case 3:
-                    sortBy = DBManager.SortBy.Rating;
-                    break;
-            }
-
+            
             await DBManager.Open();
             try
             {
-                foreach (var data in DBManager.GetAllData(sortBy))
+                var tempList = new List<Thumbnail>();
+
+                foreach (var data in DBManager.GetAllData())
                 {
                     SoftwareBitmapSource source = new SoftwareBitmapSource();
                     using (var irs = new InMemoryRandomAccessStream())
@@ -150,15 +140,51 @@ namespace MangaReader
                         TitleText = data.Name,
                         Rating = data.Rating,
                         Source = source,
+                        CreateDate = data.DateCreated,
                     };
 
-                    ItemGrid.Items.Add(thumbnail);
+                    tempList.Add(thumbnail);
                 }
+
+                thumbnails = tempList;
+
+                Resort(SortBy.Name);
             }
             finally
             {
                 DBManager.Release();
                 LoadingControl.IsLoading = false;
+            }
+        }
+
+        private void Resort(SortBy sortBy)
+        {
+            if (ItemGrid == null)
+                return;
+
+            ItemGrid.Items.Clear();
+            switch (sortBy)
+            {
+                case SortBy.Rating:
+                    thumbnails = thumbnails.OrderByDescending(thumbnail => thumbnail.Rating);
+                    break;
+
+                case SortBy.CreateDate:
+                    thumbnails = thumbnails.OrderBy(thumbnail => thumbnail.CreateDate);
+                    break;
+
+                case SortBy.CreateDateDesc:
+                    thumbnails = thumbnails.OrderByDescending(thumbnail => thumbnail.CreateDate);
+                    break;
+
+                default:
+                    thumbnails = thumbnails.OrderBy(thumbnail => thumbnail.Name);
+                    break;
+            }
+
+            foreach (var thumbnail in thumbnails)
+            {
+                ItemGrid.Items.Add(thumbnail);
             }
         }
 
@@ -177,9 +203,29 @@ namespace MangaReader
             }
         }
 
-        private async void SortByDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void SortByDropDown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await RefreshMangaData();
+            SortBy sortBy = SortBy.Name;
+            switch (SortByDropDown.SelectedIndex)
+            {
+                case 0:
+                    sortBy = SortBy.Name;
+                    break;
+
+                case 1:
+                    sortBy = SortBy.CreateDate;
+                    break;
+
+                case 2:
+                    sortBy = SortBy.CreateDateDesc;
+                    break;
+
+                case 3:
+                    sortBy = SortBy.Rating;
+                    break;
+            }
+
+            Resort(sortBy);
         }
 
         private async void OpenFolderButton_Click(object sender, RoutedEventArgs e)

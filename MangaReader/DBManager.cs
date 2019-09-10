@@ -67,34 +67,10 @@ namespace MangaReader
             return row;
         }
 
-        public enum SortBy
-        {
-            Name,
-            CreateDate,
-            CreateDateDesc,
-            Rating
-        }
-
-        public static IEnumerable<MangaData> GetAllData(SortBy sortBy)
+        public static IEnumerable<MangaData> GetAllData()
         {
             var col = access.DB.GetCollection<MangaData>();
-            switch (sortBy)
-            {
-                case SortBy.Name:
-                    return col.FindAll().OrderBy((m) => m.Name).ToArray();
-
-                case SortBy.CreateDate:
-                    return col.FindAll().OrderBy((m) => m.DateCreated).ToArray();
-
-                case SortBy.CreateDateDesc:
-                    return col.FindAll().OrderByDescending((m) => m.DateCreated).ToArray();
-
-                case SortBy.Rating:
-                    return col.FindAll().OrderByDescending(m => m.Rating).ToArray();
-
-                default:
-                    return null;
-            }
+            return col.FindAll().OrderBy((m) => m.Name).ToArray();
         }
 
         public static void UpdateData(MangaData data)
