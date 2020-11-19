@@ -16,65 +16,78 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingPage"/> class.
         /// </summary>
+
+        private readonly Settings settings;
+
         public SettingPage()
         {
             this.InitializeComponent();
-            this.ApplicationData.LocalSettings.Values.TryGetValue("theme", out var theme);
 
-            switch (theme as string)
-            {
-                case "Light":
-                    this.LightRadioButton.IsChecked = true;
-                    break;
-
-                case "Dark":
-                    this.DarkRadioButton.IsChecked = true;
-                    break;
-
-                default:
-                    this.DefaultRadioButton.IsChecked = true;
-                    break;
-            }
-
-            this.ApplicationData.LocalSettings.Values.TryGetValue("background", out var background);
-
-            switch (background as string)
-            {
-                case "solid":
-                    this.SolidRadioButton.IsChecked = true;
-                    break;
-
-                default:
-                    this.TransparentRadioButton.IsChecked = true;
-                    break;
-            }
+            this.settings = new Settings(this.ApplicationData);
+            this.cmbTheme.SelectedIndex = (int)this.settings.ApplicationTheme;
+            this.cmbBackground.SelectedIndex = (int)this.settings.ImageViewBackground;
+            this.cmbScaling.SelectedIndex = (int)this.settings.ImageViewInterpolationMode;
         }
 
         private ApplicationData ApplicationData => Windows.Storage.ApplicationData.Current;
 
-        private void LightRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.ApplicationData.LocalSettings.Values["theme"] = "Light";
+            switch (this.cmbTheme.SelectedIndex)
+            {
+                case 0:
+                    this.settings.ApplicationTheme = ApplicationTheme.Default;
+                    break;
+                case 1:
+                    this.settings.ApplicationTheme = ApplicationTheme.Light;
+                    break;
+
+                case 2:
+                    this.settings.ApplicationTheme = ApplicationTheme.Dark;
+                    break;
+            }
+
+            this.settings.Commit();
         }
 
-        private void DarkRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void cmbBackground_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.ApplicationData.LocalSettings.Values["theme"] = "Dark";
+            switch (this.cmbBackground.SelectedIndex)
+            {
+                case 0:
+                    this.settings.ImageViewBackground = ZipPicViewUWP.ImageViewBackground.Transparent;
+                    break;
+
+                case 1:
+                    this.settings.ImageViewBackground = ZipPicViewUWP.ImageViewBackground.Solid;
+                    break;
+            }
+
+            this.settings.Commit();
         }
 
-        private void DefaultRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void cmbScaling_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.ApplicationData.LocalSettings.Values["theme"] = "Default";
-        }
+            switch (this.cmbScaling.SelectedIndex)
+            {
+                case 0:
+                    this.settings.ImageViewInterpolationMode = Windows.Graphics.Imaging.BitmapInterpolationMode.NearestNeighbor;
+                    break;
 
-        private void TransparentRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.ApplicationData.LocalSettings.Values["background"] = "transparent";
-        }
+                case 1:
+                    this.settings.ImageViewInterpolationMode = Windows.Graphics.Imaging.BitmapInterpolationMode.Linear;
+                    break;
 
-        private void SolidRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            this.ApplicationData.LocalSettings.Values["background"] = "solid";
+                case 2:
+                    this.settings.ImageViewInterpolationMode = Windows.Graphics.Imaging.BitmapInterpolationMode.Cubic;
+                    break;
+
+                case 3:
+                    this.settings.ImageViewInterpolationMode = Windows.Graphics.Imaging.BitmapInterpolationMode.Fant;
+                    break;
+            }
+
+            this.settings.Commit();
         }
     }
 }

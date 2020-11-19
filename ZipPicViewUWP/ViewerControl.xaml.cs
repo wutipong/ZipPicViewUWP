@@ -8,6 +8,7 @@ namespace ZipPicViewUWP
     using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Microsoft.Toolkit.Uwp.UI.Media;
     using Windows.Storage.Pickers;
     using Windows.System;
     using Windows.System.Display;
@@ -43,7 +44,9 @@ namespace ZipPicViewUWP
                 new TimeSpan(1, 0, 0),
             };
 
+        private readonly Settings settings;
         private readonly DispatcherTimer timer;
+
         private int counter;
         private DisplayRequest displayRequest;
         private MediaElement clickSound;
@@ -93,13 +96,25 @@ namespace ZipPicViewUWP
             this.PrecountToggle.Toggled += this.PrecountToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("background", out var background);
-            if (background as string == "solid")
+
+            this.settings = new Settings(applicationData);
+            switch (this.settings.ImageViewBackground)
             {
-                this.ImageBorder.Background = new SolidColorBrush()
-                {
-                    Color = (Color)Application.Current.Resources["SystemAltHighColor"],
-                };
+                case ZipPicViewUWP.ImageViewBackground.Solid:
+                    this.ImageBorder.Background = new SolidColorBrush()
+                    {
+                        Color = (Color)Application.Current.Resources["SystemAltHighColor"],
+                    };
+                    break;
+
+                case ZipPicViewUWP.ImageViewBackground.Transparent:
+                    this.ImageBorder.Background = new BackdropBlurBrush()
+                    {
+                        Amount = 3.0,
+                    };
+                    break;
             }
+
 
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {
@@ -206,7 +221,7 @@ namespace ZipPicViewUWP
             int width = this.ExpectedImageWidth;
             int height = this.ExpectedImageHeight;
 
-            var createBitmapTask = MediaManager.CreateImage(file, width, height);
+            var createBitmapTask = MediaManager.CreateImage(file, width, height, this.settings.ImageViewInterpolationMode);
 
             _ = Task.Run(async () =>
             {

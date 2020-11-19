@@ -13,46 +13,46 @@
         <TextBlock Style="{StaticResource HeaderTextBlockStyle}">
             Settings
         </TextBlock>
-        <TextBlock Foreground="Red">
-            * The setting changes will be applied after the next time the application runs.
-        </TextBlock>
-        <my:HeaderedItemsControl>
-            <my:HeaderedItemsControl.Header>
-                <TextBlock>Choose an app mode</TextBlock>
-            </my:HeaderedItemsControl.Header>
-            <RadioButton
-                Name="LightRadioButton"
-                Checked="LightRadioButton_Checked"
-                GroupName="ThemeGroup">
-                Light
-            </RadioButton>
-            <RadioButton
-                Name="DarkRadioButton"
-                Checked="DarkRadioButton_Checked"
-                GroupName="ThemeGroup">
-                Dark
-            </RadioButton>
-            <RadioButton
-                Name="DefaultRadioButton"
-                Checked="DefaultRadioButton_Checked"
-                GroupName="ThemeGroup">
-                Windows Default
-            </RadioButton>
-        </my:HeaderedItemsControl>
-        <my:HeaderedItemsControl>
-            <my:HeaderedItemsControl.Header>
-                <TextBlock>Image background style.</TextBlock>
-            </my:HeaderedItemsControl.Header>
-            <RadioButton
-                Name="TransparentRadioButton"
-                GroupName="BackgroundGroup" Checked="TransparentRadioButton_Checked">
-                Transparent
-            </RadioButton>
-            <RadioButton
-                Name="SolidRadioButton"
-                GroupName="BackgroundGroup" Checked="SolidRadioButton_Checked">
-                Solid
-            </RadioButton>
-        </my:HeaderedItemsControl>
+        <my:HeaderedContentControl>
+            <my:HeaderedContentControl.Header>
+                <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">
+                    User Interface
+                </TextBlock>
+            </my:HeaderedContentControl.Header>
+            <my:HeaderedContentControl.Content>
+                <StackPanel Orientation="Vertical">
+                    <TextBlock Foreground="Red">
+                        The setting changes will be applied after the next time the application runs.
+                    </TextBlock>
+                    <ComboBox x:Name="cmbTheme" Header="Application Theme" SelectionChanged="cmbTheme_SelectionChanged">
+                        <ComboBoxItem Content="OS Default"></ComboBoxItem>
+                        <ComboBoxItem Content="Light"/>
+                        <ComboBoxItem Content="Dark" />
+                    </ComboBox>
+                </StackPanel>
+            </my:HeaderedContentControl.Content>
+        </my:HeaderedContentControl>
+
+        <my:HeaderedContentControl>
+            <my:HeaderedContentControl.Header>
+                <TextBlock Style="{StaticResource SubheaderTextBlockStyle}">
+                    Image View
+                </TextBlock>
+            </my:HeaderedContentControl.Header>
+            <my:HeaderedContentControl.Content>
+                <StackPanel Orientation="Vertical">
+                    <ComboBox x:Name="cmbBackground" Header="Background" SelectionChanged="cmbBackground_SelectionChanged">
+                        <ComboBoxItem Content="Transparent" />
+                        <ComboBoxItem Content="Solid" />
+                    </ComboBox>
+                    <ComboBox x:Name="cmbScaling" Header="Image Scaling" SelectionChanged="cmbScaling_SelectionChanged">
+                        <ComboBoxItem>Fant</ComboBoxItem>
+                        <ComboBoxItem>Cubic</ComboBoxItem>
+                        <ComboBoxItem>Linear</ComboBoxItem>
+                        <ComboBoxItem>Nearest Neighbor</ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+            </my:HeaderedContentControl.Content>
+        </my:HeaderedContentControl>
     </StackPanel>
 </Page>

@@ -309,7 +309,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// <param name="width">Expected Width.</param>
         /// <param name="height">Expected Height.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(string entry, int width, int height)
+        public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(string entry, int width, int height, BitmapInterpolationMode mode)
         {
             await Semaphore.WaitAsync();
             try
@@ -321,7 +321,7 @@ namespace ZipPicViewUWP.MediaProvider
                 }
 
                 var decoder = await BitmapDecoder.CreateAsync(stream);
-                var output = await ImageHelper.CreateResizedBitmap(decoder, (uint)width, (uint)height);
+                var output = await ImageHelper.CreateResizedBitmap(decoder, (uint)width, (uint)height, mode);
 
                 stream.Dispose();
                 return (output, (int)decoder.PixelWidth, (int)decoder.PixelHeight);

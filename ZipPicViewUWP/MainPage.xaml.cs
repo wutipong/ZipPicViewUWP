@@ -367,7 +367,10 @@ namespace ZipPicViewUWP
 
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)
         {
-            var selectedItem = this.NavigationPane.SelectedItem as NavigationViewItem;
+            if (this.NavigationPane.SelectedItem == null)
+            {
+                return;
+            }
 
             if (e.IsSettingsSelected == true)
             {
@@ -384,7 +387,7 @@ namespace ZipPicViewUWP
                 }
             }
 
-            var item = selectedItem as NavigationViewItem;
+            var item = this.NavigationPane.SelectedItem as NavigationViewItem;
 
             var folderListItem = item.Content as FolderListItem;
 

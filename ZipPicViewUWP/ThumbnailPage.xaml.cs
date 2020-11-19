@@ -138,7 +138,7 @@ namespace ZipPicViewUWP
             var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
             if (cover != null && cover != string.Empty)
             {
-                var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200);
+                var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200, Windows.Graphics.Imaging.BitmapInterpolationMode.Linear);
 
                 this.coverBitmapSource = new SoftwareBitmapSource();
                 await this.coverBitmapSource.SetBitmapAsync(bitmap);

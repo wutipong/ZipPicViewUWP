@@ -22,19 +22,21 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// </summary>
+        /// 
+        private readonly Settings settings;
         public App()
         {
             var applicationData = Windows.Storage.ApplicationData.Current;
-            applicationData.LocalSettings.Values.TryGetValue("theme", out var themeValue);
+            this.settings = new Settings(applicationData);
 
-            switch (themeValue)
+            switch (this.settings.ApplicationTheme)
             {
-                case "Light":
-                    this.RequestedTheme = ApplicationTheme.Light;
+                case ApplicationTheme.Light:
+                    this.RequestedTheme = Windows.UI.Xaml.ApplicationTheme.Light;
                     break;
 
-                case "Dark":
-                    this.RequestedTheme = ApplicationTheme.Dark;
+                case ApplicationTheme.Dark:
+                    this.RequestedTheme = Windows.UI.Xaml.ApplicationTheme.Dark;
                     break;
             }
 
