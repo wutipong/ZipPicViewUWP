@@ -1,37 +1,36 @@
-﻿using NUnit.Framework;
-using System;
-
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace ZipPicViewUWP.Utility.Test
 {
-    [TestFixture]
+    [TestClass]
     public class StringExtensionsTest
     {
-        [Test]
+        [TestMethod]
         public void TestEllipsesShorter()
         {
             Assert.AreEqual("Hello", "Hello".Ellipses(10));
         }
 
-        [Test]
+        [TestMethod]
         public void TestEllipsesLonger()
         {
             Assert.AreEqual("He … other", "Hello World, Long Time no see ... brother".Ellipses(10));
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtractFileNameNoDirectory()
         {
             Assert.AreEqual("Hello", "Hello".ExtractFilename());
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtractFileNameForwardSlash()
         {
             Assert.AreEqual("Hello", "/hell/Hello".ExtractFilename());
         }
 
-        [Test]
+        [TestMethod]
         public void TestExtractFileNameBackSlash()
         {
             Assert.AreEqual("Hello", @"\hell\Hello".ExtractFilename());

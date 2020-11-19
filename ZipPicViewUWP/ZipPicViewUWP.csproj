@@ -24,7 +24,7 @@
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <AppxPackageDir>D:\Desktop\</AppxPackageDir>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
-    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
@@ -304,7 +304,7 @@
       <Name>MediaProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{62909d1a-baae-4b9e-a563-52ac8dc9e23e}</Project>
+      <Project>{7da90b2f-b1e4-4bcb-b7dc-69f29fd76893}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
   </ItemGroup>
