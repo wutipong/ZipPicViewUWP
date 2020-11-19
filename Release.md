@@ -1,5 +1,9 @@
 # Release Note
 
+## Version 2020.11
+* Add image viewer's scale mode option.
+* Redesign the app icon.
+
 ## Version 2019.06
 * Major UI design overhaul.
 * Main color is now blue instead of red.
