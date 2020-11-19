@@ -16,7 +16,6 @@
                 Width="200"
                 Height="200"
                 Padding="8"
-                Background="{StaticResource PrimaryColor}"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignTopWithPanel="True">
                 <Image
