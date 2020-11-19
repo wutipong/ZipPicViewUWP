@@ -39,7 +39,7 @@
             RelativePanel.AlignTopWithPanel="true"
             SelectionChanged="NavigationPane_SelectionChanged">
             <controls:NavigationView.PaneFooter>
-                <controls:NavigationViewList>
+                <StackPanel Orientation="Vertical" Visibility="Visible">
                     <controls:NavigationViewItemSeparator />
                     <controls:NavigationViewItem
                         Content="Open File"
@@ -54,7 +54,7 @@
                         Content="About"
                         Icon="Help"
                         Tapped="NavigationViewItem_Tapped" />
-                </controls:NavigationViewList>
+                </StackPanel>
             </controls:NavigationView.PaneFooter>
             <mtuuc:DockPanel LastChildFill="True">
                 <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
@@ -76,7 +76,7 @@
             RelativePanel.AlignTopWithPanel="True"
             Visibility="Collapsed" />
         <mtuuc:InAppNotification
-            Name="Notification"
+            x:Name="Notification"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
