@@ -24,9 +24,12 @@
                     <TextBlock Foreground="Red">
                         The setting changes will be applied after the next time the application runs.
                     </TextBlock>
-                    <ComboBox x:Name="cmbTheme" Header="Application Theme" SelectionChanged="cmbTheme_SelectionChanged">
-                        <ComboBoxItem Content="OS Default"></ComboBoxItem>
-                        <ComboBoxItem Content="Light"/>
+                    <ComboBox
+                        x:Name="cmbTheme"
+                        Header="Application Theme"
+                        SelectionChanged="cmbTheme_SelectionChanged">
+                        <ComboBoxItem Content="OS Default" />
+                        <ComboBoxItem Content="Light" />
                         <ComboBoxItem Content="Dark" />
                     </ComboBox>
                 </StackPanel>
@@ -41,15 +44,21 @@
             </my:HeaderedContentControl.Header>
             <my:HeaderedContentControl.Content>
                 <StackPanel Orientation="Vertical">
-                    <ComboBox x:Name="cmbBackground" Header="Background" SelectionChanged="cmbBackground_SelectionChanged">
+                    <ComboBox
+                        x:Name="cmbBackground"
+                        Header="Background"
+                        SelectionChanged="cmbBackground_SelectionChanged">
                         <ComboBoxItem Content="Transparent" />
                         <ComboBoxItem Content="Solid" />
                     </ComboBox>
-                    <ComboBox x:Name="cmbScaling" Header="Image Scaling" SelectionChanged="cmbScaling_SelectionChanged">
-                        <ComboBoxItem>Fant</ComboBoxItem>
-                        <ComboBoxItem>Cubic</ComboBoxItem>
-                        <ComboBoxItem>Linear</ComboBoxItem>
+                    <ComboBox
+                        x:Name="cmbScaling"
+                        Header="Image Scaling"
+                        SelectionChanged="cmbScaling_SelectionChanged">
                         <ComboBoxItem>Nearest Neighbor</ComboBoxItem>
+                        <ComboBoxItem>Linear</ComboBoxItem>
+                        <ComboBoxItem>Cubic</ComboBoxItem>
+                        <ComboBoxItem>Fant</ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
             </my:HeaderedContentControl.Content>
