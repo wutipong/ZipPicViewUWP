@@ -44,13 +44,13 @@ namespace ZipPicViewUWP
                 new TimeSpan(1, 0, 0),
             };
 
-        private readonly Settings settings;
         private readonly DispatcherTimer timer;
 
         private int counter;
         private DisplayRequest displayRequest;
         private MediaElement clickSound;
         private SoftwareBitmapSource source;
+        private Settings settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
@@ -115,7 +115,6 @@ namespace ZipPicViewUWP
                     break;
             }
 
-
             if (!Windows.Graphics.Printing.PrintManager.IsSupported())
             {
                 this.PrintButton.Visibility = Visibility.Collapsed;
@@ -175,6 +174,26 @@ namespace ZipPicViewUWP
         /// </summary>
         public async void Show()
         {
+            var applicationData = Windows.Storage.ApplicationData.Current;
+            this.settings = new Settings(applicationData);
+
+            switch (this.settings.ImageViewBackground)
+            {
+                case ZipPicViewUWP.ImageViewBackground.Solid:
+                    this.ImageBorder.Background = new SolidColorBrush()
+                    {
+                        Color = (Color)Application.Current.Resources["SystemAltHighColor"],
+                    };
+                    break;
+
+                case ZipPicViewUWP.ImageViewBackground.Transparent:
+                    this.ImageBorder.Background = new BackdropBlurBrush()
+                    {
+                        Amount = 3.0,
+                    };
+                    break;
+            }
+
             this.Opacity = 0;
             this.Visibility = Visibility.Visible;
             var updateImage = this.UpdateImage(false);
