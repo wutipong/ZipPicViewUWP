@@ -1,5 +1,8 @@
 # Release Note
 
+## Version 2020.11.1
+* fix the viewer's image scaling options not being applied.
+
 ## Version 2020.11
 * Add image viewer's scale mode option.
 * Redesign the app icon.
