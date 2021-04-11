@@ -7,6 +7,7 @@ namespace ZipPicViewUWP
     using System;
     using System.Collections.Generic;
     using Microsoft.Toolkit.Uwp.UI.Controls;
+    using Microsoft.UI.Xaml.Controls;
     using Windows.Storage.Pickers;
     using Windows.UI.Popups;
     using Windows.UI.Xaml;
@@ -38,7 +39,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the progress ring.
         /// </summary>
-        public ProgressRing ProgressRing => this.loading;
+        public Microsoft.UI.Xaml.Controls.ProgressRing ProgressRing => this.loading;
 
         /// <summary>
         /// Gets or sets the entry assciated with the thumbnail.

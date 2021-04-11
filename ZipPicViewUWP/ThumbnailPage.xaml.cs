@@ -214,6 +214,7 @@ namespace ZipPicViewUWP
 
         private void ThumbnailPage_ThumbnailItemLoading(object source, int current, int count)
         {
+            this.Progress.IsIndeterminate = false;
             this.Progress.Maximum = count;
             this.Progress.Value = current;
 

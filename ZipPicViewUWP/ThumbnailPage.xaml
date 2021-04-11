@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:muxcontrols="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:ZipPicViewUWP"
@@ -114,7 +115,7 @@
                 <CompositeTransform />
             </Border.RenderTransform>
             <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                <controls:RadialProgressBar
+                <muxcontrols:ProgressRing
                     Name="Progress"
                     Width="30"
                     Height="30"

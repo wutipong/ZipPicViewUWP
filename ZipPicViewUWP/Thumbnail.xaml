@@ -38,7 +38,7 @@
     </UserControl.Resources>
     <Border Margin="2" BorderThickness="2">
         <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <ProgressRing
+            <muxcontrols:ProgressRing
                 x:Name="loading"
                 Width="100"
                 Height="100"
