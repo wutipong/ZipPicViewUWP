@@ -2,8 +2,10 @@
     x:Class="ZipPicViewUWP.ThumbnailPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:Microsoft.Toolkit.Uwp.UI.Behaviors"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:ZipPicViewUWP"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -58,44 +60,48 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
+            <interactivity:Interaction.Behaviors>
+                <behaviors:QuickReturnHeaderBehavior />
+            </interactivity:Interaction.Behaviors>
             <controls:AdaptiveGridView.Header>
-                <controls:ScrollHeader Mode="Fade">
-                    <RelativePanel Margin="20">
-                        <Border
-                            Name="CoverBorder"
-                            Width="200"
-                            Height="200"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            RelativePanel.AlignTopWithPanel="True">
-                            <Image Name="CoverImage" />
-                        </Border>
+                <RelativePanel
+                    MinHeight="200"
+                    Margin="20"
+                    Background="{StaticResource BaseColor}">
+                    <Border
+                        Name="CoverBorder"
+                        Width="200"
+                        Height="200"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignTopWithPanel="True">
+                        <Image Name="CoverImage" />
+                    </Border>
 
-                        <TextBlock
-                            Name="FolderName"
-                            MaxHeight="160"
-                            Margin="20,0,8,0"
-                            VerticalAlignment="Bottom"
-                            Foreground="{StaticResource AccentColor}"
-                            RelativePanel.Above="ImageCount"
-                            RelativePanel.AlignRightWithPanel="True"
-                            RelativePanel.RightOf="CoverBorder"
-                            Style="{StaticResource HeaderTextBlockStyle}"
-                            TextTrimming="CharacterEllipsis"
-                            TextAlignment="Start"
-                            TextWrapping="Wrap">
-                            Folder Name
-                        </TextBlock>
-                        <TextBlock
-                            Name="ImageCount"
-                            Margin="20,0"
-                            Foreground="{StaticResource LowAccentColor}"
-                            RelativePanel.AlignBottomWith="CoverBorder"
-                            RelativePanel.RightOf="CoverBorder"
-                            Style="{StaticResource SubheaderTextBlockStyle}">
-                            Image Count
-                        </TextBlock>
-                    </RelativePanel>
-                </controls:ScrollHeader>
+                    <TextBlock
+                        Name="FolderName"
+                        MaxHeight="160"
+                        Margin="20,0,8,0"
+                        VerticalAlignment="Bottom"
+                        Foreground="{StaticResource AccentColor}"
+                        RelativePanel.Above="ImageCount"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.RightOf="CoverBorder"
+                        Style="{StaticResource HeaderTextBlockStyle}"
+                        TextAlignment="Start"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap">
+                        Folder Name
+                    </TextBlock>
+                    <TextBlock
+                        Name="ImageCount"
+                        Margin="20,0"
+                        Foreground="{StaticResource LowAccentColor}"
+                        RelativePanel.AlignBottomWith="CoverBorder"
+                        RelativePanel.RightOf="CoverBorder"
+                        Style="{StaticResource SubheaderTextBlockStyle}">
+                        Image Count
+                    </TextBlock>
+                </RelativePanel>
             </controls:AdaptiveGridView.Header>
         </controls:AdaptiveGridView>
         <Border
