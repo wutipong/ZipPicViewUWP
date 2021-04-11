@@ -62,12 +62,13 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True">
             <interactivity:Interaction.Behaviors>
-                <behaviors:QuickReturnHeaderBehavior />
+                <behaviors:StickyHeaderBehavior />
             </interactivity:Interaction.Behaviors>
             <controls:AdaptiveGridView.Header>
                 <RelativePanel
                     MinHeight="200"
-                    Margin="20"
+                    Margin="0"
+                    Padding="20"
                     Background="{StaticResource BaseColor}">
                     <Border
                         Name="CoverBorder"
