@@ -84,7 +84,7 @@
                         <wctcontrols:HeaderedItemsControl.Header>
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="OpenFile" />
-                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource SubheaderTextBlockStyle}">Open File</TextBlock>
+                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource TitleTextBlockStyle}">Open File</TextBlock>
                             </StackPanel>
                         </wctcontrols:HeaderedItemsControl.Header>
 
@@ -106,7 +106,7 @@
                         <wctcontrols:HeaderedItemsControl.Header>
                             <StackPanel Orientation="Horizontal">
                                 <SymbolIcon Symbol="Folder" />
-                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource SubheaderTextBlockStyle}">Open Folder</TextBlock>
+                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource TitleTextBlockStyle}">Open Folder</TextBlock>
                             </StackPanel>
                         </wctcontrols:HeaderedItemsControl.Header>
                         <TextBlock
