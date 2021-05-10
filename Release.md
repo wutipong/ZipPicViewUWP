@@ -1,5 +1,10 @@
 # Release Note
 
+## Version 2021.05
+* Update dependencies. ZWP now requires Windows 10 1809.
+* Add image filter.
+* Minor update on the overall UI.
+
 ## Version 2020.11.1
 * fix the viewer's image scaling options not being applied.
 
