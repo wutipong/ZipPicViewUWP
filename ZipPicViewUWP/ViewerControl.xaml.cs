@@ -269,6 +269,9 @@ namespace ZipPicViewUWP
 
             this.FilenameTextBlock.Text = file.ExtractFilename();
 
+            ToolTip toolTip = new ToolTip { Content = file };
+            ToolTipService.SetToolTip(this.FilenameTextBlock, toolTip);
+
             if (this.source != null)
             {
                 this.source.Dispose();

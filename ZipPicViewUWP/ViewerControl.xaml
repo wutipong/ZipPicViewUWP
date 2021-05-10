@@ -360,14 +360,16 @@
                         VerticalAlignment="Stretch"
                         Background="Transparent"
                         Checked="AutoButton_Checked"
-                        Unchecked="AutoButton_Unchecked">
+                        Unchecked="AutoButton_Unchecked"
+                        ToolTipService.ToolTip="Advance the image automatically after the set duration.">
                         <SymbolIcon Symbol="Play" />
                     </ToggleButton>
 
                     <Button
                         Name="AutoDurationButton"
                         VerticalAlignment="Stretch"
-                        Background="Transparent">
+                        Background="Transparent"
+                        ToolTipService.ToolTip="Image advance options.">
                         <SymbolIcon Symbol="List" />
                         <Button.Flyout>
                             <Flyout>
@@ -394,7 +396,8 @@
                     <Button
                         Name="FilterButton"
                         VerticalAlignment="Stretch"
-                        Background="Transparent">
+                        Background="Transparent"
+                        ToolTipService.ToolTip="Set image filter.">
                         <SymbolIcon Symbol="Pictures" />
                         <Button.Flyout>
                             <Flyout>
