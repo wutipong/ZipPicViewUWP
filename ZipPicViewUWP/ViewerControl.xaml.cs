@@ -538,7 +538,8 @@ namespace ZipPicViewUWP
             bool blackwhite = false;
             bool sepia = false;
 
-            switch ((Effect) this.FilterList.SelectedIndex) {
+            switch ((Effect)this.FilterList.SelectedIndex)
+            {
                 case Effect.BlackWhite: blackwhite = true; break;
                 case Effect.Invert: invert = true; break;
                 case Effect.Sepia: sepia = true; break;

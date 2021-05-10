@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
+﻿// <copyright file="Settings.cs" company="Wutipong Wongsakuldej">
+// Copyright (c) Wutipong Wongsakuldej. All rights reserved.
+// </copyright>
 
 namespace ZipPicViewUWP
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using Windows.Graphics.Imaging;
+    using Windows.Storage;
+
     public enum ApplicationTheme
     {
         Default, Light, Dark
