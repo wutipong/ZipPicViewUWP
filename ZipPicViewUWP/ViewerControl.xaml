@@ -198,7 +198,7 @@
         </Storyboard>
     </UserControl.Resources>
     <RelativePanel>
-        <Border
+        <RelativePanel
             Name="ImageBorder"
             ManipulationCompleted="ImageBorder_ManipulationCompleted"
             ManipulationMode="TranslateX"
@@ -208,13 +208,19 @@
             RelativePanel.AlignTopWithPanel="True"
             RenderTransformOrigin="0.5,0.5"
             Tapped="ImageBorder_Tapped">
-            <Border.RenderTransform>
+            <RelativePanel.RenderTransform>
                 <CompositeTransform />
-            </Border.RenderTransform>
-            <Border.Background>
+            </RelativePanel.RenderTransform>
+            <RelativePanel.Background>
                 <media:BackdropBlurBrush Amount="3.0" />
-            </Border.Background>
-            <Image Name="Image" RenderTransformOrigin="0.5,0.5">
+            </RelativePanel.Background>
+            <Image 
+                Name="Image" 
+                RenderTransformOrigin="0.5,0.5"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True">
                 <Image.RenderTransform>
                     <CompositeTransform />
                 </Image.RenderTransform>
@@ -222,7 +228,50 @@
                     <PlaneProjection />
                 </Image.Projection>
             </Image>
-        </Border>
+            <Border
+                Visibility="Collapsed"
+                Name="InvertBorder"
+                RelativePanel.AlignBottomWith="Image"
+                RelativePanel.AlignLeftWith="Image"
+                RelativePanel.AlignRightWith="Image"
+                RelativePanel.AlignTopWith="Image">
+                <Border.Background>
+                    <media:BackdropInvertBrush />
+                </Border.Background>
+            </Border>
+            <Border
+                Visibility="Collapsed"
+                Name="BlackWhiteBorder"
+                RelativePanel.AlignBottomWith="Image"
+                RelativePanel.AlignLeftWith="Image"
+                RelativePanel.AlignRightWith="Image"
+                RelativePanel.AlignTopWith="Image">
+                <Border.Background>
+                    <media:BackdropSaturationBrush Saturation="0.0" />
+                </Border.Background>
+            </Border>
+            <Border
+                Visibility="Collapsed"
+                Name="SepiaBorder"
+                RelativePanel.AlignBottomWith="Image"
+                RelativePanel.AlignLeftWith="Image"
+                RelativePanel.AlignRightWith="Image"
+                RelativePanel.AlignTopWith="Image">
+                <Border.Background>
+                    <media:BackdropSepiaBrush/>
+                </Border.Background>
+            </Border>
+            <Border
+                Visibility="Collapsed"
+                RelativePanel.AlignBottomWith="Image"
+                RelativePanel.AlignLeftWith="Image"
+                RelativePanel.AlignRightWith="Image"
+                RelativePanel.AlignTopWith="Image">
+                <Border.Background>
+                    <media:BackdropInvertBrush />
+                </Border.Background>
+            </Border>
+        </RelativePanel>
         <Grid
             Name="ControlLayer"
             RelativePanel.AlignBottomWithPanel="True"
@@ -332,6 +381,32 @@
                                             <ListBoxItem Content="10 seconds" />
                                             <ListBoxItem Content="15 seconds" />
                                             <ListBoxItem Content="30 seconds" />
+                                        </ListBox>
+                                    </controls:HeaderedContentControl>
+                                </StackPanel>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Rectangle
+                        Width="2"
+                        Margin="6"
+                        Fill="{StaticResource AccentColor}" />
+                    <Button
+                        Name="FilterButton"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent">
+                        <SymbolIcon Symbol="Pictures" />
+                        <Button.Flyout>
+                            <Flyout>
+                                <StackPanel VerticalAlignment="Top">
+                                    <controls:HeaderedContentControl HorizontalContentAlignment="Stretch" Header="Effects">
+                                        <ListBox x:Name="FilterList" Background="Transparent" SelectionChanged="FilterList_SelectionChanged" >
+                                            <ListBoxItem IsSelected="True" >
+                                                <TextBlock FontStyle="Italic">None</TextBlock>
+                                            </ListBoxItem>
+                                            <ListBoxItem Content="Grayscale" />
+                                            <ListBoxItem Content="Sepia" />
+                                            <ListBoxItem Content="Invert" />
                                         </ListBox>
                                     </controls:HeaderedContentControl>
                                 </StackPanel>

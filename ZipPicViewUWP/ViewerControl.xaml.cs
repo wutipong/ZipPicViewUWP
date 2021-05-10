@@ -52,6 +52,14 @@ namespace ZipPicViewUWP
         private SoftwareBitmapSource source;
         private Settings settings;
 
+        private enum Effect
+        {
+            None,
+            BlackWhite,
+            Sepia,
+            Invert,
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
         /// </summary>
@@ -519,6 +527,23 @@ namespace ZipPicViewUWP
         private void ControlLayerShowStoryBoard_Completed(object sender, object e)
         {
             this.ControlLayerVisibilityChange?.Invoke(this, Visibility.Visible);
+        }
+
+        private void FilterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            bool invert = false;
+            bool blackwhite = false;
+            bool sepia = false;
+
+            switch ((Effect) this.FilterList.SelectedIndex) {
+                case Effect.BlackWhite: blackwhite = true; break;
+                case Effect.Invert: invert = true; break;
+                case Effect.Sepia: sepia = true; break;
+            }
+
+            this.InvertBorder.Visibility = invert ? Visibility.Visible : Visibility.Collapsed;
+            this.BlackWhiteBorder.Visibility = blackwhite ? Visibility.Visible : Visibility.Collapsed;
+            this.SepiaBorder.Visibility = sepia ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
