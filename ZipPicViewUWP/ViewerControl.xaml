@@ -239,7 +239,8 @@
                 Margin="0,100,20,100"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Background="{StaticResource FloatingControl}">
+                Background="{StaticResource FloatingControl}"
+                CornerRadius="2">
                 <Button
                     x:Name="NextButton"
                     HorizontalAlignment="Stretch"
@@ -256,7 +257,8 @@
                 Margin="20,100,0,100"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Background="{StaticResource FloatingControl}">
+                Background="{StaticResource FloatingControl}"
+                CornerRadius="2">
                 <Button
                     x:Name="PreviousButton"
                     HorizontalAlignment="Stretch"
@@ -372,7 +374,8 @@
                 Margin="20,70"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Background="{StaticResource FloatingControl}">
+                Background="{StaticResource FloatingControl}"
+                CornerRadius="2">
                 <Button
                     x:Name="CloseButton"
                     HorizontalAlignment="Stretch"
