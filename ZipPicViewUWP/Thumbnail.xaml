@@ -36,12 +36,12 @@
                 Label="Print" />
         </muxcontrols:CommandBarFlyout>
     </UserControl.Resources>
-    <Border Margin="2" BorderThickness="2">
+    <Border Margin="2" BorderThickness="2" CornerRadius="4">
         <RelativePanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <muxcontrols:ProgressRing
                 x:Name="loading"
-                Width="100"
-                Height="100"
+                Width="50"
+                Height="50"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 IsActive="True"
