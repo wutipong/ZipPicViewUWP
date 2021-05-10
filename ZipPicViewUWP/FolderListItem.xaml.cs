@@ -39,17 +39,21 @@ namespace ZipPicViewUWP
             set
             {
                 this.entry = value;
-
+                var tooltipStr = value;
                 if (this.entry == MediaManager.Provider.Root)
                 {
                     this.name.Text = "<ROOT>";
                     this.name.FontStyle = Windows.UI.Text.FontStyle.Oblique;
+                    tooltipStr = "<ROOT>";
                 }
                 else
                 {
                     int prefixCount = this.entry.Count(c => c == MediaManager.Provider.Separator);
                     this.name.Text = value.ExtractFilename();
                 }
+
+                ToolTip toolTip = new ToolTip { Content = tooltipStr };
+                ToolTipService.SetToolTip(this, toolTip);
             }
         }
 
