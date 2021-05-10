@@ -43,19 +43,23 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Event handler when open file button is clicked.
         /// </summary>
-        public event RoutedEventHandler OpenFileClick
-        {
-            add => this.OpenFileButton.Click += value;
-            remove => this.OpenFileButton.Click -= value;
-        }
+        public event RoutedEventHandler OpenFileClick;
 
         /// <summary>
         /// Event handler when open folder button is clicked.
         /// </summary>
-        public event RoutedEventHandler OpenFolderClick
+        public event RoutedEventHandler OpenFolderClick;
+
+        private void AdaptiveGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            add => this.OpenFolderButton.Click += value;
-            remove => this.OpenFolderButton.Click -= value;
+            if (e.ClickedItem == this.OpenFile)
+            {
+                this.OpenFileClick?.Invoke(this, e);
+            } 
+            else if (e.ClickedItem == this.OpenFolder)
+            {
+                this.OpenFolderClick?.Invoke(this, e);
+            }
         }
     }
 }

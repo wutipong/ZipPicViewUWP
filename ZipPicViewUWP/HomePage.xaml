@@ -73,25 +73,19 @@
                 To get started, press Open File or Open Folder.
             </TextBlock>
             <wctcontrols:AdaptiveGridView
-                Margin="64,8,8,8"
                 DesiredWidth="600"
-                IsItemClickEnabled="False"
-                SelectionMode="None">
+                SelectionMode="None"
+                ItemClick="AdaptiveGridView_ItemClick"
+                IsItemClickEnabled="True">
                 <wctcontrols:AdaptiveGridView.Items>
-                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
+                    <wctcontrols:HeaderedItemsControl 
+                        Margin="8" 
+                        Name="OpenFile">
                         <wctcontrols:HeaderedItemsControl.Header>
-                            <Button
-                                Name="OpenFileButton"
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="1"
-                                Width="130">
-
-                                <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="OpenFile" />
-                                    <TextBlock Margin="8,0,0,0">Open File</TextBlock>
-                                </StackPanel>
-                            </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="OpenFile" />
+                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource SubheaderTextBlockStyle}">Open File</TextBlock>
+                            </StackPanel>
                         </wctcontrols:HeaderedItemsControl.Header>
 
                         <TextBlock
@@ -106,17 +100,14 @@
                         </TextBlock>
                     </wctcontrols:HeaderedItemsControl>
 
-                    <wctcontrols:HeaderedItemsControl Margin="8" Background="{ThemeResource SystemListLowColor}">
+                    <wctcontrols:HeaderedItemsControl 
+                        Margin="8" 
+                        Name="OpenFolder">
                         <wctcontrols:HeaderedItemsControl.Header>
-                            <Button
-                                Name="OpenFolderButton"
-                                Width="130"
-                                VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <SymbolIcon Symbol="Folder" />
-                                    <TextBlock Margin="8,0,0,0">Open Folder</TextBlock>
-                                </StackPanel>
-                            </Button>
+                            <StackPanel Orientation="Horizontal">
+                                <SymbolIcon Symbol="Folder" />
+                                <TextBlock Margin="8,0,0,0" Style="{ThemeResource SubheaderTextBlockStyle}">Open Folder</TextBlock>
+                            </StackPanel>
                         </wctcontrols:HeaderedItemsControl.Header>
                         <TextBlock
                             Margin="8,0,0,0"
