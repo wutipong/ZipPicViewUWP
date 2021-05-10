@@ -69,7 +69,12 @@ namespace ZipPicViewUWP
         public string Title
         {
             get => this.FolderName.Text;
-            set => this.FolderName.Text = value;
+            set
+            {
+                this.FolderName.Text = value;
+                ToolTip toolTip = new ToolTip { Content = value };
+                ToolTipService.SetToolTip(this.FolderName, toolTip);
+            }
         }
 
         /// <summary>
@@ -125,11 +130,15 @@ namespace ZipPicViewUWP
             {
                 var entry = entries[i];
                 var thumbnail = new Thumbnail();
-                thumbnail.Label.Text = entry.ExtractFilename().Ellipses(25);
+                var filename = entry.ExtractFilename();
+                thumbnail.Label.Text = filename.Ellipses(25);
                 thumbnail.Entry = entry;
                 thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
                 thumbnail.Notification = this.Notification;
                 thumbnail.PrintHelper = this.PrintHelper;
+
+                ToolTip toolTip = new ToolTip { Content = filename };
+                ToolTipService.SetToolTip(thumbnail, toolTip);
 
                 this.Thumbnails[i] = thumbnail;
                 this.ThumbnailGrid.Items.Add(thumbnail);
