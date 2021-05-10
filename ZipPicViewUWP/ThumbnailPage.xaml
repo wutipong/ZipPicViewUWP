@@ -69,7 +69,7 @@
                     MinHeight="200"
                     Margin="0"
                     Padding="20"
-                    Background="{StaticResource BaseColor}">
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                     <Border
                         Name="CoverBorder"
                         Width="200"

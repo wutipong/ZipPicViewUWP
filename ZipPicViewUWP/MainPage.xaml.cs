@@ -43,18 +43,6 @@ namespace ZipPicViewUWP
         public MainPage()
         {
             this.InitializeComponent();
-            var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-            coreTitleBar.IsVisibleChanged += (sender, arg) =>
-            {
-                if (sender.IsVisible)
-                {
-                    this.TitleBar.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    this.TitleBar.Visibility = Visibility.Collapsed;
-                }
-            };
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["LowAccentColor"];

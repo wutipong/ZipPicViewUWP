@@ -84,7 +84,6 @@
         <Border
             x:Name="TitleBar"
             Height="30"
-            Background="Transparent"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="true">
