@@ -172,12 +172,8 @@ namespace ZipPicViewUWP.MediaProvider
                 {
                     lock (this.Archive)
                     {
-                        using (var entryStream = this.Archive.Entries.First(e => e.Key == entry).OpenEntryStream())
-                        {
-                            entryStream.CopyTo(outputStream);
-                            outputStream.Seek(0, SeekOrigin.Begin);
-                        }
-
+                        var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
+                        archiveEntry.WriteTo(outputStream);
                         return (outputStream, null);
                     }
                 }
