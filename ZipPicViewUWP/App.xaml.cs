@@ -95,6 +95,9 @@ namespace ZipPicViewUWP
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            //In light theme, the system button color is set to white, which is the same as the title bar color.
+            // The color is explicitly changed to "SystemBaseHighColor" to make the button visible.
+            titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["SystemBaseHighColor"];
         }
 
         /// <summary>
