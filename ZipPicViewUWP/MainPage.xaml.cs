@@ -45,7 +45,9 @@ namespace ZipPicViewUWP
             this.InitializeComponent();
 
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["LowAccentColor"];
+
+            ///TODO: replace the color resources.
+            titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["BaseHigh"];
         }
 
         /// <summary>
