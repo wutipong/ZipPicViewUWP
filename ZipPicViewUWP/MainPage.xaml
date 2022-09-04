@@ -37,7 +37,7 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="true"
-            SelectionChanged="NavigationPane_SelectionChanged">
+            SelectionChanged="NavigationPane_SelectionChanged" Margin="0,40,0,0">
             <controls:NavigationView.PaneFooter>
                 <StackPanel Orientation="Vertical" Visibility="Visible">
                     <controls:NavigationViewItemSeparator />
