@@ -13,17 +13,16 @@ namespace ZipPicViewUWP.MediaProvider
     using SharpCompress.Archives;
     using SharpCompress.Readers;
     using Windows.Storage.Streams;
-    using ZipPicViewUWP.Utility;
 
     /// <summary>
     /// Media provider class for archive file source.
     /// </summary>
     public class ArchiveMediaProvider : AbstractMediaProvider
     {
-        private string[] fileList;
-        private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
+        private string[] _fileList;
+        private readonly Dictionary<string, string[]> _folderFileEntries = new Dictionary<string, string[]>();
 
-        private Stream stream;
+        private Stream _stream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArchiveMediaProvider"/> class.
@@ -33,7 +32,7 @@ namespace ZipPicViewUWP.MediaProvider
         public ArchiveMediaProvider(Stream stream, IArchive archive)
         {
             this.Archive = archive;
-            this.stream = stream;
+            this._stream = stream;
 
             this.Separator = this.DetermineSeparator();
             this.FileFilter = new PhysicalFileFilter();
@@ -47,25 +46,14 @@ namespace ZipPicViewUWP.MediaProvider
         /// <summary>
         /// Gets the list of file inside this archive.
         /// </summary>
-        protected string[] FileList
-        {
-            get
-            {
-                if (this.fileList == null)
-                {
-                    this.fileList = this.CreateFileList();
-                }
-
-                return this.fileList;
-            }
-        }
+        protected string[] FileList => this._fileList ?? (this._fileList = this.CreateFileList());
 
         /// <summary>
         /// Try to open the archive using supplied password.
         /// </summary>
         /// <param name="stream">The archive stream.</param>
         /// <param name="password">password of the file.</param>
-        /// <param name="isEncrypted">will be assigned whtether or not the file is encrypted.</param>
+        /// <param name="isEncrypted">will be assigned whether or not the file is encrypted.</param>
         /// <returns>the archive instance.</returns>
         public static IArchive TryOpenArchive(Stream stream, string password, out bool isEncrypted)
         {
@@ -77,20 +65,19 @@ namespace ZipPicViewUWP.MediaProvider
 
             var archive = ArchiveFactory.Open(stream, options);
 
-            var entry = archive.Entries.First(e => !e.IsDirectory);
+            var entry = archive.Entries.FirstOrDefault(e => !e.IsDirectory);
 
-            if (entry != null)
+            if (entry == null) return archive;
+
+            isEncrypted = entry.IsEncrypted;
+            if (isEncrypted && password == null)
             {
-                isEncrypted = entry.IsEncrypted;
-                if (isEncrypted && password == null)
-                {
-                    return null;
-                }
+                return null;
+            }
 
-                // Try open a stream to see if it can be opened
-                using (var entryStream = entry.OpenEntryStream())
-                {
-                }
+            // Try open a stream to see if it can be opened
+            using (entry.OpenEntryStream())
+            {
             }
 
             return archive;
@@ -104,11 +91,6 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns>media provider of the given archive.</returns>
         public static ArchiveMediaProvider Create(Stream stream, IArchive archive)
         {
-            if (archive.Type == SharpCompress.Common.ArchiveType.SevenZip)
-            {
-                return new SevenZipMediaProvider(stream, archive);
-            }
-
             return new ArchiveMediaProvider(stream, archive);
         }
 
@@ -117,14 +99,13 @@ namespace ZipPicViewUWP.MediaProvider
         {
             return Task.Run<(string[], Exception)>(() =>
             {
-                if (this.folderFileEntries.ContainsKey(entry))
+                if (this._folderFileEntries.ContainsKey(entry))
                 {
-                    return (this.folderFileEntries[entry], null);
+                    return (this._folderFileEntries[entry], null);
                 }
 
                 try
                 {
-                    var entryLength = entry.Length;
                     var output = new LinkedList<string>();
                     var folder = entry == this.Root ? string.Empty : entry;
 
@@ -147,8 +128,8 @@ namespace ZipPicViewUWP.MediaProvider
                         }
                     }
 
-                    this.folderFileEntries[entry] = output.ToArray();
-                    return (this.folderFileEntries[entry], null);
+                    this._folderFileEntries[entry] = output.ToArray();
+                    return (this._folderFileEntries[entry], null);
                 }
                 catch (Exception e)
                 {
@@ -194,10 +175,10 @@ namespace ZipPicViewUWP.MediaProvider
                 this.Archive = null;
             }
 
-            lock (this.stream)
+            lock (this._stream)
             {
-                this.stream.Dispose();
-                this.stream = null;
+                this._stream.Dispose();
+                this._stream = null;
             }
         }
 
@@ -258,14 +239,13 @@ namespace ZipPicViewUWP.MediaProvider
 
                         foreach (var entry in this.FileList)
                         {
-                            var key = entry;
-                            var separatorIndex = key.LastIndexOf(this.Separator);
+                            var separatorIndex = entry.LastIndexOf(this.Separator);
                             if (separatorIndex < 0)
                             {
                                 continue;
                             }
 
-                            var parent = key.Substring(0, separatorIndex);
+                            var parent = entry.Substring(0, separatorIndex);
 
                             if (!output.Contains(parent))
                             {
@@ -294,18 +274,10 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns>file list.</returns>
         protected virtual string[] CreateFileList()
         {
-            List<string> files = new List<string>();
+            var files = new List<string>();
             lock (this.Archive)
             {
-                foreach (var e in this.Archive.Entries)
-                {
-                    if (e.IsDirectory)
-                    {
-                        continue;
-                    }
-
-                    files.Add(e.Key);
-                }
+                files.AddRange(from e in this.Archive.Entries where !e.IsDirectory select e.Key);
             }
 
             return files.ToArray();
@@ -313,15 +285,7 @@ namespace ZipPicViewUWP.MediaProvider
 
         private char DetermineSeparator()
         {
-            foreach (var entry in this.Archive.Entries)
-            {
-                if (entry.Key.Contains('\\'))
-                {
-                    return '\\';
-                }
-            }
-
-            return '/';
+            return this.Archive.Entries.Any(entry => entry.Key.Contains('\\')) ? '\\' : '/';
         }
     }
 }
