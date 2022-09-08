@@ -2,6 +2,9 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace ZipPicViewUWP.MediaProvider
 {
     /// <summary>
@@ -11,9 +14,9 @@ namespace ZipPicViewUWP.MediaProvider
     public class PdfFileFilter : FileFilter
     {
         /// <inheritdoc/>
-        public override string FindCoverPage(string[] fileNames)
+        public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            return fileNames.Length <= 0 ? null : fileNames[0];
+            return fileNames.Count() <= 0 ? null : fileNames.ElementAt(0);
         }
 
         /// <inheritdoc/>

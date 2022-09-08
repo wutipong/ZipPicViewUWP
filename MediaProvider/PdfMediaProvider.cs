@@ -5,6 +5,7 @@
 namespace ZipPicViewUWP.MediaProvider
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
     using Windows.Data.Pdf;
@@ -49,62 +50,60 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetChildEntries(string entry)
+        public override async Task<IEnumerable<string>> GetChildEntries(string entry)
         {
-            return await Task.Run<(string[], Exception)>(() =>
-            {
-                return (this.pages, null);
-            });
+            return await Task.Run<IEnumerable<string>>(() => this.pages);
+            
         }
 
         /// <inheritdoc/>
-        public override async Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
+        public override async Task<Stream> OpenEntryAsync(string entry)
         {
-            var (irs, error) = await this.OpenEntryAsRandomAccessStreamAsync(entry);
-
-            if (error != null)
+            try
             {
-                return (null, error);
+                var irs = await this.OpenEntryAsRandomAccessStreamAsync(entry);
+                var decoder = await BitmapDecoder.CreateAsync(irs);
+                var bitmap = decoder.GetSoftwareBitmapAsync();
+
+                var outputIrs = new InMemoryRandomAccessStream();
+
+                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, outputIrs);
+                encoder.SetSoftwareBitmap(await bitmap);
+
+                await encoder.FlushAsync();
+
+                var outputStream = new MemoryStream();
+                outputIrs.Seek(0);
+                outputIrs.AsStreamForRead().CopyTo(outputStream);
+
+                outputIrs.Dispose();
+                outputStream.Seek(0, SeekOrigin.Begin);
+
+                return outputStream;
+
+            } 
+            catch(Exception err)
+            {
+                throw err;
             }
-
-            var decoder = await BitmapDecoder.CreateAsync(irs);
-            var bitmap = decoder.GetSoftwareBitmapAsync();
-
-            var outputIrs = new InMemoryRandomAccessStream();
-
-            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, outputIrs);
-            encoder.SetSoftwareBitmap(await bitmap);
-
-            await encoder.FlushAsync();
-
-            var outputStream = new MemoryStream();
-            outputIrs.Seek(0);
-            outputIrs.AsStreamForRead().CopyTo(outputStream);
-
-            outputIrs.Dispose();
-            outputStream.Seek(0, SeekOrigin.Begin);
-
-            return (outputStream, null);
         }
 
         /// <inheritdoc/>
-        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
+        public override async Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
             var pageindex = uint.Parse(entry);
-
             var page = this.pdfDocument.GetPage(pageindex);
-
             var stream = new InMemoryRandomAccessStream();
 
             await page.RenderToStreamAsync(stream);
 
-            return (stream, null);
+            return stream;
         }
 
         /// <inheritdoc/>
-        public override Task<(string[], Exception error)> GetAllFileEntries()
+        public override async Task<IEnumerable<string>> GetAllFileEntries()
         {
-            return Task.Run<(string[], Exception)>(() => (this.pages, null));
+            return await Task.Run(()=> this.pages);
         }
 
         /// <inheritdoc/>
@@ -120,12 +119,9 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        protected override async Task<IEnumerable<string>> DoGetFolderEntries()
         {
-            return await Task.Run<(string[], Exception)>(() =>
-            {
-                return (new string[] { this.Root }, null);
-            });
+            return await Task.Run<IEnumerable<string>>(() => new string[] { this.Root });
         }
     }
 }

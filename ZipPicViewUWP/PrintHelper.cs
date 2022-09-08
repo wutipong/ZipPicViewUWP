@@ -80,12 +80,9 @@ namespace ZipPicViewUWP
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<Exception> Print(AbstractMediaProvider provider, string entry)
         {
+            try
             {
-                var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                if (error != null)
-                {
-                    return error;
-                }
+                var stream = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
 
                 var output = new BitmapImage();
                 output.SetSource(stream);
@@ -93,9 +90,13 @@ namespace ZipPicViewUWP
                 this.BitmapImage = output;
 
                 await this.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
-            }
 
-            return null;
+                return null;
+            }
+            catch (Exception err)
+            {
+                return err;
+            }
         }
 
         private void AddPrintPages(object sender, AddPagesEventArgs e)

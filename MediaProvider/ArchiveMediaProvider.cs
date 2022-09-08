@@ -19,7 +19,7 @@ namespace ZipPicViewUWP.MediaProvider
     /// </summary>
     public class ArchiveMediaProvider : AbstractMediaProvider
     {
-        private string[] _fileList;
+        private IEnumerable<string> _fileList;
         private readonly Dictionary<string, string[]> _folderFileEntries = new Dictionary<string, string[]>();
 
         private Stream _stream;
@@ -46,7 +46,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// <summary>
         /// Gets the list of file inside this archive.
         /// </summary>
-        protected string[] FileList => this._fileList ?? (this._fileList = this.CreateFileList());
+        protected IEnumerable<string> FileList => this._fileList ?? (this._fileList = this.CreateFileList());
 
         /// <summary>
         /// Try to open the archive using supplied password.
@@ -95,13 +95,13 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override Task<(string[], Exception error)> GetChildEntries(string entry)
+        public override async Task<IEnumerable<string>> GetChildEntries(string entry)
         {
-            return Task.Run<(string[], Exception)>(() =>
+            return await Task.Run<IEnumerable<string>>(() =>
             {
                 if (this._folderFileEntries.ContainsKey(entry))
                 {
-                    return (this._folderFileEntries[entry], null);
+                    return this._folderFileEntries[entry];
                 }
 
                 try
@@ -129,24 +129,24 @@ namespace ZipPicViewUWP.MediaProvider
                     }
 
                     this._folderFileEntries[entry] = output.ToArray();
-                    return (this._folderFileEntries[entry], null);
+                    return this._folderFileEntries[entry];
                 }
                 catch (Exception e)
                 {
-                    return (null, e);
+                    throw e;
                 }
             });
         }
 
         /// <inheritdoc/>
-        public override Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
+        public override Task<Stream> OpenEntryAsync(string entry)
         {
-            return Task.Run<(Stream, Exception)>(() =>
+            return Task.Run<Stream>(() =>
             {
                 var outputStream = new MemoryStream();
                 if (this.Archive == null)
                 {
-                    return (null, new Exception("Cannot Read Archive"));
+                    throw new Exception("Cannot Read Archive");
                 }
 
                 try
@@ -157,12 +157,12 @@ namespace ZipPicViewUWP.MediaProvider
                         archiveEntry.WriteTo(outputStream);
                         outputStream.Position = 0;
 
-                        return (outputStream, null);
+                        return outputStream;
                     }
                 }
                 catch (Exception e)
                 {
-                    return (null, e);
+                    throw e;
                 }
             });
         }
@@ -185,96 +185,77 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
+        public override async Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
             try
             {
-                var (stream, error) = await this.OpenEntryAsync(entry);
-                return (stream.AsRandomAccessStream(), error);
+                var stream = await this.OpenEntryAsync(entry);
+                return stream.AsRandomAccessStream();
             }
             catch (Exception e)
             {
-                return (null, e);
+                throw e;
             }
         }
 
         /// <inheritdoc/>
-        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        protected override Task<IEnumerable<string>> DoGetFolderEntries()
         {
-            return await Task.Run<(string[], Exception)>(() =>
-            {
-                try
-                {
-                    return (this.CreateFolderList(), null);
-                }
-                catch (Exception e)
-                {
-                    return (null, e);
-                }
-            });
+            return Task.FromResult(this.CreateFolderList().AsEnumerable());
         }
 
         /// <summary>
         /// Create a list of folders contained in the archive.
         /// </summary>
         /// <returns>folder list.</returns>
-        protected virtual string[] CreateFolderList()
+        protected virtual IEnumerable<string> CreateFolderList()
         {
             var output = new List<string>();
-            Exception exception = null;
             lock (this.Archive)
             {
-                if (this.Archive != null)
+                if (this.Archive == null) 
+                { 
+                    return Array.Empty<string>(); 
+                }
+
+                var folderEntries = from entry in this.Archive.Entries
+                                    where entry.IsDirectory
+                                    orderby entry.Key
+                                    select entry.Key;
+
+                output.Add(this.Root);
+                foreach (var folder in folderEntries)
                 {
-                    try
+                    output.Add(
+                        folder.EndsWith(this.Separator) ?
+                        folder.Substring(0, folder.Length - 1) :
+                        folder);
+                }
+
+                foreach (var entry in this.FileList)
+                {
+                    var separatorIndex = entry.LastIndexOf(this.Separator);
+                    if (separatorIndex < 0)
                     {
-                        var folderEntries = from entry in this.Archive.Entries
-                                            where entry.IsDirectory
-                                            orderby entry.Key
-                                            select entry.Key;
-
-                        output.Add(this.Root);
-                        foreach (var folder in folderEntries)
-                        {
-                            output.Add(folder.EndsWith(this.Separator) ? folder.Substring(0, folder.Length - 1) : folder);
-                        }
-
-                        foreach (var entry in this.FileList)
-                        {
-                            var separatorIndex = entry.LastIndexOf(this.Separator);
-                            if (separatorIndex < 0)
-                            {
-                                continue;
-                            }
-
-                            var parent = entry.Substring(0, separatorIndex);
-
-                            if (!output.Contains(parent))
-                            {
-                                output.Add(parent);
-                            }
-                        }
+                        continue;
                     }
-                    catch (Exception err)
+
+                    var parent = entry.Substring(0, separatorIndex);
+
+                    if (!output.Contains(parent))
                     {
-                        exception = err;
+                        output.Add(parent);
                     }
                 }
             }
-
-            if (exception != null)
-            {
-                throw exception;
-            }
-
-            return output.ToArray();
+            return output;
         }
 
         /// <summary>
         /// Create a list of file contained in the archive.
         /// </summary>
         /// <returns>file list.</returns>
-        protected virtual string[] CreateFileList()
+        protected virtual IEnumerable<string> CreateFileList()
         {
             var files = new List<string>();
             lock (this.Archive)
@@ -282,7 +263,7 @@ namespace ZipPicViewUWP.MediaProvider
                 files.AddRange(from e in this.Archive.Entries where !e.IsDirectory select e.Key);
             }
 
-            return files.ToArray();
+            return files;
         }
 
         private char DetermineSeparator()

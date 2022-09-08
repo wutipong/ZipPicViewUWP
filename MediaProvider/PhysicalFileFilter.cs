@@ -38,9 +38,9 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override string FindCoverPage(string[] fileNames)
+        public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            if (fileNames.Length <= 0)
+            if (fileNames.Count() <= 0)
             {
                 return null;
             }
@@ -54,7 +54,7 @@ namespace ZipPicViewUWP.MediaProvider
                 }
             }
 
-            return fileNames[0];
+            return fileNames.ElementAt(0);
         }
 
         /// <inheritdoc/>

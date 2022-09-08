@@ -5,6 +5,7 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -113,22 +114,20 @@ namespace ZipPicViewUWP
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task SetFolderEntry(string folder)
         {
-            var (entries, error) = await MediaManager.Provider.GetChildEntries(folder);
-            if (error != null)
-            {
-                throw error;
-            }
+            var entries = await MediaManager.Provider.GetChildEntries(folder);
 
             this.Entry = folder;
 
-            this.ImageCount.Text = entries.Length == 1 ? "1 image." : string.Format("{0} images.", entries.Length);
+            this.ImageCount.Text = entries.Count() == 1 ?
+                "1 image." :
+                string.Format($"{entries.Count()} images.");
 
-            this.Thumbnails = new Thumbnail[entries.Length];
+            this.Thumbnails = new Thumbnail[entries.Count()];
             this.ThumbnailGrid.Items.Clear();
 
-            for (int i = 0; i < entries.Length; i++)
+            for (int i = 0; i < entries.Count(); i++)
             {
-                var entry = entries[i];
+                var entry = entries.ElementAt(i);
                 var thumbnail = new Thumbnail();
                 var filename = entry.ExtractFilename();
                 thumbnail.Label.Text = filename.Ellipses(25);

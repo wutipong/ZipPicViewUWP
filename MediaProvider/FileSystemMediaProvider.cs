@@ -35,24 +35,24 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override async Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
+        public override async Task<Stream> OpenEntryAsync(string entry)
         {
             try
             {
-                return (await this.folder.OpenStreamForReadAsync(entry), null);
+                return await this.folder.OpenStreamForReadAsync(entry);
             }
             catch (Exception err)
             {
-                return (null, err);
+                throw err;
             }
         }
 
         /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetChildEntries(string entry)
+        public override async Task<IEnumerable<string>> GetChildEntries(string entry)
         {
             if (this.folderFileEntries.ContainsKey(entry))
             {
-                return (this.folderFileEntries[entry], null);
+                return this.folderFileEntries[entry];
             }
 
             try
@@ -76,28 +76,31 @@ namespace ZipPicViewUWP.MediaProvider
                 }
 
                 this.folderFileEntries[entry] = output.ToArray();
-                return (this.folderFileEntries[entry], null);
+                return this.folderFileEntries[entry];
             }
             catch (Exception e)
             {
-                return (null, e);
+                throw e;
             }
         }
 
         /// <inheritdoc/>
-        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
+        public override async Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            var (results, error) = await this.OpenEntryAsync(entry);
-            if (error != null)
+            try
             {
-                return (null, error);
+                var results = await this.OpenEntryAsync(entry);
+               
+                return results.AsRandomAccessStream();
+            } 
+            catch (Exception e)
+            {
+                throw e;
             }
-
-            return (results.AsRandomAccessStream(), null);
         }
 
         /// <inheritdoc/>
-        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        protected override async Task<IEnumerable<string>> DoGetFolderEntries()
         {
             try
             {
@@ -123,11 +126,11 @@ namespace ZipPicViewUWP.MediaProvider
 
                 await this.CreateFileList(folderEntries);
 
-                return (folderEntries, null);
+                return folderEntries;
             }
             catch (Exception e)
             {
-                return (null, e);
+                throw e;
             }
         }
 
