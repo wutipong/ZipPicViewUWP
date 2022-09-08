@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP.MediaProvider
+namespace ZipPicViewUWP
 {
     using System;
     using System.Threading.Tasks;
@@ -37,18 +37,24 @@ namespace ZipPicViewUWP.MediaProvider
         /// <param name="expectedWidth"> Expected width.</param>
         /// <param name="expectedHeight">Expected height.</param>
         /// <param name="mode">Interpolation mode.</param>
+        /// <param name="shrinkingOnly">Shrinking only, no enlarging.</param>
         /// <returns>a new image with smallest size that is larger than the input dimension.</returns>
-        public static async Task<SoftwareBitmap> CreateResizedBitmap(BitmapDecoder decoder, uint expectedWidth, uint expectedHeight, BitmapInterpolationMode mode = BitmapInterpolationMode.Fant, bool shrinkingOnly = false)
+        public static async Task<SoftwareBitmap> CreateResizedBitmap(
+            BitmapDecoder decoder,
+            uint expectedWidth,
+            uint expectedHeight,
+            BitmapInterpolationMode mode = BitmapInterpolationMode.Fant,
+            bool shrinkingOnly = false)
         {
             var expectedSize = new Size(expectedWidth, expectedHeight);
-
             var size = new Size(decoder.PixelWidth, decoder.PixelHeight);
 
             expectedSize = size.ResizeToFill(expectedSize);
 
             if (shrinkingOnly)
             {
-                if (expectedSize.Width > decoder.OrientedPixelWidth && expectedSize.Height > decoder.OrientedPixelHeight)
+                if (expectedSize.Width > decoder.OrientedPixelWidth &&
+                    expectedSize.Height > decoder.OrientedPixelHeight)
                 {
                     size = expectedSize;
                 }

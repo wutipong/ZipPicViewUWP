@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP.MediaProvider
+namespace ZipPicViewUWP
 {
     using System;
     using Windows.Foundation;
@@ -39,7 +39,8 @@ namespace ZipPicViewUWP.MediaProvider
         /// </summary>
         /// <param name="inputSize">Input size.</param>
         /// <param name="expectedSize">Expected size.</param>
-        /// <returns>The largest image size (with the same aspect ratio) that is smaller than or equal to the expected size.</returns>
+        /// <returns>The largest image size (with the same aspect ratio) that is smaller
+        /// than or equal to the expected size.</returns>
         public static Size ResizeToFit(this Size inputSize, Size expectedSize)
         {
             var sizeRatio = inputSize.Width / inputSize.Height;
@@ -63,7 +64,11 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns>an image size with the same width and aspect ratio.</returns>
         public static Size ResizeToWidth(this Size inputSize, double expectedWidth)
         {
-            var (width, height) = ImageSizeExtension.ResizeToWidth(expectedWidth, inputSize.Width, inputSize.Height);
+            var (width, height) = ImageSizeExtension.ResizeToWidth(
+                expectedWidth,
+                inputSize.Width,
+                inputSize.Height);
+
             return new Size(width, height);
         }
 
@@ -75,7 +80,11 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns>an image size with the same width and aspect ratio.</returns>
         public static Size ResizeToHeight(this Size inputSize, double expectedHeight)
         {
-            var (width, height) = ImageSizeExtension.ResizeToHeight(expectedHeight, inputSize.Width, inputSize.Height);
+            var (width, height) = ImageSizeExtension.ResizeToHeight(
+                expectedHeight,
+                inputSize.Width,
+                inputSize.Height);
+
             return new Size(width, height);
         }
 
@@ -83,7 +92,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// Find the orientation of the given size.
         /// </summary>
         /// <param name="s">Size.</param>
-        /// <returns>Orientation, landscpae or portrait.</returns>
+        /// <returns>Orientation, landscape or portrait.</returns>
         public static ImageOrientation GetOrientation(this Size s)
         {
             return s.Width > s.Height ? ImageOrientation.Landscape : ImageOrientation.Portrait;

@@ -124,8 +124,6 @@
     <Compile Include="ArchiveMediaProvider.cs" />
     <Compile Include="FileFilter.cs" />
     <Compile Include="FileSystemMediaProvider.cs" />
-    <Compile Include="ImageHelper.cs" />
-    <Compile Include="ImageSizeHelper.cs" />
     <Compile Include="PdfFileFilter.cs" />
     <Compile Include="PdfMediaProvider.cs" />
     <Compile Include="PhysicalFileFilter.cs" />
