@@ -22,14 +22,12 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Initializes a new instance of the <see cref="App"/> class.
         /// </summary>
-        /// 
-        private readonly Settings settings;
         public App()
         {
             var applicationData = Windows.Storage.ApplicationData.Current;
-            this.settings = new Settings(applicationData);
+            var settings = new Settings(applicationData);
 
-            switch (this.settings.ApplicationTheme)
+            switch (settings.ApplicationTheme)
             {
                 case ApplicationTheme.Light:
                     this.RequestedTheme = Windows.UI.Xaml.ApplicationTheme.Light;
@@ -95,7 +93,8 @@ namespace ZipPicViewUWP
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
-            //In light theme, the system button color is set to white, which is the same as the title bar color.
+
+            // In light theme, the system button color is set to white, which is the same as the title bar color.
             // The color is explicitly changed to "SystemBaseHighColor" to make the button visible.
             titleBar.ButtonForegroundColor = (Color)Application.Current.Resources["SystemBaseHighColor"];
         }

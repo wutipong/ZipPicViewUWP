@@ -2,13 +2,12 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-using ZipPicViewUWP.MediaProvider;
-
 namespace ZipPicViewUWP
 {
     using Windows.Foundation;
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
+    using ZipPicViewUWP.MediaProvider;
 
     /// <summary>
     ///  A Placeholder panel holding an image that will be printed.

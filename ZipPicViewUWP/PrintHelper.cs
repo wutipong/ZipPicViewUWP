@@ -37,6 +37,11 @@ namespace ZipPicViewUWP
         }
 
         /// <summary>
+        /// Gets a value indicating whether is printing supported.
+        /// </summary>
+        public static bool IsPrintingSupported => PrintManager.IsSupported();
+
+        /// <summary>
         /// Gets or sets image to be printed.
         /// </summary>
         public BitmapImage BitmapImage { get; set; }
