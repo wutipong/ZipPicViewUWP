@@ -25,9 +25,9 @@
                         The setting changes will be applied after the next time the application runs.
                     </TextBlock>
                     <ComboBox
-                        x:Name="cmbTheme"
+                        x:Name="ThemeComboBox"
                         Header="Application Theme"
-                        SelectionChanged="cmbTheme_SelectionChanged">
+                        SelectionChanged="ThemeComboBoxSelectionChanged">
                         <ComboBoxItem Content="OS Default" />
                         <ComboBoxItem Content="Light" />
                         <ComboBoxItem Content="Dark" />
@@ -45,16 +45,16 @@
             <my:HeaderedContentControl.Content>
                 <StackPanel Orientation="Vertical">
                     <ComboBox
-                        x:Name="cmbBackground"
+                        x:Name="BackgroundComboBox"
                         Header="Background"
-                        SelectionChanged="cmbBackground_SelectionChanged">
+                        SelectionChanged="BackgroundComboBoxSelectionChanged">
                         <ComboBoxItem Content="Transparent" />
                         <ComboBoxItem Content="Solid" />
                     </ComboBox>
                     <ComboBox
-                        x:Name="cmbScaling"
+                        x:Name="ImageManipulationComboBox"
                         Header="Image Scaling"
-                        SelectionChanged="cmbScaling_SelectionChanged">
+                        SelectionChanged="ImageManipulationComboBoxSelectionChanged">
                         <ComboBoxItem>Nearest Neighbor</ComboBoxItem>
                         <ComboBoxItem>Linear</ComboBoxItem>
                         <ComboBoxItem>Cubic</ComboBoxItem>

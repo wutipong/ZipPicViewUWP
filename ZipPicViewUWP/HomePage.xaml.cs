@@ -55,7 +55,7 @@ namespace ZipPicViewUWP
             if (e.ClickedItem == this.OpenFile)
             {
                 this.OpenFileClick?.Invoke(this, e);
-            } 
+            }
             else if (e.ClickedItem == this.OpenFolder)
             {
                 this.OpenFolderClick?.Invoke(this, e);

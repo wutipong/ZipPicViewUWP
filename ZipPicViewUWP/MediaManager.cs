@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP.MediaProvider
+namespace ZipPicViewUWP
 {
     using System;
     using System.IO;
@@ -15,8 +15,7 @@ namespace ZipPicViewUWP.MediaProvider
     using Windows.Storage;
     using Windows.Storage.Streams;
     using Windows.UI.Xaml.Controls;
-    using Windows.UI.Xaml.Media.Imaging;
-    using ZipPicViewUWP.Utility;
+    using ZipPicViewUWP.MediaProvider;
 
     /// <summary>
     /// MediaManager contains various functions to interact with the MediaProvider.
@@ -76,11 +75,13 @@ namespace ZipPicViewUWP.MediaProvider
             get => currentEntry;
             set
             {
-                if (value != currentEntry)
+                if (value == currentEntry)
                 {
-                    CurrentEntryChange(value);
-                    currentEntry = value;
+                    return;
                 }
+
+                CurrentEntryChange?.Invoke(value);
+                currentEntry = value;
             }
         }
 
@@ -308,8 +309,10 @@ namespace ZipPicViewUWP.MediaProvider
         /// <param name="entry">Entry.</param>
         /// <param name="width">Expected Width.</param>
         /// <param name="height">Expected Height.</param>
+        /// <param name="mode">Image manipulation algorithm.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(string entry, int width, int height, BitmapInterpolationMode mode)
+        public static async Task<(SoftwareBitmap, int origWidth, int origHeight)> CreateImage(
+            string entry, int width, int height, BitmapInterpolationMode mode)
         {
             await Semaphore.WaitAsync();
             try

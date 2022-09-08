@@ -13,27 +13,26 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class SettingPage : Page
     {
+        private readonly Settings settings;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingPage"/> class.
         /// </summary>
-
-        private readonly Settings settings;
-
         public SettingPage()
         {
             this.InitializeComponent();
 
-            this.settings = new Settings(this.ApplicationData);
-            this.cmbTheme.SelectedIndex = (int)this.settings.ApplicationTheme;
-            this.cmbBackground.SelectedIndex = (int)this.settings.ImageViewBackground;
-            this.cmbScaling.SelectedIndex = (int)this.settings.ImageViewInterpolationMode;
+            this.settings = new Settings(ApplicationData);
+            this.ThemeComboBox.SelectedIndex = (int)this.settings.ApplicationTheme;
+            this.BackgroundComboBox.SelectedIndex = (int)this.settings.ImageViewBackground;
+            this.ImageManipulationComboBox.SelectedIndex = (int)this.settings.ImageViewInterpolationMode;
         }
 
-        private ApplicationData ApplicationData => Windows.Storage.ApplicationData.Current;
+        private static ApplicationData ApplicationData => Windows.Storage.ApplicationData.Current;
 
-        private void cmbTheme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ThemeComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (this.cmbTheme.SelectedIndex)
+            switch (this.ThemeComboBox.SelectedIndex)
             {
                 case 0:
                     this.settings.ApplicationTheme = ApplicationTheme.Default;
@@ -50,9 +49,9 @@ namespace ZipPicViewUWP
             this.settings.Commit();
         }
 
-        private void cmbBackground_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void BackgroundComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (this.cmbBackground.SelectedIndex)
+            switch (this.BackgroundComboBox.SelectedIndex)
             {
                 case 0:
                     this.settings.ImageViewBackground = ZipPicViewUWP.ImageViewBackground.Transparent;
@@ -66,9 +65,9 @@ namespace ZipPicViewUWP
             this.settings.Commit();
         }
 
-        private void cmbScaling_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ImageManipulationComboBoxSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            switch (this.cmbScaling.SelectedIndex)
+            switch (this.ImageManipulationComboBox.SelectedIndex)
             {
                 case 0:
                     this.settings.ImageViewInterpolationMode = Windows.Graphics.Imaging.BitmapInterpolationMode.NearestNeighbor;

@@ -20,7 +20,6 @@ namespace ZipPicViewUWP
     using Windows.UI.Xaml.Input;
     using Windows.UI.Xaml.Media;
     using Windows.UI.Xaml.Media.Imaging;
-    using ZipPicViewUWP.MediaProvider;
     using ZipPicViewUWP.Utility;
 
     /// <summary>
@@ -52,14 +51,6 @@ namespace ZipPicViewUWP
         private SoftwareBitmapSource source;
         private Settings settings;
 
-        private enum Effect
-        {
-            None,
-            BlackWhite,
-            Sepia,
-            Invert,
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewerControl"/> class.
         /// </summary>
@@ -70,37 +61,42 @@ namespace ZipPicViewUWP
             this.timer.Tick += this.Timer_Tick;
             this.timer.Interval = new TimeSpan(0, 0, 1);
 
-            this.DurationList.Items.Clear();
+            this.DurationList?.Items?.Clear();
             var oneMinute = TimeSpan.FromMinutes(1.00);
             foreach (var duration in AdvanceDurations)
             {
-                var durationStr = duration < oneMinute ?
-                    string.Format("{0} Second(s)", duration.Seconds) :
-                    string.Format("{0}:{1:00} Minute(s)", (int)duration.TotalMinutes, duration.Seconds);
+                var durationStr = duration < oneMinute ? $"{duration.Seconds} Second(s)"
+                    : $"{(int)duration.TotalMinutes}:{duration.Seconds:00} Minute(s)";
 
-                this.DurationList.Items.Add(durationStr);
+                this.DurationList?.Items?.Add(durationStr);
             }
 
             var applicationData = Windows.Storage.ApplicationData.Current;
             applicationData.LocalSettings.Values.TryGetValue("durationIndex", out var durationIndex);
-            this.DurationList.SelectedIndex = durationIndex == null ? 0 : (int)durationIndex;
-            if (this.DurationList.SelectedIndex < 0 || this.DurationList.SelectedIndex >= this.DurationList.Items.Count)
+
+            var durationList = this.DurationList;
+            if (durationList != null)
             {
-                this.DurationList.SelectedIndex = 0;
+                durationList.SelectedIndex = durationIndex == null ? 0 : (int)durationIndex;
+                if (durationList.SelectedIndex < 0 ||
+                    durationList.SelectedIndex >= durationList.Items?.Count)
+                {
+                    durationList.SelectedIndex = 0;
+                }
+
+                durationList.SelectionChanged += this.DurationList_SelectionChanged;
             }
 
-            this.DurationList.SelectionChanged += this.DurationList_SelectionChanged;
-
             applicationData.LocalSettings.Values.TryGetValue("randomAdvance", out var randomAdvance);
-            this.RandomToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
+            this.RandomToggle.IsOn = randomAdvance != null && (bool)randomAdvance;
             this.RandomToggle.Toggled += this.RandomToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("globalAdvance", out var globalAdvance);
-            this.GlobalToggle.IsOn = randomAdvance == null ? false : (bool)randomAdvance;
+            this.GlobalToggle.IsOn = randomAdvance != null && (bool)randomAdvance;
             this.GlobalToggle.Toggled += this.GlobalToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("precount", out var precount);
-            this.PrecountToggle.IsOn = precount == null ? false : (bool)precount;
+            this.PrecountToggle.IsOn = precount != null && (bool)precount;
             this.PrecountToggle.Toggled += this.PrecountToggle_Toggled;
 
             applicationData.LocalSettings.Values.TryGetValue("background", out var background);
@@ -121,9 +117,11 @@ namespace ZipPicViewUWP
                         Amount = 3.0,
                     };
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
-            if (!Windows.Graphics.Printing.PrintManager.IsSupported())
+            if (!PrintHelper.IsPrintingSupported)
             {
                 this.PrintButton.Visibility = Visibility.Collapsed;
             }
@@ -134,14 +132,22 @@ namespace ZipPicViewUWP
         /// </summary>
         public event RoutedEventHandler CloseButtonClick
         {
-            add { this.CloseButton.Click += value; }
-            remove { this.CloseButton.Click -= value; }
+            add => this.CloseButton.Click += value;
+            remove => this.CloseButton.Click -= value;
         }
 
         /// <summary>
         /// An event triggered when control layer visibility is changed.
         /// </summary>
         public event EventHandler<Visibility> ControlLayerVisibilityChange;
+
+        private enum Effect
+        {
+            None,
+            BlackWhite,
+            Sepia,
+            Invert,
+        }
 
         /// <summary>
         /// Gets or sets the width of image to be display.

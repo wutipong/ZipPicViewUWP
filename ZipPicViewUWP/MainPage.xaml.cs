@@ -319,11 +319,10 @@ namespace ZipPicViewUWP
                 }
             }
 
-            FolderReadingDialog dialog = new FolderReadingDialog();
+            var dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
 
-            Exception error;
-            error = await MediaManager.ChangeProvider(provider);
+            var error = await MediaManager.ChangeProvider(provider);
             if (error != null)
             {
                 dialog.Hide();
@@ -344,10 +343,6 @@ namespace ZipPicViewUWP
         private void SetFileName(string filename)
         {
             this.FileName = filename;
-        }
-
-        private void ImageControl_ControlLayerVisibilityChange(object sender, Visibility e)
-        {
         }
 
         private async void NavigationPane_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs e)

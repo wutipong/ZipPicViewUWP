@@ -12,26 +12,52 @@ namespace ZipPicViewUWP
     using Windows.Graphics.Imaging;
     using Windows.Storage;
 
+    /// <summary>
+    /// Application Theme.
+    /// </summary>
     public enum ApplicationTheme
     {
-        Default, Light, Dark
+        /// <summary>
+        /// OS Default theme.
+        /// </summary>
+        Default,
+
+        /// <summary>
+        /// Light theme.
+        /// </summary>
+        Light,
+
+        /// <summary>
+        /// Dark theme.
+        /// </summary>
+        Dark,
     }
 
+    /// <summary>
+    /// Image viewer background brush.
+    /// </summary>
     public enum ImageViewBackground
     {
-        Transparent, Solid
+        /// <summary>
+        /// Transparent.
+        /// </summary>
+        Transparent,
+
+        /// <summary>
+        /// Solid color.
+        /// </summary>
+        Solid,
     }
 
+    /// <summary>
+    /// Application settings.
+    /// </summary>
     public class Settings
     {
-        public ApplicationTheme ApplicationTheme { get; set; } = ApplicationTheme.Default;
-
-        public ImageViewBackground ImageViewBackground { get; set; } = ImageViewBackground.Transparent;
-
-        public BitmapInterpolationMode ImageViewInterpolationMode { get; set; } = BitmapInterpolationMode.Fant;
-
-        private ApplicationData ApplicationData { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Settings"/> class.
+        /// </summary>
+        /// <param name="applicationData">application data.</param>
         public Settings(ApplicationData applicationData)
         {
             this.ApplicationData = applicationData;
@@ -42,7 +68,9 @@ namespace ZipPicViewUWP
                 {
                     this.ApplicationTheme = Enum.Parse<ApplicationTheme>(theme as string);
                 }
-                catch (ArgumentException) { }
+                catch (ArgumentException)
+                {
+                }
             }
 
             if (this.ApplicationData.LocalSettings.Values.TryGetValue("background", out var background))
@@ -51,7 +79,9 @@ namespace ZipPicViewUWP
                 {
                     this.ImageViewBackground = Enum.Parse<ImageViewBackground>(background as string);
                 }
-                catch (ArgumentException) { }
+                catch (ArgumentException)
+                {
+                }
             }
 
             if (this.ApplicationData.LocalSettings.Values.TryGetValue("image_scaling", out var scaling))
@@ -60,10 +90,32 @@ namespace ZipPicViewUWP
                 {
                     this.ImageViewInterpolationMode = Enum.Parse<BitmapInterpolationMode>(scaling as string);
                 }
-                catch (ArgumentException) { }
+                catch (ArgumentException)
+                {
+                }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the application theme.
+        /// </summary>
+        public ApplicationTheme ApplicationTheme { get; set; } = ApplicationTheme.Default;
+
+        /// <summary>
+        /// Gets or sets image viewer background.
+        /// </summary>
+        public ImageViewBackground ImageViewBackground { get; set; } = ImageViewBackground.Transparent;
+
+        /// <summary>
+        /// Gets or sets image manipulation algorithm.
+        /// </summary>
+        public BitmapInterpolationMode ImageViewInterpolationMode { get; set; } = BitmapInterpolationMode.Fant;
+
+        private ApplicationData ApplicationData { get; set; }
+
+        /// <summary>
+        /// Commit.
+        /// </summary>
         public void Commit()
         {
             this.ApplicationData.LocalSettings.Values["theme"] = this.ApplicationTheme.ToString();
