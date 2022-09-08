@@ -127,14 +127,9 @@
     <Compile Include="ImageHelper.cs" />
     <Compile Include="ImageSizeHelper.cs" />
     <Compile Include="MediaManager.cs" />
-    <Compile Include="PdfFileFIlter.cs" />
+    <Compile Include="PdfFileFilter.cs" />
     <Compile Include="PdfMediaProvider.cs" />
     <Compile Include="PhysicalFileFilter.cs" />
-    <Compile Include="PrintHelper.cs" />
-    <Compile Include="PrintPage.xaml.cs">
-      <DependentUpon>PrintPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="PrintPanel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\MediaProvider.rd.xml" />
   </ItemGroup>
@@ -148,12 +143,6 @@
     <PackageReference Include="SharpCompress">
       <Version>0.32.2</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="PrintPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UtilityLibrary\UtilityLibrary.csproj">

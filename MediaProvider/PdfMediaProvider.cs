@@ -29,7 +29,7 @@ namespace ZipPicViewUWP.MediaProvider
         public PdfMediaProvider(StorageFile file)
         {
             this.file = file;
-            this.FileFilter = new PdfFileFIlter();
+            this.FileFilter = new PdfFileFilter();
         }
 
         /// <summary>

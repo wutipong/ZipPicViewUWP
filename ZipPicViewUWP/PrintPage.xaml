@@ -1,13 +1,12 @@
 ﻿<Page
-    x:Class="ZipPicViewUWP.MediaProvider.PrintPage"
+    x:Class="ZipPicViewUWP.PrintPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:TestPrint"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:my="using:ZipPicViewUWP.MediaProvider"
+    xmlns:zipPicViewUwp="using:ZipPicViewUWP"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
 
-    <my:PrintPanel x:Name="PrintPanel" />
+    <zipPicViewUwp:PrintPanel x:Name="PrintPanel" />
 </Page>

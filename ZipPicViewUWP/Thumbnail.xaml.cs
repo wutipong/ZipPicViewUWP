@@ -143,13 +143,14 @@ namespace ZipPicViewUWP
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.Print(this.PrintHelper, this.Entry);
-
-            if (error != null)
+            var error = await this.PrintHelper.Print(MediaManager.Provider, this.Entry);
+            if (error == null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
-                await dialog.ShowAsync();
+                return;
             }
+
+            var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
+            await dialog.ShowAsync();
         }
     }
 }

@@ -38,23 +38,23 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override string FindCoverPage(string[] filenames)
+        public override string FindCoverPage(string[] fileNames)
         {
-            if (filenames.Length <= 0)
+            if (fileNames.Length <= 0)
             {
                 return null;
             }
 
             foreach (var keyword in this.coverKeywords)
             {
-                var name = filenames.FirstOrDefault((s) => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                var name = fileNames.FirstOrDefault((s) => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
                 if (name != null)
                 {
                     return name;
                 }
             }
 
-            return filenames[0];
+            return fileNames[0];
         }
 
         /// <inheritdoc/>

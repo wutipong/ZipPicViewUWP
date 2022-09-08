@@ -346,12 +346,14 @@ namespace ZipPicViewUWP
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.Print(this.PrintHelper, MediaManager.CurrentEntry);
-            if (error != null)
+            var error = await this.PrintHelper.Print(MediaManager.Provider, MediaManager.CurrentEntry);
+            if (error == null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", MediaManager.CurrentEntry.ExtractFilename()), "Error");
-                await dialog.ShowAsync();
+                return;
             }
+
+            var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", MediaManager.CurrentEntry.ExtractFilename()), "Error");
+            await dialog.ShowAsync();
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -367,14 +369,13 @@ namespace ZipPicViewUWP
             picker.FileTypeChoices.Add("All", new List<string>() { "." });
             var file = await picker.PickSaveFileAsync();
             var error = await MediaManager.SaveFileAs(entry, file);
-
-            if (error != null)
+            if (error == null)
             {
-                var dialog = new MessageDialog(string.Format("Cannot save image file: {0}.", file.Name), "Error");
-                await dialog.ShowAsync();
-
                 return;
             }
+
+            var dialog = new MessageDialog(string.Format("Cannot save image file: {0}.", file.Name), "Error");
+            await dialog.ShowAsync();
         }
 
         private void ImageBorder_Tapped(object sender, TappedRoutedEventArgs e)

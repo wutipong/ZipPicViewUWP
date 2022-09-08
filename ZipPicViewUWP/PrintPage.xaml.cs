@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP.MediaProvider
+namespace ZipPicViewUWP
 {
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
