@@ -120,6 +120,8 @@
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ImageHelper.cs" />
+    <Compile Include="ImageSizeHelper.cs" />
     <Compile Include="MediaManager.cs" />
     <Compile Include="PrintHelper.cs" />
     <Compile Include="PrintPage.xaml.cs">
