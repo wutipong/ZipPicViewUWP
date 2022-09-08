@@ -155,6 +155,8 @@ namespace ZipPicViewUWP.MediaProvider
                     {
                         var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
                         archiveEntry.WriteTo(outputStream);
+                        outputStream.Position = 0;
+
                         return (outputStream, null);
                     }
                 }

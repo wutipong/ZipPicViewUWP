@@ -2,7 +2,7 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-namespace ZipPicViewUWP.MediaProvider
+namespace ZipPicViewUWP
 {
     using System;
     using System.Threading.Tasks;
@@ -12,9 +12,11 @@ namespace ZipPicViewUWP.MediaProvider
     using Windows.UI.Xaml.Controls;
     using Windows.UI.Xaml.Media.Imaging;
     using Windows.UI.Xaml.Printing;
+    using ZipPicViewUWP.MediaProvider;
+    using ZipPicViewUWP.Utility;
 
     /// <summary>
-    /// Helper class providing printing functionalities.
+    /// Helper class providing printing functionality.
     /// </summary>
     public class PrintHelper
     {
@@ -63,6 +65,32 @@ namespace ZipPicViewUWP.MediaProvider
         {
             this.title = title;
             return await PrintManager.ShowPrintUIAsync();
+        }
+
+        /// <summary>
+        /// Print the image file.
+        /// </summary>
+        /// <param name="provider">Media provider.</param>
+        /// <param name="entry">Entry to print.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public async Task<Exception> Print(AbstractMediaProvider provider, string entry)
+        {
+            {
+                var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
+                if (error != null)
+                {
+                    return error;
+                }
+
+                var output = new BitmapImage();
+                output.SetSource(stream);
+
+                this.BitmapImage = output;
+
+                await this.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
+            }
+
+            return null;
         }
 
         private void AddPrintPages(object sender, AddPagesEventArgs e)

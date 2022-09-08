@@ -19,7 +19,7 @@ namespace ZipPicViewUWP.MediaProvider
     using ZipPicViewUWP.Utility;
 
     /// <summary>
-    /// MediaManager contains variuos functions to interact with the MediaProvider.
+    /// MediaManager contains various functions to interact with the MediaProvider.
     /// </summary>
     public static class MediaManager
     {
@@ -36,12 +36,12 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <summary>
-        /// A delgate for property change events.
+        /// A delegate for property change events.
         /// </summary>
         /// <typeparam name="T">Type of the parameter.</typeparam>
-        /// <param name="newvalue">New value to be set to the property.</param>
+        /// <param name="v">New value to be set to the property.</param>
         /// <returns>Exception when the operation fails.</returns>
-        public delegate Task<Exception> PropertyChangeHandler<T>(T newvalue);
+        public delegate Task<Exception> PropertyChangeHandler<in T>(T v);
 
         /// <summary>
         /// Current entry change event.
@@ -384,32 +384,6 @@ namespace ZipPicViewUWP.MediaProvider
             output.Dispose();
 
             stream.Dispose();
-
-            return null;
-        }
-
-        /// <summary>
-        /// Print the image file.
-        /// </summary>
-        /// <param name="printHelper">Print helper object.</param>
-        /// <param name="entry">Entry to print.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> Print(PrintHelper printHelper, string entry)
-        {
-            {
-                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                if (error != null)
-                {
-                    return error;
-                }
-
-                var output = new BitmapImage();
-                output.SetSource(stream);
-
-                printHelper.BitmapImage = output;
-
-                await printHelper.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
-            }
 
             return null;
         }

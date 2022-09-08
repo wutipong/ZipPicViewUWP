@@ -19,8 +19,8 @@ namespace ZipPicViewUWP.MediaProvider
         /// <summary>
         /// File a cover image from the list of file names.
         /// </summary>
-        /// <param name="filenames">Input file names.</param>
+        /// <param name="fileNames">Input file names.</param>
         /// <returns>The cover image file name.</returns>
-        public abstract string FindCoverPage(string[] filenames);
+        public abstract string FindCoverPage(string[] fileNames);
     }
 }

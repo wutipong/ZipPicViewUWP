@@ -8,17 +8,12 @@ namespace ZipPicViewUWP.MediaProvider
     /// File filter to be used with <c>PdfMediaProvider</c>.
     /// <seealso cref="PdfMediaProvider"/>
     /// </summary>
-    public class PdfFileFIlter : FileFilter
+    public class PdfFileFilter : FileFilter
     {
         /// <inheritdoc/>
-        public override string FindCoverPage(string[] filenames)
+        public override string FindCoverPage(string[] fileNames)
         {
-            if (filenames.Length <= 0)
-            {
-                return null;
-            }
-
-            return filenames[0];
+            return fileNames.Length <= 0 ? null : fileNames[0];
         }
 
         /// <inheritdoc/>
