@@ -150,21 +150,21 @@ namespace ZipPicViewUWP
         /// Change the media provider.
         /// </summary>
         /// <param name="newProvider">the new media provider.</param>
-        /// <returns>Exception when there're errors. Null otherwise.</returns>
-        public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task ChangeProvider(AbstractMediaProvider newProvider)
         {
             await Semaphore.WaitAsync();
             try
             {
                 if (newProvider == Provider)
                 {
-                    return null;
+                    return;
                 }
 
                 var (fileEntries, errorFile) = await newProvider.GetAllFileEntries();
                 if (errorFile != null)
                 {
-                    return errorFile;
+                    throw errorFile;
                 }
 
                 FileEntries = fileEntries;
@@ -172,20 +172,16 @@ namespace ZipPicViewUWP
                 var (folderEntries, errorFolder) = await newProvider.GetFolderEntries();
                 if (errorFolder != null)
                 {
-                    return errorFolder;
+                    throw errorFolder;
                 }
 
                 FolderEntries = folderEntries;
                 CurrentFolder = newProvider.Root;
                 currentFolderEntries = null;
 
-                if (Provider != null)
-                {
-                    Provider.Dispose();
-                }
+                Provider?.Dispose();
 
                 Provider = newProvider;
-                return null;
             }
             finally
             {

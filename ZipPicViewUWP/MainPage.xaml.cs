@@ -169,7 +169,7 @@ namespace ZipPicViewUWP
                 }
                 catch (Exception err)
                 {
-                    var dialog = new MessageDialog(string.Format("Cannot open file: {0} : {1}.", selected.Name, err.Message), "Error");
+                    var dialog = new MessageDialog($"Cannot open file: {selected.Name} : {err.Message}.", "Error");
                     await dialog.ShowAsync();
                     stream?.Dispose();
                     this.IsEnabled = true;
@@ -322,8 +322,11 @@ namespace ZipPicViewUWP
             var dialog = new FolderReadingDialog();
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
 
-            var error = await MediaManager.ChangeProvider(provider);
-            if (error != null)
+            try
+            {
+                await MediaManager.ChangeProvider(provider);
+            }
+            catch (Exception error)
             {
                 dialog.Hide();
                 return error;
