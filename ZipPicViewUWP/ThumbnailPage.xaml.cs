@@ -73,7 +73,7 @@ namespace ZipPicViewUWP
             set
             {
                 this.FolderName.Text = value;
-                ToolTip toolTip = new ToolTip { Content = value };
+                var toolTip = new ToolTip { Content = value };
                 ToolTipService.SetToolTip(this.FolderName, toolTip);
             }
         }
@@ -118,33 +118,35 @@ namespace ZipPicViewUWP
 
             this.Entry = folder;
 
-            this.ImageCount.Text = entries.Count() == 1 ?
+            var fileNames = entries as string[] ?? entries.ToArray();
+            this.ImageCount.Text = fileNames.Length == 1 ?
                 "1 image." :
-                string.Format($"{entries.Count()} images.");
+                string.Format($"{fileNames.Length} images.");
 
-            this.Thumbnails = new Thumbnail[entries.Count()];
-            this.ThumbnailGrid.Items.Clear();
+            this.Thumbnails = new Thumbnail[fileNames.Count()];
+            this.ThumbnailGrid?.Items?.Clear();
 
-            for (int i = 0; i < entries.Count(); i++)
+            for (var i = 0; i < fileNames.Count(); i++)
             {
-                var entry = entries.ElementAt(i);
+                var entry = fileNames.ElementAt(i);
                 var thumbnail = new Thumbnail();
                 var filename = entry.ExtractFilename();
+
                 thumbnail.Label.Text = filename.Ellipses(25);
                 thumbnail.Entry = entry;
                 thumbnail.ProgressRing.Visibility = Visibility.Collapsed;
                 thumbnail.Notification = this.Notification;
                 thumbnail.PrintHelper = this.PrintHelper;
 
-                ToolTip toolTip = new ToolTip { Content = filename };
+                var toolTip = new ToolTip { Content = filename };
                 ToolTipService.SetToolTip(thumbnail, toolTip);
 
                 this.Thumbnails[i] = thumbnail;
-                this.ThumbnailGrid.Items.Add(thumbnail);
+                this.ThumbnailGrid?.Items?.Add(thumbnail);
             }
 
-            var cover = MediaManager.Provider.FileFilter.FindCoverPage(entries);
-            if (cover != null && cover != string.Empty)
+            var cover = MediaManager.Provider.FileFilter.FindCoverPage(fileNames);
+            if (!string.IsNullOrEmpty(cover))
             {
                 var (bitmap, _, _) = await MediaManager.CreateImage(cover, 200, 200, Windows.Graphics.Imaging.BitmapInterpolationMode.Linear);
 
@@ -162,11 +164,11 @@ namespace ZipPicViewUWP
         public async Task ResumeLoadThumbnail()
         {
             this.CancellationToken = new CancellationTokenSource();
-            CancellationToken token = this.CancellationToken.Token;
+            var token = this.CancellationToken.Token;
             this.ProgressBorderShowStoryBoard.Begin();
             try
             {
-                for (int i = 0; i < this.Thumbnails.Length; i++)
+                for (var i = 0; i < this.Thumbnails.Length; i++)
                 {
                     var thumbnail = this.Thumbnails[i];
                     if (thumbnail.ImageSource != null)
@@ -195,6 +197,7 @@ namespace ZipPicViewUWP
             }
             catch (Exception)
             {
+                // Ignore error if any.
             }
         }
 
@@ -213,7 +216,7 @@ namespace ZipPicViewUWP
         private void ThumbnailGrid_ItemClick(object sender, ItemClickEventArgs e)
         {
             var thumbnail = e.ClickedItem as Thumbnail;
-            var entry = thumbnail.Entry;
+            var entry = thumbnail?.Entry;
 
             MediaManager.CurrentEntry = entry;
 
@@ -233,7 +236,7 @@ namespace ZipPicViewUWP
             }
             else
             {
-                this.ProgressText.Text = string.Format("Loading Thumbnails {0}/{1}.", current + 1, count);
+                this.ProgressText.Text = $"Loading Thumbnails {current + 1}/{count}.";
             }
         }
     }

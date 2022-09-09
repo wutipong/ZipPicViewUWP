@@ -57,7 +57,7 @@ namespace ZipPicViewUWP
             this.printDocument.GetPreviewPage += this.GetPrintPreviewPage;
             this.printDocument.AddPages += this.AddPrintPages;
 
-            PrintManager printMan = PrintManager.GetForCurrentView();
+            var printMan = PrintManager.GetForCurrentView();
             printMan.PrintTaskRequested += this.PrintTaskRequested;
         }
 
@@ -101,21 +101,21 @@ namespace ZipPicViewUWP
 
         private void AddPrintPages(object sender, AddPagesEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
             printDoc.AddPage(this.printPage);
             printDoc.AddPagesComplete();
         }
 
         private void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
 
             printDoc.SetPreviewPageCount(1, PreviewPageCountType.Intermediate);
         }
 
         private void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
             this.printPage = new PrintPage()
             {
                 LayoutOption = this.printLayout,

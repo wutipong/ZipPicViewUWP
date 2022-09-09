@@ -206,6 +206,9 @@ namespace ZipPicViewUWP
                         Amount = 3.0,
                     };
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             this.Opacity = 0;
@@ -249,10 +252,10 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            bool showLoading = true;
+            var showLoading = true;
 
-            int width = this.ExpectedImageWidth;
-            int height = this.ExpectedImageHeight;
+            var width = this.ExpectedImageWidth;
+            var height = this.ExpectedImageHeight;
 
             var createBitmapTask = MediaManager.CreateImage(file, width, height, this.settings.ImageViewInterpolationMode);
 
@@ -275,20 +278,17 @@ namespace ZipPicViewUWP
 
             this.FilenameTextBlock.Text = file.ExtractFilename();
 
-            ToolTip toolTip = new ToolTip { Content = file };
+            var toolTip = new ToolTip { Content = file };
             ToolTipService.SetToolTip(this.FilenameTextBlock, toolTip);
 
-            if (this.source != null)
-            {
-                this.source.Dispose();
-            }
+            this.source?.Dispose();
 
             this.source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
             showLoading = false;
 
             await this.source.SetBitmapAsync(bitmap);
-            this.OriginalDimension.Text = string.Format("{0}x{1}", origWidth, origHeight);
+            this.OriginalDimension.Text = $"{origWidth}x{origHeight}";
             this.Image.Source = this.source;
             this.LoadingControl.Visibility = Visibility.Collapsed;
             this.ResetCounter();
@@ -341,11 +341,13 @@ namespace ZipPicViewUWP
             var error = await MediaManager.CopyToClipboard(MediaManager.CurrentEntry);
             if (error == null)
             {
-                this.Notification.Show(string.Format("The image {0} has been copied to the clipboard.", MediaManager.CurrentEntry.ExtractFilename()), 1000);
+                this.Notification.Show(
+                    $"The image {MediaManager.CurrentEntry.ExtractFilename()} has been copied to the clipboard.", 1000);
             }
             else
             {
-                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", MediaManager.CurrentEntry.ExtractFilename()), "Error");
+                var dialog = new MessageDialog(
+                    $"Cannot copy image from file: {MediaManager.CurrentEntry.ExtractFilename()}.", "Error");
                 await dialog.ShowAsync();
             }
         }
@@ -358,7 +360,8 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", MediaManager.CurrentEntry.ExtractFilename()), "Error");
+            var dialog = new MessageDialog(
+                $"Cannot copy image from file: {MediaManager.CurrentEntry.ExtractFilename()}.", "Error");
             await dialog.ShowAsync();
         }
 
@@ -380,7 +383,7 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var dialog = new MessageDialog(string.Format("Cannot save image file: {0}.", file.Name), "Error");
+            var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
             await dialog.ShowAsync();
         }
 
@@ -484,16 +487,18 @@ namespace ZipPicViewUWP
             }
 
             var key = e.VirtualKey;
-            if (key == VirtualKey.Left ||
-                key == VirtualKey.PageUp)
+            switch (key)
             {
-                this.AdvanceBackward();
-            }
-            else if (key == VirtualKey.Right ||
-                key == VirtualKey.PageDown ||
-                key == VirtualKey.Space)
-            {
-                this.AdvanceForward();
+                case VirtualKey.Left:
+                case VirtualKey.PageUp:
+                    this.AdvanceBackward();
+                    break;
+
+                case VirtualKey.Right:
+                case VirtualKey.PageDown:
+                case VirtualKey.Space:
+                    this.AdvanceForward();
+                    break;
             }
 
             e.Handled = true;
@@ -520,8 +525,8 @@ namespace ZipPicViewUWP
 
         private async void AdvanceAutoBeginStoryboard_Completed(object sender, object e)
         {
-            bool current = !this.GlobalToggle.IsOn;
-            bool random = this.RandomToggle.IsOn;
+            var current = !this.GlobalToggle.IsOn;
+            var random = this.RandomToggle.IsOn;
 
             await MediaManager.Advance(current, random);
             await this.UpdateImage();
@@ -541,19 +546,33 @@ namespace ZipPicViewUWP
 
         private void FilterList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            bool invert = false;
-            bool blackwhite = false;
-            bool sepia = false;
+            var invert = false;
+            var blackWhite = false;
+            var sepia = false;
 
             switch ((Effect)this.FilterList.SelectedIndex)
             {
-                case Effect.BlackWhite: blackwhite = true; break;
-                case Effect.Invert: invert = true; break;
-                case Effect.Sepia: sepia = true; break;
+                case Effect.BlackWhite:
+                    blackWhite = true;
+                    break;
+
+                case Effect.Invert:
+                    invert = true;
+                    break;
+
+                case Effect.Sepia:
+                    sepia = true;
+                    break;
+
+                case Effect.None:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             this.InvertBorder.Visibility = invert ? Visibility.Visible : Visibility.Collapsed;
-            this.BlackWhiteBorder.Visibility = blackwhite ? Visibility.Visible : Visibility.Collapsed;
+            this.BlackWhiteBorder.Visibility = blackWhite ? Visibility.Visible : Visibility.Collapsed;
             this.SepiaBorder.Visibility = sepia ? Visibility.Visible : Visibility.Collapsed;
         }
     }

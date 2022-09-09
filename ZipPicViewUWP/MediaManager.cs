@@ -97,11 +97,13 @@ namespace ZipPicViewUWP
             get => currentFolder;
             set
             {
-                if (value != currentFolder)
+                if (value == currentFolder)
                 {
-                    CurrentFolderChange?.Invoke(value);
-                    currentFolder = value;
+                    return;
                 }
+
+                CurrentFolderChange?.Invoke(value);
+                currentFolder = value;
             }
         }
 
@@ -111,20 +113,22 @@ namespace ZipPicViewUWP
         /// <returns>A result <see cref="Task"/> representing the asynchronous operation.</returns>
         public static async Task<(string[], Exception)> GetCurrentFolderFileEntries()
         {
-            if (currentFolderEntries == null)
+            if (currentFolderEntries != null)
             {
-                await Semaphore.WaitAsync();
-                try
-                {
-                    var entries = await Provider.GetChildEntries(CurrentFolder);
+                return (currentFolderEntries, null);
+            }
 
-                    currentFolderEntries = entries.ToArray();
-                    Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
-                }
-                finally
-                {
-                    Semaphore.Release();
-                }
+            await Semaphore.WaitAsync();
+            try
+            {
+                var entries = await Provider.GetChildEntries(CurrentFolder);
+
+                currentFolderEntries = entries.ToArray();
+                Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
+            }
+            finally
+            {
+                Semaphore.Release();
             }
 
             return (currentFolderEntries, null);
@@ -138,7 +142,7 @@ namespace ZipPicViewUWP
         public static async Task<MediaElement> LoadSound(string filename)
         {
             var sound = new MediaElement();
-            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(string.Format(@"Assets\{0}", filename));
+            var soundFile = await Package.Current.InstalledLocation.GetFileAsync($@"Assets\{filename}");
             sound.AutoPlay = false;
             sound.SetSource(await soundFile.OpenReadAsync(), string.Empty);
             sound.Stop();
@@ -205,7 +209,7 @@ namespace ZipPicViewUWP
                 entries = FileEntries.ToArray();
             }
 
-            int index = Array.IndexOf(entries, CurrentEntry);
+            var index = Array.IndexOf(entries, CurrentEntry);
             if (random)
             {
                 index += new Random().Next(0, entries.Length);
@@ -279,15 +283,6 @@ namespace ZipPicViewUWP
             {
                 Semaphore.Release();
             }
-
-            return bitmap;
-        }
-
-        private static async Task<SoftwareBitmap> CreateErrorBitmap(int width, int height)
-        {
-            var stream = await CreateErrorImageStream();
-            var decoder = await BitmapDecoder.CreateAsync(stream);
-            var bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
 
             return bitmap;
         }
@@ -377,6 +372,15 @@ namespace ZipPicViewUWP
             }
 
             return null;
+        }
+
+        private static async Task<SoftwareBitmap> CreateErrorBitmap(int width, int height)
+        {
+            var stream = await CreateErrorImageStream();
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
+
+            return bitmap;
         }
 
         private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)

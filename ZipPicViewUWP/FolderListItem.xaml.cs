@@ -48,11 +48,10 @@ namespace ZipPicViewUWP
                 }
                 else
                 {
-                    int prefixCount = this.entry.Count(c => c == MediaManager.Provider.Separator);
                     this.name.Text = value.ExtractFilename();
                 }
 
-                ToolTip toolTip = new ToolTip { Content = tooltipStr };
+                var toolTip = new ToolTip { Content = tooltipStr };
                 ToolTipService.SetToolTip(this, toolTip);
             }
         }
@@ -97,8 +96,8 @@ namespace ZipPicViewUWP
         /// <returns>Tree string array.</returns>
         public static string[] BuildTreeString(string[] entries)
         {
-            List<char>[] tree = new List<char>[entries.Length];
-            for (int i = 0; i < entries.Length; i++)
+            var tree = new List<char>[entries.Length];
+            for (var i = 0; i < entries.Length; i++)
             {
                 tree[i] = new List<char>();
                 if (entries[i] == MediaManager.Provider.Root)
@@ -106,18 +105,18 @@ namespace ZipPicViewUWP
                     continue;
                 }
 
-                int currentLevel = entries[i].Count((c) => c == MediaManager.Provider.Separator);
+                var currentLevel = entries[i].Count((c) => c == MediaManager.Provider.Separator);
 
-                for (int j = 0; j < currentLevel; j++)
+                for (var j = 0; j < currentLevel; j++)
                 {
                     tree[i].Add(' ');
                 }
 
                 tree[i].Add('└');
 
-                for (int j = i - 1; j > 0; j--)
+                for (var j = i - 1; j > 0; j--)
                 {
-                    int lastLevel = entries[j].Count((c) => c == MediaManager.Provider.Separator);
+                    var lastLevel = entries[j].Count((c) => c == MediaManager.Provider.Separator);
                     if (lastLevel > currentLevel)
                     {
                         tree[j][currentLevel] = '│';
@@ -136,13 +135,12 @@ namespace ZipPicViewUWP
                 }
             }
 
-            string[] output = new string[entries.Length];
-            for (int i = 0; i < output.Length; i++)
+            var output = new string[entries.Length];
+            for (var i = 0; i < output.Length; i++)
             {
-                StringBuilder sb = new StringBuilder();
-                for (int j = 0; j < tree[i].Count; j++)
+                var sb = new StringBuilder();
+                for (var j = 0; j < tree[i].Count; j++)
                 {
-                    // sb.Append(" ");
                     sb.Append(tree[i][j]);
                 }
 
@@ -169,11 +167,13 @@ namespace ZipPicViewUWP
         /// </summary>
         public void Release()
         {
-            if (this.ImageSource != null)
+            if (this.ImageSource == null)
             {
-                this.ImageSource.Dispose();
-                this.ImageSource = null;
+                return;
             }
+
+            this.ImageSource.Dispose();
+            this.ImageSource = null;
         }
     }
 }

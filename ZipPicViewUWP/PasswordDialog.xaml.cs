@@ -22,9 +22,6 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets: Return the value of the password field.
         /// </summary>
-        public string Password
-        {
-            get { return this.passwordBox.Password; }
-        }
+        public string Password => this.passwordBox.Password;
     }
 }

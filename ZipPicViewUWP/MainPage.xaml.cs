@@ -87,15 +87,21 @@ namespace ZipPicViewUWP
                     return;
                 }
 
-                if (items[0] is StorageFile)
+                switch (items[0])
                 {
-                    var storageFile = items[0] as StorageFile;
-                    await this.OpenFile(storageFile);
-                }
-                else if (items[0] is StorageFolder)
-                {
-                    var storageFolder = items[0] as StorageFolder;
-                    await this.OpenFolder(storageFolder);
+                    case StorageFile _:
+                    {
+                        var storageFile = items[0] as StorageFile;
+                        await this.OpenFile(storageFile);
+                        break;
+                    }
+
+                    case StorageFolder _:
+                    {
+                        var storageFolder = items[0] as StorageFolder;
+                        await this.OpenFolder(storageFolder);
+                        break;
+                    }
                 }
             }
         }
@@ -111,13 +117,12 @@ namespace ZipPicViewUWP
             this.HideImageControl();
 
             var parent = MediaManager.CurrentFolder;
-            var folderIndex = Array.IndexOf(MediaManager.FolderEntries, parent);
             this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems.First((obj) =>
             {
                 var selectedItem = obj as NavigationViewItem;
-                var item = (FolderListItem)selectedItem.Content;
+                var item = (FolderListItem)selectedItem?.Content;
 
-                return item.FolderEntry == parent;
+                return item?.FolderEntry == parent;
             });
         }
 
@@ -144,7 +149,7 @@ namespace ZipPicViewUWP
                 {
                     stream = await selected.OpenStreamForReadAsync();
 
-                    var archive = ArchiveMediaProvider.TryOpenArchive(stream, null, out bool isEncrypted);
+                    var archive = ArchiveMediaProvider.TryOpenArchive(stream, null, out var isEncrypted);
                     if (isEncrypted)
                     {
                         var dialog = new PasswordDialog();
@@ -238,12 +243,14 @@ namespace ZipPicViewUWP
         {
             foreach (var item in this.NavigationPane.MenuItems)
             {
-                if (item is NavigationViewItem nv)
+                if (!(item is NavigationViewItem nv))
                 {
-                    if (nv.Content is FolderListItem fd)
-                    {
-                        fd.Release();
-                    }
+                    continue;
+                }
+
+                if (nv.Content is FolderListItem fd)
+                {
+                    fd.Release();
                 }
             }
 
@@ -265,16 +272,16 @@ namespace ZipPicViewUWP
 
             var trees = FolderListItem.BuildTreeString(MediaManager.FolderEntries);
 
-            for (int i = 0; i < count; i++)
+            for (var i = 0; i < count; i++)
             {
                 var folder = MediaManager.FolderEntries[i];
 
                 dialog.Value = i;
 
                 var item = new FolderListItem { FolderEntry = folder, TreeText = trees[i] };
-                var navigationitem = new NavigationViewItem() { Content = item };
+                var navigationItem = new NavigationViewItem() { Content = item };
 
-                this.NavigationPane.MenuItems.Add(navigationitem);
+                this.NavigationPane.MenuItems.Add(navigationItem);
 
                 var cover = await MediaManager.FindFolderThumbnailEntry(folder);
 
@@ -299,7 +306,7 @@ namespace ZipPicViewUWP
         private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
         {
             var bitmap = await MediaManager.CreateThumbnail(entry, 20, 32);
-            SoftwareBitmapSource source = new SoftwareBitmapSource();
+            var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
             item.SetImageSourceAsync(source);
@@ -372,10 +379,10 @@ namespace ZipPicViewUWP
 
             var item = this.NavigationPane.SelectedItem as NavigationViewItem;
 
-            var folderListItem = item.Content as FolderListItem;
+            var folderListItem = item?.Content as FolderListItem;
 
-            var folder = folderListItem.FolderEntry;
-            var page = this.thumbnailPages.Find((p) => p.Entry == folder);
+            var folder = folderListItem?.FolderEntry;
+            var page = this.thumbnailPages?.Find((p) => p.Entry == folder);
 
             if (page == null)
             {
@@ -387,8 +394,8 @@ namespace ZipPicViewUWP
                 page.ItemClicked += this.ThumbnailPage_ItemClicked;
                 await page.SetFolderEntry(folder);
 
-                this.thumbnailPages.Add(page);
-                if (this.thumbnailPages.Count > 10)
+                this.thumbnailPages?.Add(page);
+                if (this.thumbnailPages?.Count > 10)
                 {
                     var removePage = this.thumbnailPages[0];
                     this.thumbnailPages.Remove(removePage);
@@ -403,10 +410,11 @@ namespace ZipPicViewUWP
 
             page.Title = folder == MediaManager.Provider.Root ?
                     this.FileName : folder.ExtractFilename();
+
             page.TitleStyle = folder == MediaManager.Provider.Root ?
                 Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
 
-            this.currentFolder = folderListItem.FolderEntry;
+            this.currentFolder = folderListItem?.FolderEntry;
             await page.ResumeLoadThumbnail();
         }
 
@@ -420,16 +428,18 @@ namespace ZipPicViewUWP
 
         private async void NavigationViewItem_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is NavigationViewItem item)
+            if (!(sender is NavigationViewItem item))
             {
-                if (item.Content as string == "About")
-                {
-                    AboutDialog dialog = new AboutDialog();
-                    await dialog.ShowAsync();
-                }
+                return;
             }
 
-            return;
+            if (item.Content as string != "About")
+            {
+                return;
+            }
+
+            var dialog = new AboutDialog();
+            await dialog.ShowAsync();
         }
     }
 }

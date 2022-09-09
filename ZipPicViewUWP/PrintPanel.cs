@@ -2,6 +2,9 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System;
+using Windows.UI.Xaml;
+
 namespace ZipPicViewUWP
 {
     using Windows.Foundation;
@@ -48,8 +51,8 @@ namespace ZipPicViewUWP
         /// </summary>
         public BitmapImage BitmapImage
         {
-            get { return (BitmapImage)this.Image.Source; }
-            set { this.Image.Source = value; }
+            get => (BitmapImage)this.Image.Source;
+            set => this.Image.Source = value;
         }
 
         /// <summary>
@@ -57,7 +60,7 @@ namespace ZipPicViewUWP
         /// </summary>
         public LayoutOption Layout { get; set; } = LayoutOption.Centered;
 
-        private Image Image { get; set; } = new Image();
+        private Image Image { get; } = new Image();
 
         /// <inheritdoc/>
         protected override Size ArrangeOverride(Size finalSize)
@@ -86,7 +89,7 @@ namespace ZipPicViewUWP
             return availableSize;
         }
 
-        private void LayoutHorizontally(Image image, Size finalSize)
+        private void LayoutHorizontally(UIElement image, Size finalSize)
         {
             var anchorPoint = default(Point);
 
@@ -103,6 +106,9 @@ namespace ZipPicViewUWP
                 case LayoutOption.Centered:
                     anchorPoint.X = (finalSize.Width - image.DesiredSize.Width) / 2;
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             image.Arrange(new Rect(anchorPoint, image.DesiredSize));
@@ -125,6 +131,9 @@ namespace ZipPicViewUWP
                 case LayoutOption.Centered:
                     anchorPoint.Y = (finalSize.Height - image.DesiredSize.Height) / 2;
                     break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             image.Arrange(new Rect(anchorPoint, image.DesiredSize));

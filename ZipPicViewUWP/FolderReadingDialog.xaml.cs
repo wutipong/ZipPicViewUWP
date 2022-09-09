@@ -4,6 +4,7 @@
 
 namespace ZipPicViewUWP
 {
+    using System.Globalization;
     using Windows.UI.Xaml.Controls;
 
     /// <summary>
@@ -29,12 +30,12 @@ namespace ZipPicViewUWP
             set
             {
                 this.Progress.Maximum = value;
-                this.MaximumText.Text = this.IsIndeterminate ? "-" : this.Maximum.ToString();
+                this.MaximumText.Text = this.IsIndeterminate ? "-" : this.Maximum.ToString(CultureInfo.InvariantCulture);
             }
         }
 
         /// <summary>
-        /// Gets or sets the currunt progress.
+        /// Gets or sets the current progress.
         /// </summary>
         public double Value
         {
@@ -42,7 +43,7 @@ namespace ZipPicViewUWP
             set
             {
                 this.Progress.Value = value;
-                this.ValueText.Text = this.IsIndeterminate ? "-" : value.ToString();
+                this.ValueText.Text = this.IsIndeterminate ? "-" : value.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -55,8 +56,8 @@ namespace ZipPicViewUWP
             set
             {
                 this.Progress.IsIndeterminate = value;
-                this.MaximumText.Text = value ? "-" : this.Maximum.ToString();
-                this.ValueText.Text = value ? "-" : value.ToString();
+                this.MaximumText.Text = value ? "-" : this.Maximum.ToString(CultureInfo.InvariantCulture);
+                this.ValueText.Text = value ? "-" : this.Value.ToString(CultureInfo.InvariantCulture);
             }
         }
     }
