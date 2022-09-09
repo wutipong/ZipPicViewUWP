@@ -59,33 +59,25 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override async Task<Stream> OpenEntryAsync(string entry)
         {
-            try
-            {
-                var irs = await this.OpenEntryAsRandomAccessStreamAsync(entry);
-                var decoder = await BitmapDecoder.CreateAsync(irs);
-                var bitmap = decoder.GetSoftwareBitmapAsync();
+            var irs = await this.OpenEntryAsRandomAccessStreamAsync(entry);
+            var decoder = await BitmapDecoder.CreateAsync(irs);
+            var bitmap = decoder.GetSoftwareBitmapAsync();
 
-                var outputIrs = new InMemoryRandomAccessStream();
+            var outputIrs = new InMemoryRandomAccessStream();
 
-                var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, outputIrs);
-                encoder.SetSoftwareBitmap(await bitmap);
+            var encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, outputIrs);
+            encoder.SetSoftwareBitmap(await bitmap);
 
-                await encoder.FlushAsync();
+            await encoder.FlushAsync();
 
-                var outputStream = new MemoryStream();
-                outputIrs.Seek(0);
-                outputIrs.AsStreamForRead().CopyTo(outputStream);
+            var outputStream = new MemoryStream();
+            outputIrs.Seek(0);
+            await outputIrs.AsStreamForRead().CopyToAsync(outputStream);
 
-                outputIrs.Dispose();
-                outputStream.Seek(0, SeekOrigin.Begin);
+            outputIrs.Dispose();
+            outputStream.Seek(0, SeekOrigin.Begin);
 
-                return outputStream;
-
-            } 
-            catch(Exception err)
-            {
-                throw err;
-            }
+            return outputStream;
         }
 
         /// <inheritdoc/>

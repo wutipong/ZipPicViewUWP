@@ -15,23 +15,25 @@ namespace ZipPicViewUWP.MediaProvider
     /// </summary>
     public class PhysicalFileFilter : FileFilter
     {
-        private static string[] formats = null;
-        private readonly string[] coverKeywords = new string[] { "cover", "top" };
+        private static IEnumerable<string> formats;
+        private readonly string[] coverKeywords = { "cover", "top" };
 
-        private static string[] ImageFileExtensions
+        private static IEnumerable<string> ImageFileExtensions
         {
             get
             {
-                if (formats == null)
+                if (formats != null)
                 {
-                    List<string> exts = new List<string>();
-                    foreach (var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
-                    {
-                        exts.AddRange(decoderInfo.FileExtensions);
-                    }
-
-                    formats = exts.ToArray();
+                    return formats;
                 }
+
+                var extensions = new List<string>();
+                foreach (var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
+                {
+                    extensions.AddRange(decoderInfo.FileExtensions);
+                }
+
+                formats = extensions;
 
                 return formats;
             }
@@ -40,7 +42,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            if (fileNames.Count() <= 0)
+            if (!fileNames.Any())
             {
                 return null;
             }

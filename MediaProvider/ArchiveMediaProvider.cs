@@ -20,7 +20,7 @@ namespace ZipPicViewUWP.MediaProvider
     public class ArchiveMediaProvider : AbstractMediaProvider
     {
         private IEnumerable<string> _fileList;
-        private readonly Dictionary<string, string[]> _folderFileEntries = new Dictionary<string, string[]>();
+        private readonly Dictionary<string, IEnumerable<string>> _folderFileEntries = new Dictionary<string, IEnumerable<string>>();
 
         private Stream _stream;
 
@@ -97,44 +97,37 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override async Task<IEnumerable<string>> GetChildEntries(string entry)
         {
-            return await Task.Run<IEnumerable<string>>(() =>
+            return await Task.Run(() =>
             {
                 if (this._folderFileEntries.ContainsKey(entry))
                 {
                     return this._folderFileEntries[entry];
                 }
 
-                try
+                var output = new LinkedList<string>();
+                var folder = entry == this.Root ? string.Empty : entry;
+
+                foreach (var file in this.FileList)
                 {
-                    var output = new LinkedList<string>();
-                    var folder = entry == this.Root ? string.Empty : entry;
-
-                    foreach (var file in this.FileList)
+                    if (!file.StartsWith(folder))
                     {
-                        if (!file.StartsWith(folder))
-                        {
-                            continue;
-                        }
-
-                        var innerKey = file.Substring(folder.Length + 1);
-                        if (innerKey.Contains(this.Separator))
-                        {
-                            continue;
-                        }
-
-                        if (this.FilterImageFileType(innerKey))
-                        {
-                            output.AddLast(file);
-                        }
+                        continue;
                     }
 
-                    this._folderFileEntries[entry] = output.ToArray();
-                    return this._folderFileEntries[entry];
+                    var innerKey = file.Substring(folder.Length + 1);
+                    if (innerKey.Contains(this.Separator))
+                    {
+                        continue;
+                    }
+
+                    if (this.FilterImageFileType(innerKey))
+                    {
+                        output.AddLast(file);
+                    }
                 }
-                catch (Exception e)
-                {
-                    throw e;
-                }
+
+                this._folderFileEntries[entry] = output;
+                return this._folderFileEntries[entry];
             });
         }
 
@@ -149,20 +142,13 @@ namespace ZipPicViewUWP.MediaProvider
                     throw new Exception("Cannot Read Archive");
                 }
 
-                try
+                lock (this.Archive)
                 {
-                    lock (this.Archive)
-                    {
-                        var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
-                        archiveEntry.WriteTo(outputStream);
-                        outputStream.Position = 0;
+                    var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
+                    archiveEntry.WriteTo(outputStream);
+                    outputStream.Position = 0;
 
-                        return outputStream;
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw e;
+                    return outputStream;
                 }
             });
         }
@@ -187,15 +173,8 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override async Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            try
-            {
-                var stream = await this.OpenEntryAsync(entry);
-                return stream.AsRandomAccessStream();
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            var stream = await this.OpenEntryAsync(entry);
+            return stream.AsRandomAccessStream();
         }
 
         /// <inheritdoc/>

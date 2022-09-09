@@ -19,7 +19,7 @@ namespace ZipPicViewUWP.MediaProvider
     /// </summary>
     public abstract class AbstractMediaProvider : IDisposable
     {
-        private IEnumerable<string> folderEntries = null;
+        private IEnumerable<string> folderEntries;
 
         /// <summary>
         /// Gets or sets the associated file filter to be used with this provider.
@@ -53,12 +53,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns><c>true</c> if it is an image file, <c>false</c> otherwise.</returns>
         public bool FilterImageFileType(string entryName)
         {
-            if (this.FileFilter == null)
-            {
-                return true;
-            }
-
-            return this.FileFilter.IsImageFile(entryName);
+            return this.FileFilter?.IsImageFile(entryName) ?? false;
         }
 
         /// <summary>
@@ -119,24 +114,24 @@ namespace ZipPicViewUWP.MediaProvider
                 return this.folderEntries;
             }
 
-            this.folderEntries = (await this.DoGetFolderEntries()).ToArray();
+            this.folderEntries = await this.DoGetFolderEntries();
 
             var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
 
-            folderEntries.OrderBy(s=>s, Comparer<string>.Create((string s1, string s2) =>
+            this.folderEntries = folderEntries.OrderBy(s=>s, Comparer<string>.Create((string s1, string s2) =>
             {
                 if (s1 == this.Root)
                 {
                     return -1;
                 }
-                else if (s2 == this.Root)
+
+                if (s2 == this.Root)
                 {
                     return 1;
                 }
-                else
-                {
-                    return comparer.Compare(s1, s2);
-                }
+                
+                return comparer.Compare(s1, s2);
+                
             }));
 
             return this.folderEntries;

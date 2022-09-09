@@ -16,7 +16,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            return fileNames.Count() <= 0 ? null : fileNames.ElementAt(0);
+            return !fileNames.Any() ? null : fileNames.ElementAt(0);
         }
 
         /// <inheritdoc/>
