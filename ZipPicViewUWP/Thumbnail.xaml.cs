@@ -102,13 +102,13 @@ namespace ZipPicViewUWP
 
         private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.CopyToClipboard(this.Entry);
-
-            if (error == null)
+            try
             {
+                await MediaManager.CopyToClipboard(this.Entry);
                 this.Notification.Show($"The image {this.Entry.ExtractFilename()} has been copied to the clipboard.", 1000);
+
             }
-            else
+            catch (Exception)
             {
                 var dialog = new MessageDialog($"Cannot copy image from file: {this.Entry.ExtractFilename()}.", "Error");
                 await dialog.ShowAsync();
@@ -132,26 +132,29 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var error = await MediaManager.SaveFileAs(entry, file);
-            if (error == null)
+            try
             {
-                return;
+                await MediaManager.SaveFileAs(entry, file);
             }
-
-            var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
-            await dialog.ShowAsync();
+            catch (Exception)
+            {
+                var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
+                await dialog.ShowAsync();
+            }
         }
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await this.PrintHelper.Print(MediaManager.Provider, this.Entry);
-            if (error == null)
+            try
             {
+                await this.PrintHelper.Print(MediaManager.Provider, this.Entry);
+            }
+            catch (Exception)
+            {
+                var dialog = new MessageDialog($"Cannot print image file: {this.Entry.ExtractFilename()}.", "Error");
+                await dialog.ShowAsync();
                 return;
             }
-
-            var dialog = new MessageDialog($"Cannot copy image from file: {this.Entry.ExtractFilename()}.", "Error");
-            await dialog.ShowAsync();
         }
     }
 }

@@ -328,26 +328,17 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entry">File to copy.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> CopyToClipboard(string entry)
+        public static async Task CopyToClipboard(string entry)
         {
-            try
-            {
-                var stream = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                var dataPackage = new DataPackage();
-                var memoryStream = new InMemoryRandomAccessStream();
+            var stream = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
+            var dataPackage = new DataPackage();
+            var memoryStream = new InMemoryRandomAccessStream();
 
-                await RandomAccessStream.CopyAsync(stream, memoryStream);
+            await RandomAccessStream.CopyAsync(stream, memoryStream);
 
-                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
+            dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
 
-                Clipboard.SetContent(dataPackage);
-            }
-            catch (Exception ex)
-            {
-                return ex;
-            }
-
-            return null;
+            Clipboard.SetContent(dataPackage);
         }
 
         /// <summary>
@@ -356,22 +347,13 @@ namespace ZipPicViewUWP
         /// <param name="entry">Source entry>.</param>
         /// <param name="file">Output file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> SaveFileAs(string entry, StorageFile file)
+        public static async Task SaveFileAs(string entry, StorageFile file)
         {
-            try
+            using (var output = await file.OpenStreamForWriteAsync())
+            using (var stream = await Provider.OpenEntryAsync(entry))
             {
-                using (var output = await file.OpenStreamForWriteAsync())
-                using (var stream = await Provider.OpenEntryAsync(entry))
-                {
-                    stream.CopyTo(output);
-                }
+                stream.CopyTo(output);
             }
-            catch (Exception err)
-            {
-                return err;
-            }
-
-            return null;
         }
 
         private static async Task<SoftwareBitmap> CreateErrorBitmap(int width, int height)

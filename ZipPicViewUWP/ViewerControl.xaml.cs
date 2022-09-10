@@ -338,13 +338,13 @@ namespace ZipPicViewUWP
 
         private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.CopyToClipboard(MediaManager.CurrentEntry);
-            if (error == null)
+            try
             {
+                await MediaManager.CopyToClipboard(MediaManager.CurrentEntry);
                 this.Notification.Show(
                     $"The image {MediaManager.CurrentEntry.ExtractFilename()} has been copied to the clipboard.", 1000);
             }
-            else
+            catch (Exception)
             {
                 var dialog = new MessageDialog(
                     $"Cannot copy image from file: {MediaManager.CurrentEntry.ExtractFilename()}.", "Error");
@@ -354,15 +354,16 @@ namespace ZipPicViewUWP
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await this.PrintHelper.Print(MediaManager.Provider, MediaManager.CurrentEntry);
-            if (error == null)
+            try
             {
-                return;
+                await this.PrintHelper.Print(MediaManager.Provider, MediaManager.CurrentEntry);
             }
-
-            var dialog = new MessageDialog(
-                $"Cannot copy image from file: {MediaManager.CurrentEntry.ExtractFilename()}.", "Error");
-            await dialog.ShowAsync();
+            catch (Exception)
+            {
+                var dialog = new MessageDialog(
+                    $"Cannot copy image from file: {MediaManager.CurrentEntry.ExtractFilename()}.", "Error");
+                await dialog.ShowAsync();
+            }
         }
 
         private async void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -377,14 +378,20 @@ namespace ZipPicViewUWP
 
             picker.FileTypeChoices.Add("All", new List<string>() { "." });
             var file = await picker.PickSaveFileAsync();
-            var error = await MediaManager.SaveFileAs(entry, file);
-            if (error == null)
+            if (file == null)
             {
                 return;
             }
 
-            var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
-            await dialog.ShowAsync();
+            try
+            {
+                await MediaManager.SaveFileAs(entry, file);
+            }
+            catch
+            {
+                var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
+                await dialog.ShowAsync();
+            }
         }
 
         private void ImageBorder_Tapped(object sender, TappedRoutedEventArgs e)
