@@ -64,34 +64,25 @@ namespace ZipPicViewUWP
 
             if (this.ApplicationData.LocalSettings.Values.TryGetValue("theme", out var theme))
             {
-                try
+                if (Enum.TryParse<ApplicationTheme>(theme as string, out var newValue))
                 {
-                    this.ApplicationTheme = Enum.Parse<ApplicationTheme>(theme as string);
-                }
-                catch (ArgumentException)
-                {
+                    this.ApplicationTheme = newValue;
                 }
             }
 
             if (this.ApplicationData.LocalSettings.Values.TryGetValue("background", out var background))
             {
-                try
+                if (Enum.TryParse<ImageViewBackground>(background as string, out var newValue))
                 {
-                    this.ImageViewBackground = Enum.Parse<ImageViewBackground>(background as string);
-                }
-                catch (ArgumentException)
-                {
+                    this.ImageViewBackground = newValue;
                 }
             }
 
             if (this.ApplicationData.LocalSettings.Values.TryGetValue("image_scaling", out var scaling))
             {
-                try
+                if (Enum.TryParse<BitmapInterpolationMode>(scaling as string, out var newValue))
                 {
-                    this.ImageViewInterpolationMode = Enum.Parse<BitmapInterpolationMode>(scaling as string);
-                }
-                catch (ArgumentException)
-                {
+                    this.ImageViewInterpolationMode = newValue;
                 }
             }
         }

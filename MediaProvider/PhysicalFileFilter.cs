@@ -15,46 +15,49 @@ namespace ZipPicViewUWP.MediaProvider
     /// </summary>
     public class PhysicalFileFilter : FileFilter
     {
-        private static string[] formats = null;
-        private readonly string[] coverKeywords = new string[] { "cover", "top" };
+        private static IEnumerable<string> formats;
+        private readonly string[] coverKeywords = { "cover", "top" };
 
-        private static string[] ImageFileExtensions
+        private static IEnumerable<string> ImageFileExtensions
         {
             get
             {
-                if (formats == null)
+                if (formats != null)
                 {
-                    List<string> exts = new List<string>();
-                    foreach (var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
-                    {
-                        exts.AddRange(decoderInfo.FileExtensions);
-                    }
-
-                    formats = exts.ToArray();
+                    return formats;
                 }
+
+                var extensions = new List<string>();
+                foreach (var decoderInfo in BitmapDecoder.GetDecoderInformationEnumerator())
+                {
+                    extensions.AddRange(decoderInfo.FileExtensions);
+                }
+
+                formats = extensions;
 
                 return formats;
             }
         }
 
         /// <inheritdoc/>
-        public override string FindCoverPage(string[] fileNames)
+        public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            if (fileNames.Length <= 0)
+            var nameArray = fileNames as string[] ?? fileNames.ToArray();
+            if (nameArray.Length == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             foreach (var keyword in this.coverKeywords)
             {
-                var name = fileNames.FirstOrDefault((s) => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                var name = nameArray.FirstOrDefault(s => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
                 if (name != null)
                 {
                     return name;
                 }
             }
 
-            return fileNames[0];
+            return nameArray[0];
         }
 
         /// <inheritdoc/>

@@ -5,10 +5,11 @@
 namespace ZipPicViewUWP
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using NaturalSort.Extension;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Graphics.Imaging;
@@ -25,12 +26,12 @@ namespace ZipPicViewUWP
         private static readonly SemaphoreSlim Semaphore;
         private static string currentEntry;
         private static string currentFolder;
-        private static string[] currentFolderEntries = null;
+        private static IEnumerable<string> currentFolderEntries = null;
 
         static MediaManager()
         {
-            CurrentEntryChange += MediaManager_CurrentEntryChange;
-            CurrentFolderChange += MediaManager_CurrentFolderChange;
+            CurrentEntryChange += OnCurrentEntryChange;
+            CurrentFolderChange += OnCurrentFolderChange;
             Semaphore = new SemaphoreSlim(1, 1);
         }
 
@@ -40,7 +41,7 @@ namespace ZipPicViewUWP
         /// <typeparam name="T">Type of the parameter.</typeparam>
         /// <param name="v">New value to be set to the property.</param>
         /// <returns>Exception when the operation fails.</returns>
-        public delegate Task<Exception> PropertyChangeHandler<in T>(T v);
+        public delegate Task PropertyChangeHandler<in T>(T v);
 
         /// <summary>
         /// Current entry change event.
@@ -55,12 +56,12 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the list of all file entries within the provider.
         /// </summary>
-        public static string[] FileEntries { get; private set; }
+        public static IEnumerable<string> FileEntries { get; private set; }
 
         /// <summary>
         /// Gets the list of all folder entries within the provider.
         /// </summary>
-        public static string[] FolderEntries { get; private set; }
+        public static IEnumerable<string> FolderEntries { get; private set; }
 
         /// <summary>
         /// Gets the current media provider.
@@ -93,11 +94,13 @@ namespace ZipPicViewUWP
             get => currentFolder;
             set
             {
-                if (value != currentFolder)
+                if (value == currentFolder)
                 {
-                    CurrentFolderChange?.Invoke(value);
-                    currentFolder = value;
+                    return;
                 }
+
+                CurrentFolderChange?.Invoke(value);
+                currentFolder = value;
             }
         }
 
@@ -105,29 +108,24 @@ namespace ZipPicViewUWP
         /// Gets the files entries under the current folder.
         /// </summary>
         /// <returns>A result <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<(string[], Exception)> GetCurrentFolderFileEntries()
+        public static async Task<IEnumerable<string>> GetCurrentFolderFileEntries()
         {
-            if (currentFolderEntries == null)
+            if (currentFolderEntries != null)
             {
-                await Semaphore.WaitAsync();
-                try
-                {
-                    var (entries, error) = await Provider.GetChildEntries(CurrentFolder);
-                    if (error != null)
-                    {
-                        return (null, error);
-                    }
-
-                    currentFolderEntries = entries;
-                    Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
-                }
-                finally
-                {
-                    Semaphore.Release();
-                }
+                return currentFolderEntries;
             }
 
-            return (currentFolderEntries, null);
+            await Semaphore.WaitAsync();
+            try
+            {
+                currentFolderEntries = await Provider.GetChildEntries(CurrentFolder);
+            }
+            finally
+            {
+                Semaphore.Release();
+            }
+
+            return currentFolderEntries;
         }
 
         /// <summary>
@@ -138,7 +136,7 @@ namespace ZipPicViewUWP
         public static async Task<MediaElement> LoadSound(string filename)
         {
             var sound = new MediaElement();
-            var soundFile = await Package.Current.InstalledLocation.GetFileAsync(string.Format(@"Assets\{0}", filename));
+            var soundFile = await Package.Current.InstalledLocation.GetFileAsync($@"Assets\{filename}");
             sound.AutoPlay = false;
             sound.SetSource(await soundFile.OpenReadAsync(), string.Empty);
             sound.Stop();
@@ -150,42 +148,26 @@ namespace ZipPicViewUWP
         /// Change the media provider.
         /// </summary>
         /// <param name="newProvider">the new media provider.</param>
-        /// <returns>Exception when there're errors. Null otherwise.</returns>
-        public static async Task<Exception> ChangeProvider(AbstractMediaProvider newProvider)
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        public static async Task ChangeProvider(AbstractMediaProvider newProvider)
         {
             await Semaphore.WaitAsync();
             try
             {
                 if (newProvider == Provider)
                 {
-                    return null;
+                    return;
                 }
 
-                var (fileEntries, errorFile) = await newProvider.GetAllFileEntries();
-                if (errorFile != null)
-                {
-                    return errorFile;
-                }
+                FileEntries = await newProvider.GetAllFileEntries();
+                FolderEntries = await newProvider.GetFolderEntries();
 
-                FileEntries = fileEntries;
-
-                var (folderEntries, errorFolder) = await newProvider.GetFolderEntries();
-                if (errorFolder != null)
-                {
-                    return errorFolder;
-                }
-
-                FolderEntries = folderEntries;
                 CurrentFolder = newProvider.Root;
                 currentFolderEntries = null;
 
-                if (Provider != null)
-                {
-                    Provider.Dispose();
-                }
+                Provider?.Dispose();
 
                 Provider = newProvider;
-                return null;
             }
             finally
             {
@@ -200,26 +182,13 @@ namespace ZipPicViewUWP
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> Advance(bool current, bool random, int step = 1)
+        public static async Task Advance(bool current, bool random, int step = 1)
         {
-            string[] entries;
+            var entries = current ?
+                (await GetCurrentFolderFileEntries()).ToArray() :
+                FileEntries.ToArray();
 
-            if (current)
-            {
-                Exception error;
-                (entries, error) = await GetCurrentFolderFileEntries();
-
-                if (error != null)
-                {
-                    return error;
-                }
-            }
-            else
-            {
-                entries = FileEntries;
-            }
-
-            int index = Array.IndexOf(entries, CurrentEntry);
+            var index = Array.IndexOf(entries, CurrentEntry);
             if (random)
             {
                 index += new Random().Next(0, entries.Length);
@@ -241,8 +210,6 @@ namespace ZipPicViewUWP
             }
 
             CurrentEntry = entries[index];
-
-            return null;
         }
 
         /// <summary>
@@ -252,12 +219,7 @@ namespace ZipPicViewUWP
         /// <returns>A string contains an entry for folder thumbnail (null if there is no entry) and an exception if there are errors.<see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public static async Task<string> FindFolderThumbnailEntry(string folder)
         {
-            var (children, error) = await Provider.GetChildEntries(folder);
-            if (error != null)
-            {
-                throw error;
-            }
-
+            var children = await Provider.GetChildEntries(folder);
             var cover = Provider.FileFilter.FindCoverPage(children);
 
             return cover;
@@ -283,24 +245,23 @@ namespace ZipPicViewUWP
         public static async Task<SoftwareBitmap> CreateThumbnail(string entry, int width, int height)
         {
             await Semaphore.WaitAsync();
+            SoftwareBitmap bitmap;
             try
             {
-                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-
-                if (error != null)
-                {
-                    stream = await CreateErrorImageStream();
-                }
-
+                var stream = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
                 var decoder = await BitmapDecoder.CreateAsync(stream);
-                var bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
-
-                return bitmap;
+                bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
+            }
+            catch (Exception)
+            {
+                bitmap = await CreateErrorBitmap(width, height);
             }
             finally
             {
                 Semaphore.Release();
             }
+
+            return bitmap;
         }
 
         /// <summary>
@@ -315,24 +276,28 @@ namespace ZipPicViewUWP
             string entry, int width, int height, BitmapInterpolationMode mode)
         {
             await Semaphore.WaitAsync();
+            SoftwareBitmap bitmap;
+            int outWidth = 0, outHeight = 0;
             try
             {
-                var (stream, error) = await MediaManager.Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                if (error != null)
-                {
-                    stream = await MediaManager.CreateErrorImageStream();
-                }
-
+                var stream = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
                 var decoder = await BitmapDecoder.CreateAsync(stream);
-                var output = await ImageHelper.CreateResizedBitmap(decoder, (uint)width, (uint)height, mode);
+                bitmap = await ImageHelper.CreateResizedBitmap(decoder, (uint)width, (uint)height, mode);
+                outWidth = (int)decoder.PixelWidth;
+                outHeight = (int)decoder.PixelHeight;
 
                 stream.Dispose();
-                return (output, (int)decoder.PixelWidth, (int)decoder.PixelHeight);
+            }
+            catch (Exception)
+            {
+                bitmap = await CreateErrorBitmap(width, height);
             }
             finally
             {
                 Semaphore.Release();
             }
+
+            return (bitmap, outWidth, outHeight);
         }
 
         /// <summary>
@@ -340,31 +305,17 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entry">File to copy.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> CopyToClipboard(string entry)
+        public static async Task CopyToClipboard(string entry)
         {
-            try
-            {
-                var (stream, error) = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                if (error != null)
-                {
-                    return error;
-                }
+            var stream = await Provider.OpenEntryAsRandomAccessStreamAsync(entry);
+            var dataPackage = new DataPackage();
+            var memoryStream = new InMemoryRandomAccessStream();
 
-                var dataPackage = new DataPackage();
-                var memoryStream = new InMemoryRandomAccessStream();
+            await RandomAccessStream.CopyAsync(stream, memoryStream);
 
-                await RandomAccessStream.CopyAsync(stream, memoryStream);
+            dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
 
-                dataPackage.SetBitmap(RandomAccessStreamReference.CreateFromStream(memoryStream));
-
-                Clipboard.SetContent(dataPackage);
-            }
-            catch (Exception ex)
-            {
-                return ex;
-            }
-
-            return null;
+            Clipboard.SetContent(dataPackage);
         }
 
         /// <summary>
@@ -373,31 +324,31 @@ namespace ZipPicViewUWP
         /// <param name="entry">Source entry>.</param>
         /// <param name="file">Output file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> SaveFileAs(string entry, StorageFile file)
+        public static async Task SaveFileAs(string entry, StorageFile file)
         {
-            var (stream, error) = await MediaManager.Provider.OpenEntryAsync(entry);
-            var output = await file.OpenStreamForWriteAsync();
-
-            if (error != null)
+            using (var output = await file.OpenStreamForWriteAsync())
+            using (var stream = await Provider.OpenEntryAsync(entry))
             {
-                return error;
+                await stream.CopyToAsync(output);
             }
-
-            stream.CopyTo(output);
-            output.Dispose();
-
-            stream.Dispose();
-
-            return null;
         }
 
-        private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)
+        private static async Task<SoftwareBitmap> CreateErrorBitmap(int width, int height)
         {
-            CurrentFolder = Provider.GetParentEntry(newvalue);
+            var stream = await CreateErrorImageStream();
+            var decoder = await BitmapDecoder.CreateAsync(stream);
+            var bitmap = await ImageHelper.CreateThumbnail(decoder, (uint)width, (uint)height);
+
+            return bitmap;
+        }
+
+        private static Task OnCurrentEntryChange(string v)
+        {
+            CurrentFolder = Provider.GetParentEntry(v);
             return null;
         }
 
-        private static Task<Exception> MediaManager_CurrentFolderChange(string newvalue)
+        private static Task OnCurrentFolderChange(string v)
         {
             currentFolderEntries = null;
 

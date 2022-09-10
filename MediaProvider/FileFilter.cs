@@ -2,6 +2,8 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System.Collections.Generic;
+
 namespace ZipPicViewUWP.MediaProvider
 {
     /// <summary>
@@ -21,6 +23,6 @@ namespace ZipPicViewUWP.MediaProvider
         /// </summary>
         /// <param name="fileNames">Input file names.</param>
         /// <returns>The cover image file name.</returns>
-        public abstract string FindCoverPage(string[] fileNames);
+        public abstract string FindCoverPage(IEnumerable<string> fileNames);
     }
 }

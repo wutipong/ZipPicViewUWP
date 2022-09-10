@@ -114,8 +114,8 @@
     <Compile Include="FolderListItem.xaml.cs">
       <DependentUpon>FolderListItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="FolderReadingDialog.xaml.cs">
-      <DependentUpon>FolderReadingDialog.xaml</DependentUpon>
+    <Compile Include="ProgressDialog.xaml.cs">
+      <DependentUpon>ProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
@@ -236,7 +236,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="FolderReadingDialog.xaml">
+    <Page Include="ProgressDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -31,13 +31,12 @@ namespace ZipPicViewUWP
         public HomePage()
         {
             this.InitializeComponent();
-            Package package = Package.Current;
+            var package = Package.Current;
 
-            PackageId packageId = package.Id;
-            PackageVersion version = packageId.Version;
+            var packageId = package.Id;
+            var version = packageId.Version;
             this.VersionText.Text = (package.IsDevelopmentMode ? "(Debug)" : string.Empty) +
-
-                string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
+                                    $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
         }
 
         /// <summary>

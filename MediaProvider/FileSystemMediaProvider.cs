@@ -21,7 +21,7 @@ namespace ZipPicViewUWP.MediaProvider
     {
         private readonly StorageFolder folder;
 
-        private Dictionary<string, string[]> folderFileEntries = new Dictionary<string, string[]>();
+        private Dictionary<string, IEnumerable<string>> folderFileEntries = new Dictionary<string, IEnumerable<string>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileSystemMediaProvider"/> class.
@@ -35,103 +35,73 @@ namespace ZipPicViewUWP.MediaProvider
         }
 
         /// <inheritdoc/>
-        public override async Task<(Stream stream, Exception error)> OpenEntryAsync(string entry)
+        public override async Task<Stream> OpenEntryAsync(string entry)
         {
-            try
-            {
-                return (await this.folder.OpenStreamForReadAsync(entry), null);
-            }
-            catch (Exception err)
-            {
-                return (null, err);
-            }
+            return await this.folder.OpenStreamForReadAsync(entry);
         }
 
         /// <inheritdoc/>
-        public override async Task<(string[], Exception error)> GetChildEntries(string entry)
+        public override async Task<IEnumerable<string>> GetChildEntries(string entry)
         {
             if (this.folderFileEntries.ContainsKey(entry))
             {
-                return (this.folderFileEntries[entry], null);
+                return this.folderFileEntries[entry];
             }
 
-            try
+            var subFolder = (entry == this.Root) ? this.folder : await this.folder.GetFolderAsync(entry);
+            var files = await subFolder.GetFilesAsync();
+            var output = new List<string>(files.Count);
+
+            var startIndex = this.folder.Path.Length == 3 ?
+                this.folder.Path.Length :
+                this.folder.Path.Length + 1;
+
+            foreach (var path in
+                     from f in files
+                     where this.FilterImageFileType(f.Name)
+                     select f.Path)
             {
-                var subFolder = (entry == this.Root) ? this.folder : await this.folder.GetFolderAsync(entry);
-
-                var files = await subFolder.GetFilesAsync();
-
-                var output = new List<string>(files.Count);
-
-                var startIndex = this.folder.Path.Length == 3 ?
-                    this.folder.Path.Length :
-                    this.folder.Path.Length + 1;
-
-                foreach (var path in
-                    from f in files
-                    where this.FilterImageFileType(f.Name)
-                    select f.Path)
-                {
-                    output.Add(path.Substring(startIndex));
-                }
-
-                this.folderFileEntries[entry] = output.ToArray();
-                return (this.folderFileEntries[entry], null);
+                output.Add(path.Substring(startIndex));
             }
-            catch (Exception e)
-            {
-                return (null, e);
-            }
+
+            this.folderFileEntries[entry] = output;
+            return this.folderFileEntries[entry];
         }
 
         /// <inheritdoc/>
-        public override async Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry)
+        public override async Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry)
         {
-            var (results, error) = await this.OpenEntryAsync(entry);
-            if (error != null)
-            {
-                return (null, error);
-            }
-
-            return (results.AsRandomAccessStream(), null);
+            var results = await this.OpenEntryAsync(entry);
+            return results.AsRandomAccessStream();
         }
 
         /// <inheritdoc/>
-        protected override async Task<(string[], Exception error)> DoGetFolderEntries()
+        protected override async Task<IEnumerable<string>> DoGetFolderEntries()
         {
-            try
+            var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
             {
-                var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
-                {
-                    FolderDepth = FolderDepth.Deep,
-                };
+                FolderDepth = FolderDepth.Deep,
+            };
 
-                var subFolders = await this.folder.CreateFolderQueryWithOptions(options).GetFoldersAsync();
+            var subFolders = await this.folder.CreateFolderQueryWithOptions(options).GetFoldersAsync();
 
-                var output = new List<string>(subFolders.Count) { this.Root };
+            var output = new List<string>(subFolders.Count) { this.Root };
 
-                var startIndex = (this.folder.Path.Length == 3) ?
-                    this.folder.Path.Length :
-                    this.folder.Path.Length + 1;
+            var startIndex = (this.folder.Path.Length == 3) ?
+                this.folder.Path.Length :
+                this.folder.Path.Length + 1;
 
-                foreach (var folder in subFolders)
-                {
-                    output.Add(folder.Path.Substring(startIndex));
-                }
-
-                var folderEntries = output.ToArray();
-
-                await this.CreateFileList(folderEntries);
-
-                return (folderEntries, null);
-            }
-            catch (Exception e)
+            foreach (var subFolder in subFolders)
             {
-                return (null, e);
+                output.Add(subFolder.Path.Substring(startIndex));
             }
+
+            await this.CreateFileList(output);
+
+            return output;
         }
 
-        private async Task CreateFileList(string[] folderEntries)
+        private async Task CreateFileList(IEnumerable<string> folderEntries)
         {
             var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
             {
@@ -140,11 +110,11 @@ namespace ZipPicViewUWP.MediaProvider
 
             var files = await this.folder.CreateFileQueryWithOptions(options).GetFilesAsync();
 
-            foreach (var folder in folderEntries)
+            foreach (var f in folderEntries)
             {
                 var l = new List<string>();
                 var parentPath = this.folder.Path +
-                        (folder == this.Root ? string.Empty : this.Separator.ToString()) + folder + (folder == this.Root ? string.Empty : this.Separator.ToString());
+                        (f == this.Root ? string.Empty : this.Separator.ToString()) + f + (f == this.Root ? string.Empty : this.Separator.ToString());
 
                 foreach (var file in files)
                 {
@@ -155,20 +125,20 @@ namespace ZipPicViewUWP.MediaProvider
                         continue;
                     }
 
-                    var relativepath = path.Substring(parentPath.Length);
+                    var relativePath = path.Substring(parentPath.Length);
 
-                    if (relativepath.Contains(this.Separator))
+                    if (relativePath.Contains(this.Separator))
                     {
                         continue;
                     }
 
-                    if (this.FileFilter.IsImageFile(relativepath))
+                    if (this.FileFilter.IsImageFile(relativePath))
                     {
-                        l.Add(folder == this.Root ? relativepath : folder + this.Separator + relativepath);
+                        l.Add(f == this.Root ? relativePath : f + this.Separator + relativePath);
                     }
                 }
 
-                this.folderFileEntries[folder] = l.ToArray();
+                this.folderFileEntries[f] = l;
             }
         }
     }

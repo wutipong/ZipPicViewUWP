@@ -42,7 +42,7 @@ namespace ZipPicViewUWP
         public Microsoft.UI.Xaml.Controls.ProgressRing ProgressRing => this.loading;
 
         /// <summary>
-        /// Gets or sets the entry assciated with the thumbnail.
+        /// Gets or sets the entry associated with the thumbnail.
         /// </summary>
         public string Entry { get; set; }
 
@@ -102,15 +102,14 @@ namespace ZipPicViewUWP
 
         private async void CopyButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await MediaManager.CopyToClipboard(this.Entry);
-
-            if (error == null)
+            try
             {
-                this.Notification.Show(string.Format("The image {0} has been copied to the clipboard.", this.Entry.ExtractFilename()), 1000);
+                await MediaManager.CopyToClipboard(this.Entry);
+                this.Notification.Show($"The image {this.Entry.ExtractFilename()} has been copied to the clipboard.", 1000);
             }
-            else
+            catch (Exception)
             {
-                var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
+                var dialog = new MessageDialog($"Cannot copy image from file: {this.Entry.ExtractFilename()}.", "Error");
                 await dialog.ShowAsync();
             }
         }
@@ -132,25 +131,29 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var error = await MediaManager.SaveFileAs(entry, file);
-
-            if (error != null)
+            try
             {
-                var dialog = new MessageDialog(string.Format("Cannot save image file: {0}.", file.Name), "Error");
+                await MediaManager.SaveFileAs(entry, file);
+            }
+            catch (Exception)
+            {
+                var dialog = new MessageDialog($"Cannot save image file: {file.Name}.", "Error");
                 await dialog.ShowAsync();
             }
         }
 
         private async void PrintButton_Click(object sender, RoutedEventArgs e)
         {
-            var error = await this.PrintHelper.Print(MediaManager.Provider, this.Entry);
-            if (error == null)
+            try
             {
+                await this.PrintHelper.Print(MediaManager.Provider, this.Entry);
+            }
+            catch (Exception)
+            {
+                var dialog = new MessageDialog($"Cannot print image file: {this.Entry.ExtractFilename()}.", "Error");
+                await dialog.ShowAsync();
                 return;
             }
-
-            var dialog = new MessageDialog(string.Format("Cannot copy image from file: {0}.", this.Entry.ExtractFilename()), "Error");
-            await dialog.ShowAsync();
         }
     }
 }

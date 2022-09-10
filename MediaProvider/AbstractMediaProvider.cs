@@ -7,6 +7,7 @@ namespace ZipPicViewUWP.MediaProvider
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Threading.Tasks;
     using NaturalSort.Extension;
     using Windows.Storage.Streams;
@@ -18,7 +19,7 @@ namespace ZipPicViewUWP.MediaProvider
     /// </summary>
     public abstract class AbstractMediaProvider : IDisposable
     {
-        private string[] folderEntries = null;
+        private IEnumerable<string> folderEntries;
 
         /// <summary>
         /// Gets or sets the associated file filter to be used with this provider.
@@ -52,41 +53,26 @@ namespace ZipPicViewUWP.MediaProvider
         /// <returns><c>true</c> if it is an image file, <c>false</c> otherwise.</returns>
         public bool FilterImageFileType(string entryName)
         {
-            if (this.FileFilter == null)
-            {
-                return true;
-            }
-
-            return this.FileFilter.IsImageFile(entryName);
+            return this.FileFilter?.IsImageFile(entryName) ?? false;
         }
 
         /// <summary>
         /// Get the list of all file entries under this provider.
         /// </summary>
         /// <returns>List of child entries.</returns>
-        public virtual async Task<(string[], Exception error)> GetAllFileEntries()
+        public virtual async Task<IEnumerable<string>> GetAllFileEntries()
         {
-            var (folders, error) = await this.GetFolderEntries();
-            if (error != null)
-            {
-                return (null, error);
-            }
-
+            var folders = await this.GetFolderEntries();
             var output = new List<string>();
             foreach (var folder in folders)
             {
-                var (files, errorFile) = await this.GetChildEntries(folder);
-                if (errorFile != null)
-                {
-                    return (null, errorFile);
-                }
-
-                Array.Sort(files, StringComparer.OrdinalIgnoreCase.WithNaturalSort());
-
-                output.AddRange(files);
+                var files = await this.GetChildEntries(folder);
+                var sorted = files.OrderBy(s=>s, StringComparer.OrdinalIgnoreCase.WithNaturalSort());
+                
+                output.AddRange(sorted);
             }
 
-            return (output.ToArray(), null);
+            return output;
         }
 
         /// <summary>
@@ -94,7 +80,7 @@ namespace ZipPicViewUWP.MediaProvider
         /// </summary>
         /// <param name="entry">parent entry.</param>
         /// <returns>List of child entries.</returns>
-        public abstract Task<(string[], Exception error)> GetChildEntries(string entry);
+        public abstract Task<IEnumerable<string>> GetChildEntries(string entry);
 
         /// <summary>
         /// Get the parent of the input entry.
@@ -121,41 +107,34 @@ namespace ZipPicViewUWP.MediaProvider
         /// Get the list of folder entries in this media provider.
         /// </summary>
         /// <returns>Folder entries.</returns>
-        public async Task<(string[], Exception error)> GetFolderEntries()
+        public async Task<IEnumerable<string>> GetFolderEntries()
         {
             if (this.folderEntries != null)
             {
-                return (this.folderEntries, null);
+                return this.folderEntries;
             }
 
-            Exception error;
-            (this.folderEntries, error) = await this.DoGetFolderEntries();
-
-            if (error != null)
-            {
-                this.folderEntries = null;
-                return (null, error);
-            }
+            this.folderEntries = await this.DoGetFolderEntries();
 
             var comparer = StringComparer.InvariantCultureIgnoreCase.WithNaturalSort();
 
-            Array.Sort(this.folderEntries, (s1, s2) =>
+            this.folderEntries = folderEntries.OrderBy(s=>s, Comparer<string>.Create((string s1, string s2) =>
             {
                 if (s1 == this.Root)
                 {
                     return -1;
                 }
-                else if (s2 == this.Root)
+
+                if (s2 == this.Root)
                 {
                     return 1;
                 }
-                else
-                {
-                    return comparer.Compare(s1, s2);
-                }
-            });
+                
+                return comparer.Compare(s1, s2);
+                
+            }));
 
-            return (this.folderEntries, null);
+            return this.folderEntries;
         }
 
         /// <summary>
@@ -163,14 +142,14 @@ namespace ZipPicViewUWP.MediaProvider
         /// </summary>
         /// <param name="entry">entry to read from.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public abstract Task<(IRandomAccessStream, Exception error)> OpenEntryAsRandomAccessStreamAsync(string entry);
+        public abstract Task<IRandomAccessStream> OpenEntryAsRandomAccessStreamAsync(string entry);
 
         /// <summary>
         /// Read the entry and return as an <c>Stream</c>.
         /// </summary>
         /// <param name="entry">entry to read from.</param>
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
-        public abstract Task<(Stream stream, Exception error)> OpenEntryAsync(string entry);
+        public abstract Task<Stream> OpenEntryAsync(string entry);
 
         /// <summary>
         /// Suggest the filename to be saved.
@@ -186,6 +165,6 @@ namespace ZipPicViewUWP.MediaProvider
         /// Get the list of folder entries in this media provider.
         /// </summary>
         /// <returns>Folder entries.</returns>
-        protected abstract Task<(string[], Exception error)> DoGetFolderEntries();
+        protected abstract Task<IEnumerable<string>> DoGetFolderEntries();
     }
 }

@@ -24,14 +24,9 @@ namespace ZipPicViewUWP
             var sizeRatio = inputSize.Width / inputSize.Height;
             var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
-            if (sizeRatio < expectSizeRatio)
-            {
-                return inputSize.ResizeToWidth(expectedSize.Width);
-            }
-            else
-            {
-                return inputSize.ResizeToHeight(expectedSize.Height);
-            }
+            return sizeRatio < expectSizeRatio ?
+                inputSize.ResizeToWidth(expectedSize.Width) :
+                inputSize.ResizeToHeight(expectedSize.Height);
         }
 
         /// <summary>
@@ -46,14 +41,9 @@ namespace ZipPicViewUWP
             var sizeRatio = inputSize.Width / inputSize.Height;
             var expectSizeRatio = expectedSize.Width / expectedSize.Height;
 
-            if (sizeRatio > expectSizeRatio)
-            {
-                return inputSize.ResizeToWidth(expectedSize.Width);
-            }
-            else
-            {
-                return inputSize.ResizeToHeight(expectedSize.Height);
-            }
+            return sizeRatio > expectSizeRatio ?
+                inputSize.ResizeToWidth(expectedSize.Width) :
+                inputSize.ResizeToHeight(expectedSize.Height);
         }
 
         /// <summary>
@@ -95,7 +85,9 @@ namespace ZipPicViewUWP
         /// <returns>Orientation, landscape or portrait.</returns>
         public static ImageOrientation GetOrientation(this Size s)
         {
-            return s.Width > s.Height ? ImageOrientation.Landscape : ImageOrientation.Portrait;
+            return s.Width > s.Height ?
+                ImageOrientation.Landscape :
+                ImageOrientation.Portrait;
         }
     }
 }

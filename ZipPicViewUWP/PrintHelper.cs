@@ -57,7 +57,7 @@ namespace ZipPicViewUWP
             this.printDocument.GetPreviewPage += this.GetPrintPreviewPage;
             this.printDocument.AddPages += this.AddPrintPages;
 
-            PrintManager printMan = PrintManager.GetForCurrentView();
+            var printMan = PrintManager.GetForCurrentView();
             printMan.PrintTaskRequested += this.PrintTaskRequested;
         }
 
@@ -78,43 +78,35 @@ namespace ZipPicViewUWP
         /// <param name="provider">Media provider.</param>
         /// <param name="entry">Entry to print.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task<Exception> Print(AbstractMediaProvider provider, string entry)
+        public async Task Print(AbstractMediaProvider provider, string entry)
         {
-            {
-                var (stream, error) = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
-                if (error != null)
-                {
-                    return error;
-                }
+            var stream = await provider.OpenEntryAsRandomAccessStreamAsync(entry);
 
-                var output = new BitmapImage();
-                output.SetSource(stream);
+            var output = new BitmapImage();
+            output.SetSource(stream);
 
-                this.BitmapImage = output;
+            this.BitmapImage = output;
 
-                await this.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
-            }
-
-            return null;
+            await this.ShowPrintUIAsync("Printing - " + entry.ExtractFilename());
         }
 
         private void AddPrintPages(object sender, AddPagesEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
             printDoc.AddPage(this.printPage);
             printDoc.AddPagesComplete();
         }
 
         private void CreatePrintPreviewPages(object sender, PaginateEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
 
             printDoc.SetPreviewPageCount(1, PreviewPageCountType.Intermediate);
         }
 
         private void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
-            PrintDocument printDoc = (PrintDocument)sender;
+            var printDoc = (PrintDocument)sender;
             this.printPage = new PrintPage()
             {
                 LayoutOption = this.printLayout,

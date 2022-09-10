@@ -25,8 +25,8 @@ namespace ZipPicViewUWP
         /// </summary>
         public PrintPanel.LayoutOption LayoutOption
         {
-            get { return this.PrintPanel.Layout; }
-            set { this.PrintPanel.Layout = value; }
+            get => this.PrintPanel.Layout;
+            set => this.PrintPanel.Layout = value;
         }
 
         /// <summary>
@@ -34,15 +34,8 @@ namespace ZipPicViewUWP
         /// </summary>
         public BitmapImage Image
         {
-            get
-            {
-                return this.PrintPanel.BitmapImage;
-            }
-
-            set
-            {
-                this.PrintPanel.BitmapImage = value;
-            }
+            get => this.PrintPanel.BitmapImage;
+            set => this.PrintPanel.BitmapImage = value;
         }
     }
 }
