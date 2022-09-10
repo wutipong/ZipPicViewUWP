@@ -64,7 +64,7 @@ namespace ZipPicViewUWP
         /// <summary>
         /// Gets the list of all folder entries within the provider.
         /// </summary>
-        public static string[] FolderEntries { get; private set; }
+        public static IEnumerable<string> FolderEntries { get; private set; }
 
         /// <summary>
         /// Gets the current media provider.
@@ -166,10 +166,8 @@ namespace ZipPicViewUWP
                 }
 
                 FileEntries = await newProvider.GetAllFileEntries();
+                FolderEntries = await newProvider.GetFolderEntries();
 
-                var folderEntries = await newProvider.GetFolderEntries();
-
-                FolderEntries = folderEntries.ToArray();
                 CurrentFolder = newProvider.Root;
                 currentFolderEntries = null;
 
