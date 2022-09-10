@@ -91,19 +91,17 @@ namespace ZipPicViewUWP.MediaProvider
                 this.folder.Path.Length :
                 this.folder.Path.Length + 1;
 
-            foreach (var folder in subFolders)
+            foreach (var subFolder in subFolders)
             {
-                output.Add(folder.Path.Substring(startIndex));
+                output.Add(subFolder.Path.Substring(startIndex));
             }
 
-            var folderEntries = output.ToArray();
+            await this.CreateFileList(output);
 
-            await this.CreateFileList(folderEntries);
-
-            return folderEntries;
+            return output;
         }
 
-        private async Task CreateFileList(string[] folderEntries)
+        private async Task CreateFileList(IEnumerable<string> folderEntries)
         {
             var options = new QueryOptions(CommonFolderQuery.DefaultQuery)
             {
@@ -140,7 +138,7 @@ namespace ZipPicViewUWP.MediaProvider
                     }
                 }
 
-                this.folderFileEntries[f] = l.ToArray();
+                this.folderFileEntries[f] = l;
             }
         }
     }
