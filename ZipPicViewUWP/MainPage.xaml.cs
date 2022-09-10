@@ -232,7 +232,7 @@ namespace ZipPicViewUWP
             this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
 
-        private async Task RebuildSubFolderList(FolderReadingDialog dialog)
+        private async Task RebuildSubFolderList(ProgressDialog dialog)
         {
             foreach (var item in this.NavigationPane.MenuItems)
             {
@@ -285,8 +285,6 @@ namespace ZipPicViewUWP
             }
 
             dialog.Value = count;
-
-            this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems[0];
         }
 
         private void ThumbnailPage_ItemClicked(object source, string entry)
@@ -311,12 +309,17 @@ namespace ZipPicViewUWP
             {
                 if (selectedItem.Content is FolderListItem item)
                 {
-                    var page = this.thumbnailPages.Find((p) => p.Entry == item.FolderEntry);
+                    var page = this.thumbnailPages.Find(p => p.Entry == item.FolderEntry);
                     page?.CancellationToken.Cancel();
                 }
             }
 
-            var dialog = new FolderReadingDialog();
+            var dialog = new ProgressDialog
+            {
+                BodyText = "Reading folder structure...",
+                Title = "Please wait.",
+            };
+
             _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
             try
             {
@@ -328,6 +331,8 @@ namespace ZipPicViewUWP
                 dialog.Hide();
                 GC.Collect();
             }
+
+            this.NavigationPane.SelectedItem = this.NavigationPane.MenuItems[0];
 
             this.ThumbnailBorder.Opacity = 0;
 
@@ -347,57 +352,71 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            if (e.IsSettingsSelected == true)
+            if (e.IsSettingsSelected)
             {
                 this.ThumbnailBorder.Child = new SettingPage();
                 return;
             }
 
-            if (this.currentFolder != null && this.thumbnailPages != null)
+            var dialog = new ProgressDialog()
             {
-                var currentPage = this.thumbnailPages.Find((p) => p.Entry == this.currentFolder);
-                currentPage?.CancellationToken.Cancel();
-            }
+                BodyText = "Reading folder contents.",
+                Title = "Please wait",
+            };
 
-            var item = this.NavigationPane.SelectedItem as NavigationViewItem;
-
-            var folderListItem = item?.Content as FolderListItem;
-
-            var folder = folderListItem?.FolderEntry;
-            var page = this.thumbnailPages?.Find((p) => p.Entry == folder);
-
-            if (page == null)
+            try
             {
-                page = new ThumbnailPage()
+                _ = dialog.ShowAsync(ContentDialogPlacement.Popup);
+                if (this.currentFolder != null && this.thumbnailPages != null)
                 {
-                    PrintHelper = this.printHelper,
-                    Notification = this.Notification,
-                };
-                page.ItemClicked += this.ThumbnailPage_ItemClicked;
-                await page.SetFolderEntry(folder);
-
-                this.thumbnailPages?.Add(page);
-                if (this.thumbnailPages?.Count > 10)
-                {
-                    var removePage = this.thumbnailPages[0];
-                    this.thumbnailPages.Remove(removePage);
-
-                    removePage.Release();
+                    var currentPage = this.thumbnailPages.Find(p => p.Entry == this.currentFolder);
+                    currentPage?.CancellationToken.Cancel();
                 }
+
+                var item = this.NavigationPane.SelectedItem as NavigationViewItem;
+
+                var folderListItem = item?.Content as FolderListItem;
+
+                var folder = folderListItem?.FolderEntry;
+                var page = this.thumbnailPages?.Find((p) => p.Entry == folder);
+
+                if (page == null)
+                {
+                    page = new ThumbnailPage
+                    {
+                        PrintHelper = this.printHelper,
+                        Notification = this.Notification,
+                    };
+                    page.ItemClicked += this.ThumbnailPage_ItemClicked;
+                    await page.SetFolderEntry(folder);
+
+                    this.thumbnailPages?.Add(page);
+                    if (this.thumbnailPages?.Count > 10)
+                    {
+                        var removePage = this.thumbnailPages[0];
+                        this.thumbnailPages.Remove(removePage);
+
+                        removePage.Release();
+                    }
+                }
+
+                this.ThumbnailBorderOpenStoryboard.Begin();
+
+                this.ThumbnailBorder.Child = page;
+
+                page.Title = folder == MediaManager.Provider.Root ? this.FileName : folder.ExtractFilename();
+
+                page.TitleStyle = folder == MediaManager.Provider.Root
+                    ? Windows.UI.Text.FontStyle.Oblique
+                    : Windows.UI.Text.FontStyle.Normal;
+
+                this.currentFolder = folderListItem?.FolderEntry;
+                _ = page.ResumeLoadThumbnail();
             }
-
-            this.ThumbnailBorderOpenStoryboard.Begin();
-
-            this.ThumbnailBorder.Child = page;
-
-            page.Title = folder == MediaManager.Provider.Root ?
-                    this.FileName : folder.ExtractFilename();
-
-            page.TitleStyle = folder == MediaManager.Provider.Root ?
-                Windows.UI.Text.FontStyle.Oblique : Windows.UI.Text.FontStyle.Normal;
-
-            this.currentFolder = folderListItem?.FolderEntry;
-            await page.ResumeLoadThumbnail();
+            finally
+            {
+                dialog.Hide();
+            }
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)

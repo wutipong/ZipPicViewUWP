@@ -42,21 +42,22 @@ namespace ZipPicViewUWP.MediaProvider
         /// <inheritdoc/>
         public override string FindCoverPage(IEnumerable<string> fileNames)
         {
-            if (!fileNames.Any())
+            var nameArray = fileNames as string[] ?? fileNames.ToArray();
+            if (nameArray.Length == 0)
             {
-                return null;
+                return string.Empty;
             }
 
             foreach (var keyword in this.coverKeywords)
             {
-                var name = fileNames.FirstOrDefault((s) => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
+                var name = nameArray.FirstOrDefault(s => s.Contains(keyword, StringComparison.OrdinalIgnoreCase));
                 if (name != null)
                 {
                     return name;
                 }
             }
 
-            return fileNames.ElementAt(0);
+            return nameArray[0];
         }
 
         /// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿// <copyright file="FolderReadingDialog.xaml.cs" company="Wutipong Wongsakuldej">
+﻿// <copyright file="ProgressDialog.xaml.cs" company="Wutipong Wongsakuldej">
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
@@ -10,12 +10,12 @@ namespace ZipPicViewUWP
     /// <summary>
     /// A dialog to display when media provider is being read.
     /// </summary>
-    public sealed partial class FolderReadingDialog : ContentDialog
+    public sealed partial class ProgressDialog : ContentDialog
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="FolderReadingDialog"/> class.
+        /// Initializes a new instance of the <see cref="ProgressDialog"/> class.
         /// </summary>
-        public FolderReadingDialog()
+        public ProgressDialog()
         {
             this.InitializeComponent();
             this.DataContext = this;
@@ -59,6 +59,15 @@ namespace ZipPicViewUWP
                 this.MaximumText.Text = value ? "-" : this.Maximum.ToString(CultureInfo.InvariantCulture);
                 this.ValueText.Text = value ? "-" : this.Value.ToString(CultureInfo.InvariantCulture);
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the body text.
+        /// </summary>
+        public string BodyText
+        {
+            get => this.BodyTextBlock.Text;
+            set => this.BodyTextBlock.Text = value;
         }
     }
 }

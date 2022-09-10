@@ -122,12 +122,12 @@ namespace ZipPicViewUWP
                 "1 image." :
                 string.Format($"{fileNames.Length} images.");
 
-            this.Thumbnails = new Thumbnail[fileNames.Count()];
+            this.Thumbnails = new Thumbnail[fileNames.Length];
             this.ThumbnailGrid?.Items?.Clear();
 
-            for (var i = 0; i < fileNames.Count(); i++)
+            for (var i = 0; i < fileNames.Length; i++)
             {
-                var entry = fileNames.ElementAt(i);
+                var entry = fileNames[i];
                 var thumbnail = new Thumbnail();
                 var filename = entry.ExtractFilename();
 
