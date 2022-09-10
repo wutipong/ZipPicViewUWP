@@ -310,6 +310,11 @@ namespace ZipPicViewUWP
         private async Task UpdateFolderThumbnail(FolderListItem item)
         {
             var cover = await MediaManager.FindFolderThumbnailEntry(item.FolderEntry);
+            if (string.IsNullOrWhiteSpace(cover))
+            {
+                return;
+            }
+
             var bitmap = await MediaManager.CreateThumbnail(cover, 20, 32);
             var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
