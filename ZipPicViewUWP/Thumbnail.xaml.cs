@@ -106,7 +106,6 @@ namespace ZipPicViewUWP
             {
                 await MediaManager.CopyToClipboard(this.Entry);
                 this.Notification.Show($"The image {this.Entry.ExtractFilename()} has been copied to the clipboard.", 1000);
-
             }
             catch (Exception)
             {

@@ -8,11 +8,8 @@ namespace ZipPicViewUWP
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using NaturalSort.Extension;
-    using SharpCompress.Compressors.Xz;
     using Windows.ApplicationModel;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Graphics.Imaging;
@@ -29,12 +26,12 @@ namespace ZipPicViewUWP
         private static readonly SemaphoreSlim Semaphore;
         private static string currentEntry;
         private static string currentFolder;
-        private static string[] currentFolderEntries = null;
+        private static IEnumerable<string> currentFolderEntries = null;
 
         static MediaManager()
         {
-            CurrentEntryChange += MediaManager_CurrentEntryChange;
-            CurrentFolderChange += MediaManager_CurrentFolderChange;
+            CurrentEntryChange += OnCurrentEntryChange;
+            CurrentFolderChange += OnCurrentFolderChange;
             Semaphore = new SemaphoreSlim(1, 1);
         }
 
@@ -44,7 +41,7 @@ namespace ZipPicViewUWP
         /// <typeparam name="T">Type of the parameter.</typeparam>
         /// <param name="v">New value to be set to the property.</param>
         /// <returns>Exception when the operation fails.</returns>
-        public delegate Task<Exception> PropertyChangeHandler<in T>(T v);
+        public delegate Task PropertyChangeHandler<in T>(T v);
 
         /// <summary>
         /// Current entry change event.
@@ -111,27 +108,24 @@ namespace ZipPicViewUWP
         /// Gets the files entries under the current folder.
         /// </summary>
         /// <returns>A result <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<(string[], Exception)> GetCurrentFolderFileEntries()
+        public static async Task<IEnumerable<string>> GetCurrentFolderFileEntries()
         {
             if (currentFolderEntries != null)
             {
-                return (currentFolderEntries, null);
+                return currentFolderEntries;
             }
 
             await Semaphore.WaitAsync();
             try
             {
-                var entries = await Provider.GetChildEntries(CurrentFolder);
-
-                currentFolderEntries = entries.ToArray();
-                Array.Sort(currentFolderEntries, StringComparer.InvariantCultureIgnoreCase.WithNaturalSort());
+                currentFolderEntries = await Provider.GetChildEntries(CurrentFolder);
             }
             finally
             {
                 Semaphore.Release();
             }
 
-            return (currentFolderEntries, null);
+            return currentFolderEntries;
         }
 
         /// <summary>
@@ -188,24 +182,11 @@ namespace ZipPicViewUWP
         /// <param name="random">Advance randomly.</param>
         /// <param name="step">step to advance, will be ignored if the random is true.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public static async Task<Exception> Advance(bool current, bool random, int step = 1)
+        public static async Task Advance(bool current, bool random, int step = 1)
         {
-            string[] entries;
-
-            if (current)
-            {
-                Exception error;
-                (entries, error) = await GetCurrentFolderFileEntries();
-
-                if (error != null)
-                {
-                    return error;
-                }
-            }
-            else
-            {
-                entries = FileEntries.ToArray();
-            }
+            var entries = current ?
+                (await GetCurrentFolderFileEntries()).ToArray() :
+                FileEntries.ToArray();
 
             var index = Array.IndexOf(entries, CurrentEntry);
             if (random)
@@ -229,8 +210,6 @@ namespace ZipPicViewUWP
             }
 
             CurrentEntry = entries[index];
-
-            return null;
         }
 
         /// <summary>
@@ -350,7 +329,7 @@ namespace ZipPicViewUWP
             using (var output = await file.OpenStreamForWriteAsync())
             using (var stream = await Provider.OpenEntryAsync(entry))
             {
-                stream.CopyTo(output);
+                await stream.CopyToAsync(output);
             }
         }
 
@@ -363,13 +342,13 @@ namespace ZipPicViewUWP
             return bitmap;
         }
 
-        private static Task<Exception> MediaManager_CurrentEntryChange(string newvalue)
+        private static Task OnCurrentEntryChange(string v)
         {
-            CurrentFolder = Provider.GetParentEntry(newvalue);
+            CurrentFolder = Provider.GetParentEntry(v);
             return null;
         }
 
-        private static Task<Exception> MediaManager_CurrentFolderChange(string newvalue)
+        private static Task OnCurrentFolderChange(string v)
         {
             currentFolderEntries = null;
 
