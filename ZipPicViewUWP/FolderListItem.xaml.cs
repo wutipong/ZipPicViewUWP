@@ -94,18 +94,21 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <param name="entries">Input entries.</param>
         /// <returns>Tree string array.</returns>
-        public static string[] BuildTreeString(string[] entries)
+        public static IEnumerable<string> BuildTreeString(IEnumerable<string> entries)
         {
-            var tree = new List<char>[entries.Length];
-            for (var i = 0; i < entries.Length; i++)
+            var entryArray = entries as string[] ?? entries.ToArray();
+            var tree = new List<char>[entryArray.Length];
+            for (var i = 0; i < entryArray.Length; i++)
             {
                 tree[i] = new List<char>();
-                if (entries[i] == MediaManager.Provider.Root)
+                var element = entryArray.ElementAt(i);
+
+                if (element == MediaManager.Provider.Root)
                 {
                     continue;
                 }
 
-                var currentLevel = entries[i].Count((c) => c == MediaManager.Provider.Separator);
+                var currentLevel = element.Count(c => c == MediaManager.Provider.Separator);
 
                 for (var j = 0; j < currentLevel; j++)
                 {
@@ -116,7 +119,7 @@ namespace ZipPicViewUWP
 
                 for (var j = i - 1; j > 0; j--)
                 {
-                    var lastLevel = entries[j].Count((c) => c == MediaManager.Provider.Separator);
+                    var lastLevel = entryArray[j].Count((c) => c == MediaManager.Provider.Separator);
                     if (lastLevel > currentLevel)
                     {
                         tree[j][currentLevel] = '│';
@@ -135,7 +138,7 @@ namespace ZipPicViewUWP
                 }
             }
 
-            var output = new string[entries.Length];
+            var output = new string[entryArray.Length];
             for (var i = 0; i < output.Length; i++)
             {
                 var sb = new StringBuilder();
