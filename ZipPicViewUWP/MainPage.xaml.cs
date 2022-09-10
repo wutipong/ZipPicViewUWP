@@ -2,6 +2,8 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System.Threading;
+
 namespace ZipPicViewUWP
 {
     using System;
@@ -28,11 +30,13 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private FileOpenPicker fileOpenPicker = null;
-        private FolderPicker folderPicker = null;
+        private FileOpenPicker fileOpenPicker;
+        private FolderPicker folderPicker;
         private List<ThumbnailPage> thumbnailPages;
         private string currentFolder;
         private PrintHelper printHelper;
+
+        private CancellationTokenSource cancellationTokenSource;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -40,12 +44,18 @@ namespace ZipPicViewUWP
         public MainPage()
         {
             this.InitializeComponent();
+            MediaManager.ProviderChange += this.MediaManagerOnProviderChange;
         }
 
         /// <summary>
         /// Gets the current file name.
         /// </summary>
         public string FileName { get; private set; } = string.Empty;
+
+        private Task MediaManagerOnProviderChange(AbstractMediaProvider v)
+        {
+            return Task.Run(() => this.cancellationTokenSource?.Cancel(false));
+        }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
@@ -290,21 +300,32 @@ namespace ZipPicViewUWP
         private async Task UpdateFolderListThumbnail()
         {
             var count = MediaManager.FolderEntries.Count();
-            for (var i = 0; i < count; i++)
+            using (this.cancellationTokenSource = new CancellationTokenSource())
             {
-                var navigationItem = this.NavigationPane.MenuItems[i] as NavigationViewItem;
-                if (navigationItem == null)
+                for (var i = 0; i < count; i++)
                 {
-                    continue;
-                }
+                    if (this.cancellationTokenSource.IsCancellationRequested)
+                    {
+                        break;
+                    }
 
-                var item = navigationItem.Content as FolderListItem;
-                if (item == null)
-                {
-                    continue;
+                    var navigationItem = this.NavigationPane.MenuItems[i] as NavigationViewItem;
+                    if (navigationItem == null)
+                    {
+                        continue;
+                    }
+
+                    var item = navigationItem.Content as FolderListItem;
+                    if (item == null)
+                    {
+                        continue;
+                    }
+
+                    await this.UpdateFolderThumbnail(item);
                 }
-                await this.UpdateFolderThumbnail(item);
             }
+
+            this.cancellationTokenSource = null;
         }
 
         private async Task UpdateFolderThumbnail(FolderListItem item)
