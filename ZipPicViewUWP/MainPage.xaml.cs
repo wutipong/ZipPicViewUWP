@@ -169,7 +169,7 @@ namespace ZipPicViewUWP
                 catch (Exception err)
                 {
                     stream?.Dispose();
-                    var dialog = new MessageDialog($"Cannot open file: {selected.Name} : {err.Message}.", "Error");
+                    var dialog = new MessageDialog($"Cannot open file: {selected.Name}. {err.Message}", "Error");
                     await dialog.ShowAsync();
                     this.IsEnabled = true;
                 }

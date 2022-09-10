@@ -136,19 +136,26 @@ namespace ZipPicViewUWP.MediaProvider
         {
             return Task.Run<Stream>(() =>
             {
-                var outputStream = new MemoryStream();
                 if (this.Archive == null)
                 {
-                    throw new Exception("Cannot Read Archive");
+                    throw new IOException("Cannot open the archive file.");
                 }
 
                 lock (this.Archive)
                 {
-                    var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
-                    archiveEntry.WriteTo(outputStream);
-                    outputStream.Position = 0;
+                    try
+                    {
+                        var outputStream = new MemoryStream();
+                        var archiveEntry = this.Archive.Entries.First(e => e.Key == entry);
+                        archiveEntry.WriteTo(outputStream);
+                        outputStream.Position = 0;
 
-                    return outputStream;
+                        return outputStream;
+                    }
+                    catch (Exception err)
+                    {
+                        throw new InvalidOperationException("Unable to read the entry", err);
+                    }
                 }
             });
         }
@@ -197,18 +204,19 @@ namespace ZipPicViewUWP.MediaProvider
                     return Array.Empty<string>(); 
                 }
 
-                var folderEntries = from entry in this.Archive.Entries
-                                    where entry.IsDirectory
-                                    orderby entry.Key
-                                    select entry.Key;
-
-                output.Add(this.Root);
-                foreach (var folder in folderEntries)
+                try
                 {
-                    output.Add(
-                        folder.EndsWith(this.Separator) ?
-                        folder.Substring(0, folder.Length - 1) :
-                        folder);
+                    var folderEntries = from entry in this.Archive.Entries
+                        where entry.IsDirectory
+                        orderby entry.Key
+                        select entry.Key;
+
+                    output.Add(this.Root);
+                    output.AddRange(folderEntries.Select(folder => folder.EndsWith(this.Separator) ? folder.Substring(0, folder.Length - 1) : folder));
+                }
+                catch (Exception err)
+                {
+                    throw new InvalidOperationException("Unable to create folder list.", err);
                 }
 
                 foreach (var entry in this.FileList)
@@ -239,7 +247,17 @@ namespace ZipPicViewUWP.MediaProvider
             var files = new List<string>();
             lock (this.Archive)
             {
-                files.AddRange(from e in this.Archive.Entries where !e.IsDirectory select e.Key);
+                try
+                {
+                    files.AddRange(
+                        from e in this.Archive.Entries
+                        where !e.IsDirectory
+                        select e.Key);
+                }
+                catch (Exception err)
+                {
+                    throw new InvalidOperationException("Unable to create file list.", err);
+                }
             }
 
             return files;
@@ -247,7 +265,15 @@ namespace ZipPicViewUWP.MediaProvider
 
         private char DetermineSeparator()
         {
-            return this.Archive.Entries.Any(entry => entry.Key.Contains('\\')) ? '\\' : '/';
+            try
+            {
+                return this.Archive.Entries.Any(entry => entry.Key.Contains('\\')) ? '\\' : '/';
+            }
+            catch (Exception err)
+            {
+                throw new InvalidOperationException("Unable to determine the path separator.", err);
+
+            }
         }
     }
 }
