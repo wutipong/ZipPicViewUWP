@@ -110,36 +110,28 @@ namespace ZipPicViewUWP.MediaProvider
 
             var files = await this.folder.CreateFileQueryWithOptions(options).GetFilesAsync();
 
-            foreach (var f in folderEntries)
+            foreach (var file in files)
             {
-                var l = new List<string>();
-                var parentPath = this.folder.Path +
-                        (f == this.Root ? string.Empty : this.Separator.ToString()) + f + (f == this.Root ? string.Empty : this.Separator.ToString());
-
-                foreach (var file in files)
+                var path = file.Path;
+                if (!this.FileFilter.IsImageFile(path))
                 {
-                    var path = file.Path;
-
-                    if (!path.StartsWith(parentPath))
-                    {
-                        continue;
-                    }
-
-                    var relativePath = path.Substring(parentPath.Length);
-
-                    if (relativePath.Contains(this.Separator))
-                    {
-                        continue;
-                    }
-
-                    if (this.FileFilter.IsImageFile(relativePath))
-                    {
-                        l.Add(f == this.Root ? relativePath : f + this.Separator + relativePath);
-                    }
+                    continue;
                 }
 
-                this.folderFileEntries[f] = l;
+                // relative path without the prefix separator.
+                var relativePath = path.Substring(this.folder.Path.Length + 1);
+                var lastSeparatorIndex = relativePath.LastIndexOf(this.Separator);
+
+                var parentPath = lastSeparatorIndex  == -1? 
+                    this.Root:
+                    relativePath.Substring(0, lastSeparatorIndex) ;
+
+                var fileList = folderFileEntries.GetValueOrDefault(parentPath, new List<string>()) as List<string>;
+                
+                fileList?.Add(relativePath);
+                this.folderFileEntries[parentPath] = fileList;
             }
+
         }
     }
 }

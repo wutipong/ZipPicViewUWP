@@ -40,7 +40,7 @@ namespace ZipPicViewUWP
         /// </summary>
         /// <typeparam name="T">Type of the parameter.</typeparam>
         /// <param name="v">New value to be set to the property.</param>
-        /// <returns>Exception when the operation fails.</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public delegate Task PropertyChangeHandler<in T>(T v);
 
         /// <summary>
@@ -52,6 +52,11 @@ namespace ZipPicViewUWP
         /// Current folder change event.
         /// </summary>
         public static event PropertyChangeHandler<string> CurrentFolderChange;
+
+        /// <summary>
+        /// Provider change event.
+        /// </summary>
+        public static event PropertyChangeHandler<AbstractMediaProvider> ProviderChange;
 
         /// <summary>
         /// Gets the list of all file entries within the provider.
@@ -166,6 +171,7 @@ namespace ZipPicViewUWP
                 currentFolderEntries = null;
 
                 Provider?.Dispose();
+                ProviderChange?.Invoke(newProvider);
 
                 Provider = newProvider;
             }
