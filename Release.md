@@ -1,5 +1,27 @@
 # Release Note
 
+## Version 2022.09
+
+Maintenance release. In this release, the project structure is refactored so it's more friendly to the developer. 
+
+One major changes is the UI, which the navigation bar does not have background color anymore, and the bar does not extend into the title bar anymore as well. This is to match the visual style to the current Windows applications.
+
+### What's Changed
+* Bump SharpCompress from 0.28.3 to 0.29.0 in /MediaProvider by @dependabot in https://github.com/wutipong/ZipPicViewUWP/pull/4
+* Feature/UI update by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/5
+* Fix/7zip not opening by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/6
+* refactor: move printing functionalities to the main project. by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/7
+* refactor: move MediaManager to the main project. by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/8
+* refactor: Move helpers to the main project by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/9
+* fix: change the way exception is handle. from return value to try-catch. by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/10
+* Feature/physical file optimize by @wutipong in https://github.com/wutipong/ZipPicViewUWP/pull/11
+
+## New Contributors
+* @dependabot made their first contribution in https://github.com/wutipong/ZipPicViewUWP/pull/4
+* @wutipong made their first contribution in https://github.com/wutipong/ZipPicViewUWP/pull/5
+
+**Full Changelog**: https://github.com/wutipong/ZipPicViewUWP/compare/2021.05...2022.09.0
+
 ## Version 2021.05
 * Update dependencies. ZWP now requires Windows 10 1809.
 * Add image filter.
