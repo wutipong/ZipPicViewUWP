@@ -2,6 +2,8 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
+using System.Threading;
+
 namespace ZipPicViewUWP
 {
     using System;
@@ -28,11 +30,13 @@ namespace ZipPicViewUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private FileOpenPicker fileOpenPicker = null;
-        private FolderPicker folderPicker = null;
+        private FileOpenPicker fileOpenPicker;
+        private FolderPicker folderPicker;
         private List<ThumbnailPage> thumbnailPages;
         private string currentFolder;
         private PrintHelper printHelper;
+
+        private CancellationTokenSource cancellationTokenSource;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
@@ -40,12 +44,18 @@ namespace ZipPicViewUWP
         public MainPage()
         {
             this.InitializeComponent();
+            MediaManager.ProviderChange += this.MediaManagerOnProviderChange;
         }
 
         /// <summary>
         /// Gets the current file name.
         /// </summary>
         public string FileName { get; private set; } = string.Empty;
+
+        private Task MediaManagerOnProviderChange(AbstractMediaProvider v)
+        {
+            return Task.Run(() => this.cancellationTokenSource?.Cancel(false));
+        }
 
         private async void DisplayPanelDragOver(object sender, DragEventArgs e)
         {
@@ -232,7 +242,7 @@ namespace ZipPicViewUWP
             this.ViewerControl.ExpectedImageHeight = (int)e.NewSize.Height;
         }
 
-        private async Task RebuildSubFolderList(ProgressDialog dialog)
+        private void RebuildSubFolderList(ProgressDialog dialog)
         {
             foreach (var item in this.NavigationPane.MenuItems)
             {
@@ -275,13 +285,6 @@ namespace ZipPicViewUWP
                 var navigationItem = new NavigationViewItem() { Content = item };
 
                 this.NavigationPane.MenuItems.Add(navigationItem);
-
-                var cover = await MediaManager.FindFolderThumbnailEntry(folder);
-
-                if (cover != null)
-                {
-                    _ = this.UpdateFolderThumbnail(cover, item);
-                }
             }
 
             dialog.Value = count;
@@ -294,9 +297,46 @@ namespace ZipPicViewUWP
             this.NavigationPane.IsEnabled = false;
         }
 
-        private async Task UpdateFolderThumbnail(string entry, FolderListItem item)
+        private async Task UpdateFolderListThumbnail()
         {
-            var bitmap = await MediaManager.CreateThumbnail(entry, 20, 32);
+            var count = MediaManager.FolderEntries.Count();
+            using (this.cancellationTokenSource = new CancellationTokenSource())
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    if (this.cancellationTokenSource.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    var navigationItem = this.NavigationPane.MenuItems[i] as NavigationViewItem;
+                    if (navigationItem == null)
+                    {
+                        continue;
+                    }
+
+                    var item = navigationItem.Content as FolderListItem;
+                    if (item == null)
+                    {
+                        continue;
+                    }
+
+                    await this.UpdateFolderThumbnail(item);
+                }
+            }
+
+            this.cancellationTokenSource = null;
+        }
+
+        private async Task UpdateFolderThumbnail(FolderListItem item)
+        {
+            var cover = await MediaManager.FindFolderThumbnailEntry(item.FolderEntry);
+            if (string.IsNullOrWhiteSpace(cover))
+            {
+                return;
+            }
+
+            var bitmap = await MediaManager.CreateThumbnail(cover, 20, 32);
             var source = new SoftwareBitmapSource();
             await source.SetBitmapAsync(bitmap);
 
@@ -324,7 +364,7 @@ namespace ZipPicViewUWP
             try
             {
                 await MediaManager.ChangeProvider(provider);
-                await this.RebuildSubFolderList(dialog);
+                this.RebuildSubFolderList(dialog);
             }
             finally
             {
@@ -338,6 +378,8 @@ namespace ZipPicViewUWP
 
             this.HideImageControl();
             this.IsEnabled = true;
+
+            _ = this.UpdateFolderListThumbnail();
         }
 
         private void SetFileName(string filename)
