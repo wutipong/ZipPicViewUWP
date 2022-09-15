@@ -252,29 +252,23 @@ namespace ZipPicViewUWP
                 return;
             }
 
-            var showLoading = true;
-
             var width = this.ExpectedImageWidth;
             var height = this.ExpectedImageHeight;
 
             var createBitmapTask = MediaManager.CreateImage(file, width, height, this.settings.ImageViewInterpolationMode);
 
-            _ = Task.Run(async () =>
+            var showLoading = new ShowLoadingTask
             {
-                if (withDelay)
-                {
-                    await Task.Delay(250);
-                }
-
-                await this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    if (showLoading)
+                WithDelay = withDelay,
+                Show = true,
+                OnShow = this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
                     {
                         this.LoadingControl.Visibility = Visibility.Visible;
                         this.LoadingShowStoryboard.Begin();
-                    }
-                });
-            });
+                    }).AsTask(),
+            };
+
+            var task = showLoading.Run();
 
             this.FilenameTextBlock.Text = file.ExtractFilename();
 
@@ -285,7 +279,9 @@ namespace ZipPicViewUWP
 
             this.source = new SoftwareBitmapSource();
             var (bitmap, origWidth, origHeight) = await createBitmapTask;
-            showLoading = false;
+
+            showLoading.Show = false;
+            await task;
 
             await this.source.SetBitmapAsync(bitmap);
             this.OriginalDimension.Text = $"{origWidth}x{origHeight}";
@@ -581,6 +577,30 @@ namespace ZipPicViewUWP
             this.InvertBorder.Visibility = invert ? Visibility.Visible : Visibility.Collapsed;
             this.BlackWhiteBorder.Visibility = blackWhite ? Visibility.Visible : Visibility.Collapsed;
             this.SepiaBorder.Visibility = sepia ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private class ShowLoadingTask
+        {
+            public bool Show { get; set; } = true;
+
+            public bool WithDelay { get; set; } = false;
+
+            public Task OnShow { get; set; }
+
+            public async Task Run()
+            {
+                if (this.WithDelay)
+                {
+                    await Task.Delay(1000);
+                }
+
+                if (!this.Show)
+                {
+                    return;
+                }
+
+                await this.OnShow;
+            }
         }
     }
 }

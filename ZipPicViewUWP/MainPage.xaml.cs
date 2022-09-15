@@ -2,14 +2,13 @@
 // Copyright (c) Wutipong Wongsakuldej. All rights reserved.
 // </copyright>
 
-using System.Threading;
-
 namespace ZipPicViewUWP
 {
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Windows.ApplicationModel.DataTransfer;
     using Windows.Storage;
