@@ -82,11 +82,15 @@
             RelativePanel.AlignTopWithPanel="True" />
         <Border
             x:Name="TitleBar"
-            Height="30"
+            Height="32"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="true">
-            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">ZipPicView</TextBlock>
+            RelativePanel.AlignTopWithPanel="true" Margin="0,0,16,0" Padding="0,0,0,0">
+            <StackPanel Orientation="Horizontal" Margin="16,0,8,0" Padding="0,0,0,0">
+                <Image Source="/Assets/Title-Logo.png" Width="16"></Image>
+                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Margin="16,0,0,0" VerticalAlignment="Center">ZipPicView</TextBlock>
+                <!-- Button Margin="16,0,0,0">Menu</Button -->
+            </StackPanel>
         </Border>
     </RelativePanel>
 </Page>
