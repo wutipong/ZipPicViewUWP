@@ -13,11 +13,16 @@
     mc:Ignorable="d">
     <Page.Resources>
         <Storyboard x:Name="ThumbnailBorderOpenStoryboard">
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+            <DoubleAnimationUsingKeyFrames 
+                Storyboard.TargetName="ThumbnailBorder" 
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="-50" />
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0" />
             </DoubleAnimationUsingKeyFrames>
-            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ThumbnailBorder" Storyboard.TargetProperty="(UIElement.Opacity)">
+
+            <DoubleAnimationUsingKeyFrames 
+                Storyboard.TargetName="ThumbnailBorder" 
+                Storyboard.TargetProperty="(UIElement.Opacity)">
                 <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0" />
                 <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1" />
             </DoubleAnimationUsingKeyFrames>
@@ -57,11 +62,15 @@
                 </StackPanel>
             </controls:NavigationView.PaneFooter>
             <mtuuc:DockPanel LastChildFill="True">
-                <Border Name="ThumbnailBorder" RenderTransformOrigin="0.5,0.5">
+                <Border 
+                    Name="ThumbnailBorder" 
+                    RenderTransformOrigin="0.5,0.5">
                     <Border.RenderTransform>
                         <CompositeTransform />
                     </Border.RenderTransform>
-                    <local:HomePage OpenFileClick="OpenFileButtonClick" OpenFolderClick="OpenFolderButtonClick" />
+                    <local:HomePage 
+                        OpenFileClick="OpenFileButtonClick" 
+                        OpenFolderClick="OpenFolderButtonClick" />
                 </Border>
             </mtuuc:DockPanel>
         </controls:NavigationView>
@@ -85,11 +94,28 @@
             Height="32"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="true" Margin="0,0,16,0" Padding="0,0,0,0">
-            <StackPanel Orientation="Horizontal" Margin="16,0,8,0" Padding="0,0,0,0">
-                <Image Source="/Assets/Title-Logo.png" Width="16"></Image>
-                <TextBlock Style="{StaticResource CaptionTextBlockStyle}" Margin="16,0,0,0" VerticalAlignment="Center">ZipPicView</TextBlock>
-                <!-- Button Margin="16,0,0,0">Menu</Button -->
+            RelativePanel.AlignTopWithPanel="true" 
+            Margin="0,0,16,0" 
+            Padding="0,0,0,0">
+            <StackPanel 
+                Orientation="Horizontal" 
+                Margin="16,0,8,0" 
+                Padding="0,0,0,0">
+                <Image 
+                    Width="16"
+                    Height="16">
+                    <Image.Source>
+                        <SvgImageSource 
+                            UriSource="ms-appx:///Assets/applogo.svg" 
+                            RasterizePixelHeight="16" 
+                            RasterizePixelWidth="16"/>
+                    </Image.Source>
+                </Image>
+                <TextBlock 
+                    Style="{StaticResource CaptionTextBlockStyle}" 
+                    Margin="16,0,0,0" 
+                    VerticalAlignment="Center" 
+                    Text="ZipPicView"/>
             </StackPanel>
         </Border>
     </RelativePanel>
