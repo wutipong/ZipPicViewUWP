@@ -309,14 +309,12 @@ namespace ZipPicViewUWP
                         break;
                     }
 
-                    var navigationItem = this.NavigationPane.MenuItems[i] as NavigationViewItem;
-                    if (navigationItem == null)
+                    if (!(this.NavigationPane.MenuItems[i] is NavigationViewItem navigationItem))
                     {
                         continue;
                     }
 
-                    var item = navigationItem.Content as FolderListItem;
-                    if (item == null)
+                    if (!(navigationItem.Content is FolderListItem item))
                     {
                         continue;
                     }
